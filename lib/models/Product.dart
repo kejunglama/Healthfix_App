@@ -1,13 +1,12 @@
-import 'package:healthfix/models/Model.dart';
 import 'package:enum_to_string/enum_to_string.dart';
+import 'package:healthfix/models/Model.dart';
 
 enum ProductType {
-  Electronics,
-  Books,
-  Fashion,
-  Groceries,
-  Art,
-  Others,
+  Nutrition,
+  Supplements,
+  Food,
+  Clothing,
+  Explore,
 }
 
 class Product extends Model {
@@ -23,6 +22,8 @@ class Product extends Model {
   static const String OWNER_KEY = "owner";
   static const String PRODUCT_TYPE_KEY = "product_type";
   static const String SEARCH_TAGS_KEY = "search_tags";
+  static const String IS_FEATURED_KEY = "is_featured";
+  static const String VARIATIONS_KEY = "variations";
 
   List<String> images;
   String title;
@@ -37,6 +38,7 @@ class Product extends Model {
   String owner;
   ProductType productType;
   List<String> searchTags;
+  List variations;
 
   Product(
     String id, {
@@ -52,11 +54,11 @@ class Product extends Model {
     this.seller,
     this.owner,
     this.searchTags,
+    this.variations,
   }) : super(id);
 
   int calculatePercentageDiscount() {
-    int discount =
-        (((originalPrice - discountPrice) * 100) / originalPrice).round();
+    int discount = (((originalPrice - discountPrice) * 100) / originalPrice).round();
     return discount;
   }
 
@@ -69,8 +71,7 @@ class Product extends Model {
       images: (map[IMAGES_KEY] ?? []).cast<String>(),
       title: map[TITLE_KEY],
       variant: map[VARIANT_KEY],
-      productType:
-          EnumToString.fromString(ProductType.values, map[PRODUCT_TYPE_KEY]),
+      productType: EnumToString.fromString(ProductType.values, map[PRODUCT_TYPE_KEY]),
       discountPrice: map[DISCOUNT_PRICE_KEY],
       originalPrice: map[ORIGINAL_PRICE_KEY],
       rating: map[RATING_KEY],
@@ -79,6 +80,7 @@ class Product extends Model {
       seller: map[SELLER_KEY],
       owner: map[OWNER_KEY],
       searchTags: map[SEARCH_TAGS_KEY].cast<String>(),
+      variations: map[VARIATIONS_KEY],
     );
   }
 
@@ -97,6 +99,7 @@ class Product extends Model {
       SELLER_KEY: seller,
       OWNER_KEY: owner,
       SEARCH_TAGS_KEY: searchTags,
+      VARIATIONS_KEY: variations,
     };
 
     return map;
@@ -114,10 +117,10 @@ class Product extends Model {
     if (highlights != null) map[HIGHLIGHTS_KEY] = highlights;
     if (description != null) map[DESCRIPTION_KEY] = description;
     if (seller != null) map[SELLER_KEY] = seller;
-    if (productType != null)
-      map[PRODUCT_TYPE_KEY] = EnumToString.convertToString(productType);
+    if (productType != null) map[PRODUCT_TYPE_KEY] = EnumToString.convertToString(productType);
     if (owner != null) map[OWNER_KEY] = owner;
     if (searchTags != null) map[SEARCH_TAGS_KEY] = searchTags;
+    if (variations != null) map[VARIATIONS_KEY] = variations;
 
     return map;
   }

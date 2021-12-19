@@ -13,15 +13,16 @@ class CustomSuffixIcon extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: EdgeInsets.fromLTRB(
-        0,
-        getProportionateScreenWidth(20),
-        getProportionateScreenWidth(20),
-        getProportionateScreenWidth(20),
-      ),
-      child: SvgPicture.asset(
-        svgIcon,
-        height: getProportionateScreenWidth(18),
+      padding: EdgeInsets.all(getProportionateScreenWidth(20)),
+      child: Container(
+        width: 20,
+        height: 20,
+        child: Center(
+          child: SvgPicture.asset(
+            svgIcon,
+            height: getProportionateScreenWidth(18),
+          ),
+        ),
       ),
     );
   }

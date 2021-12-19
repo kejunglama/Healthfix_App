@@ -2,10 +2,11 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:healthfix/constants.dart';
+import 'package:healthfix/screens/category/category_screen.dart';
+import 'package:healthfix/screens/explore_fitness/explore_screen.dart';
 
 import '../../size_config.dart';
 import 'components/body.dart';
-import 'components/home_screen_drawer.dart';
 
 class HomeScreen extends StatefulWidget {
   static const String routeName = "/home";
@@ -16,16 +17,33 @@ class HomeScreen extends StatefulWidget {
 
 class _HomeScreenState extends State<HomeScreen> {
   var _selectedIndex = 0;
+  PageController _tabsPageController;
+
+  @override
+  void initState() {
+    // TODO: implement initState
+    _tabsPageController = PageController();
+  }
+
+  @override
+  void dispose() {
+    // TODO: implement dispose
+    _tabsPageController.dispose();
+  }
 
   void _onItemTapped(int index) {
-    setState(() {
-      _selectedIndex = index;
-    });
+    print(index);
+    _tabsPageController.animateToPage(
+      index,
+      duration: Duration(seconds: 1),
+      curve: Curves.easeOutCubic,
+    );
   }
 
   @override
   Widget build(BuildContext context) {
     SizeConfig().init(context);
+
     return AnnotatedRegion<SystemUiOverlayStyle>(
       value: const SystemUiOverlayStyle(
         // For Android.
@@ -37,8 +55,19 @@ class _HomeScreenState extends State<HomeScreen> {
         statusBarBrightness: Brightness.dark,
       ),
       child: Scaffold(
-        body: Body(),
-        drawer: HomeScreenDrawer(),
+        body: PageView(
+            controller: _tabsPageController,
+            onPageChanged: (num) {
+              setState(() {
+                _selectedIndex = num;
+              });
+            },
+            children: [
+              Body(),
+              ExploreScreen(),
+              CategoryScreen(),
+            ]),
+        // drawer: HomeScreenDrawer(),
         bottomNavigationBar: buildBottomNavigationBar(),
       ),
     );
@@ -48,31 +77,31 @@ class _HomeScreenState extends State<HomeScreen> {
     return BottomNavigationBar(
       items: <BottomNavigationBarItem>[
         BottomNavigationBarItem(
-          icon: SvgPicture.asset("assets/icons/app-bar/icons-home.svg"),
-          activeIcon: SvgPicture.asset("assets/icons/app-bar/icons-filled-home.svg"),
+          icon: SvgPicture.asset("assets/icons/app/icons-home.svg"),
+          activeIcon: SvgPicture.asset("assets/icons/app/icons-filled-home.svg"),
           label: 'Home',
         ),
         BottomNavigationBarItem(
-          icon: SvgPicture.asset("assets/icons/app-bar/icons-shop.svg"),
-          activeIcon: SvgPicture.asset("assets/icons/app-bar/icons-filled-shop.svg"),
+          icon: SvgPicture.asset("assets/icons/app/icons-shop.svg"),
+          activeIcon: SvgPicture.asset("assets/icons/app/icons-filled-shop.svg"),
           label: 'Shop',
           // backgroundColor: Colors.pink,
         ),
         BottomNavigationBarItem(
-          icon: SvgPicture.asset("assets/icons/app-bar/icons-explore.svg"),
-          activeIcon: SvgPicture.asset("assets/icons/app-bar/icons-filled-explore.svg"),
+          icon: SvgPicture.asset("assets/icons/app/icons-explore.svg"),
+          activeIcon: SvgPicture.asset("assets/icons/app/icons-filled-explore.svg"),
           label: 'Explore',
           // backgroundColor: Colors.green,
         ),
         BottomNavigationBarItem(
-          icon: SvgPicture.asset("assets/icons/app-bar/icons-category.svg"),
-          activeIcon: SvgPicture.asset("assets/icons/app-bar/icons-filled-category.svg"),
+          icon: SvgPicture.asset("assets/icons/app/icons-category.svg"),
+          activeIcon: SvgPicture.asset("assets/icons/app/icons-filled-category.svg"),
           label: 'Categories',
           // backgroundColor: Colors.pink,
         ),
         BottomNavigationBarItem(
-          icon: SvgPicture.asset("assets/icons/app-bar/icons-cart.svg"),
-          activeIcon: SvgPicture.asset("assets/icons/app-bar/icons-filled-cart.svg"),
+          icon: SvgPicture.asset("assets/icons/app/icons-cart.svg"),
+          activeIcon: SvgPicture.asset("assets/icons/app/icons-filled-cart.svg"),
           label: 'Cart',
           // backgroundColor: Colors.purple,
         ),

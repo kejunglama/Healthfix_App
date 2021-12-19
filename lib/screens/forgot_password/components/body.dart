@@ -13,17 +13,22 @@ class Body extends StatelessWidget {
           padding: EdgeInsets.symmetric(
               horizontal: getProportionateScreenWidth(screenPadding)),
           child: SizedBox(
-            width: double.infinity,
+            height: SizeConfig.screenHeight * 0.95,
             child: Column(
               children: [
-                SizedBox(height: SizeConfig.screenHeight * 0.04),
-                Text(
-                  "Forgot Password",
-                  style: headingStyle,
-                ),
-                Text(
-                  "Please enter your email and we will send \nyou a link to return to your account",
-                  textAlign: TextAlign.center,
+                SizedBox(height: SizeConfig.screenHeight * 0.2),
+                Column(
+                  children: [
+                    Text(
+                      "Forgot Password",
+                      style: cusHeadingStyle(getProportionateScreenWidth(20), kPrimaryColor),
+                    ),
+                    SizedBox(height: SizeConfig.screenHeight * 0.01),
+                    Text(
+                      "Please enter your email and we will send \nyou a link to return to your account",
+                      textAlign: TextAlign.center,
+                    ),
+                  ],
                 ),
                 SizedBox(height: SizeConfig.screenHeight * 0.1),
                 ForgotPasswordForm(),

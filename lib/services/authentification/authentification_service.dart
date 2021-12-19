@@ -116,6 +116,8 @@ class AuthentificationService {
         await userCredential.user.sendEmailVerification();
       }
       await UserDatabaseHelper().createNewUser(uid);
+      String name = email.substring(0, email.indexOf('@'));
+      updateCurrentUserDisplayName(name);
       return true;
     } on MessagedFirebaseAuthException {
       rethrow;
@@ -158,7 +160,7 @@ class AuthentificationService {
     await currentUser.updateProfile(displayName: updatedDisplayName);
   }
 
-  Future<bool> resetPasswordForEmail(String email) async {
+  Future resetPasswordForEmail(String email) async {
     try {
       await firebaseAuth.sendPasswordResetEmail(email: email);
       return true;

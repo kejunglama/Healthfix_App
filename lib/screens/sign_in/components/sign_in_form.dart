@@ -1,14 +1,14 @@
+import 'package:flutter/material.dart';
+import 'package:future_progress_dialog/future_progress_dialog.dart';
+import 'package:healthfix/components/social_button.dart';
 import 'package:healthfix/exceptions/firebaseauth/messeged_firebaseauth_exception.dart';
 import 'package:healthfix/exceptions/firebaseauth/signin_exceptions.dart';
 import 'package:healthfix/screens/forgot_password/forgot_password_screen.dart';
 import 'package:healthfix/services/authentification/authentification_service.dart';
-import 'package:future_progress_dialog/future_progress_dialog.dart';
 import 'package:logger/logger.dart';
 
 import '../../../components/custom_suffix_icon.dart';
 import '../../../components/default_button.dart';
-import 'package:flutter/material.dart';
-
 import '../../../constants.dart';
 import '../../../size_config.dart';
 
@@ -37,7 +37,7 @@ class _SignInFormState extends State<SignInForm> {
       child: Column(
         children: [
           buildEmailFormField(),
-          SizedBox(height: getProportionateScreenHeight(30)),
+          SizedBox(height: getProportionateScreenHeight(15)),
           buildPasswordFormField(),
           SizedBox(height: getProportionateScreenHeight(30)),
           buildForgotPasswordWidget(context),
@@ -64,10 +64,8 @@ class _SignInFormState extends State<SignInForm> {
                 ));
           },
           child: Text(
-            "Forgot Password",
-            style: TextStyle(
-              decoration: TextDecoration.underline,
-            ),
+            "Forgot Password?",
+            style: cusHeadingLinkStyle,
           ),
         )
       ],
@@ -79,10 +77,19 @@ class _SignInFormState extends State<SignInForm> {
       controller: passwordFieldController,
       obscureText: true,
       decoration: InputDecoration(
+        enabledBorder: const OutlineInputBorder(
+          borderSide: const BorderSide(color: Colors.cyan, width: 0.1),
+        ),
+        focusedBorder: const OutlineInputBorder(
+          borderSide: const BorderSide(color: kPrimaryColor),
+        ),
+        border: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(5.0),
+        ),
         hintText: "Enter your password",
-        labelText: "Password",
+        // labelText: "Password",
         floatingLabelBehavior: FloatingLabelBehavior.always,
-        suffixIcon: CustomSuffixIcon(
+        prefixIcon: CustomSuffixIcon(
           svgIcon: "assets/icons/Lock.svg",
         ),
       ),
@@ -94,7 +101,7 @@ class _SignInFormState extends State<SignInForm> {
         }
         return null;
       },
-      autovalidateMode: AutovalidateMode.onUserInteraction,
+      // autovalidateMode: AutovalidateMode.onUserInteraction,
     );
   }
 
@@ -103,10 +110,19 @@ class _SignInFormState extends State<SignInForm> {
       controller: emailFieldController,
       keyboardType: TextInputType.emailAddress,
       decoration: InputDecoration(
+        enabledBorder: const OutlineInputBorder(
+          borderSide: const BorderSide(color: Colors.cyan, width: 0.1),
+        ),
+        focusedBorder: const OutlineInputBorder(
+          borderSide: const BorderSide(color: kPrimaryColor),
+        ),
+        border: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(5.0),
+        ),
         hintText: "Enter your email",
-        labelText: "Email",
+        // labelText: "Email",
         floatingLabelBehavior: FloatingLabelBehavior.always,
-        suffixIcon: CustomSuffixIcon(
+        prefixIcon: CustomSuffixIcon(
           svgIcon: "assets/icons/Mail.svg",
         ),
       ),
@@ -118,7 +134,7 @@ class _SignInFormState extends State<SignInForm> {
         }
         return null;
       },
-      autovalidateMode: AutovalidateMode.onUserInteraction,
+      // autovalidateMode: AutovalidateMode.onUserInteraction,
     );
   }
 

@@ -40,13 +40,13 @@ class _SignUpFormState extends State<SignUpForm> {
         child: Column(
           children: [
             buildEmailFormField(),
-            SizedBox(height: getProportionateScreenHeight(30)),
+            SizedBox(height: getProportionateScreenHeight(15)),
             buildPasswordFormField(),
-            SizedBox(height: getProportionateScreenHeight(30)),
+            SizedBox(height: getProportionateScreenHeight(15)),
             buildConfirmPasswordFormField(),
-            SizedBox(height: getProportionateScreenHeight(40)),
+            SizedBox(height: getProportionateScreenHeight(30)),
             DefaultButton(
-              text: "Sign up",
+              text: "Sign Up",
               press: signUpButtonCallback,
             ),
           ],
@@ -60,10 +60,19 @@ class _SignUpFormState extends State<SignUpForm> {
       controller: confirmPasswordFieldController,
       obscureText: true,
       decoration: InputDecoration(
+        enabledBorder: const OutlineInputBorder(
+          borderSide: const BorderSide(color: Colors.cyan, width: 0.1),
+        ),
+        focusedBorder: const OutlineInputBorder(
+          borderSide: const BorderSide(color: kPrimaryColor),
+        ),
+        border: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(5.0),
+        ),
         hintText: "Re-enter your password",
-        labelText: "Confirm Password",
+        // labelText: "Password",
         floatingLabelBehavior: FloatingLabelBehavior.always,
-        suffixIcon: CustomSuffixIcon(
+        prefixIcon: CustomSuffixIcon(
           svgIcon: "assets/icons/Lock.svg",
         ),
       ),
@@ -87,10 +96,19 @@ class _SignUpFormState extends State<SignUpForm> {
       controller: emailFieldController,
       keyboardType: TextInputType.emailAddress,
       decoration: InputDecoration(
+        enabledBorder: const OutlineInputBorder(
+          borderSide: const BorderSide(color: Colors.cyan, width: 0.1),
+        ),
+        focusedBorder: const OutlineInputBorder(
+          borderSide: const BorderSide(color: kPrimaryColor),
+        ),
+        border: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(5.0),
+        ),
         hintText: "Enter your email",
-        labelText: "Email",
+        // labelText: "Email",
         floatingLabelBehavior: FloatingLabelBehavior.always,
-        suffixIcon: CustomSuffixIcon(
+        prefixIcon: CustomSuffixIcon(
           svgIcon: "assets/icons/Mail.svg",
         ),
       ),
@@ -102,7 +120,7 @@ class _SignUpFormState extends State<SignUpForm> {
         }
         return null;
       },
-      autovalidateMode: AutovalidateMode.onUserInteraction,
+      // autovalidateMode: AutovalidateMode.onUserInteraction,
     );
   }
 
@@ -111,10 +129,19 @@ class _SignUpFormState extends State<SignUpForm> {
       controller: passwordFieldController,
       obscureText: true,
       decoration: InputDecoration(
+        enabledBorder: const OutlineInputBorder(
+          borderSide: const BorderSide(color: Colors.cyan, width: 0.1),
+        ),
+        focusedBorder: const OutlineInputBorder(
+          borderSide: const BorderSide(color: kPrimaryColor),
+        ),
+        border: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(5.0),
+        ),
         hintText: "Enter your password",
-        labelText: "Password",
+        // labelText: "Password",
         floatingLabelBehavior: FloatingLabelBehavior.always,
-        suffixIcon: CustomSuffixIcon(
+        prefixIcon: CustomSuffixIcon(
           svgIcon: "assets/icons/Lock.svg",
         ),
       ),

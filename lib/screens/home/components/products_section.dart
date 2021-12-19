@@ -24,20 +24,22 @@ class ProductsSection extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
       padding: EdgeInsets.symmetric(
-        horizontal: 14,
+        horizontal: 10,
         vertical: 16,
       ),
-      decoration: BoxDecoration(
-        color: Color(0xFFF5F6F9),
-        borderRadius: BorderRadius.circular(15),
-      ),
+      // decoration: BoxDecoration(
+      //   color: Color(0xFFF5F6F9),
+      //   borderRadius: BorderRadius.circular(15),
+      // ),
+
+      // Title Bar
       child: Column(
         children: [
           SectionTile(
             title: sectionTitle,
             press: () {},
           ),
-          // SizedBox(height: getProportionateScreenHeight(15)),
+          SizedBox(height: getProportionateScreenHeight(12)),
           Expanded(
             child: buildProductsList(),
           ),
@@ -83,11 +85,10 @@ class ProductsSection extends StatelessWidget {
       shrinkWrap: true,
       physics: BouncingScrollPhysics(),
       scrollDirection: Axis.horizontal,
-      gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-        crossAxisCount: 1,
-        childAspectRatio: 2,
-        // crossAxisSpacing: 4,
-        // mainAxisSpacing: 4,
+      gridDelegate: SliverGridDelegateWithMaxCrossAxisExtent(
+        maxCrossAxisExtent: 300,
+        mainAxisExtent: 160,
+        mainAxisSpacing: 12,
       ),
       itemCount: productsId.length,
       itemBuilder: (context, index) {

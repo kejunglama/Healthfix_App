@@ -3,16 +3,8 @@ import 'package:flutter/material.dart';
 import '../constants.dart';
 import '../size_config.dart';
 
-class DefaultButton extends StatelessWidget {
-  final String text;
-  final Function press;
-  final Color color;
-  const DefaultButton({
-    Key key,
-    this.text,
-    this.press,
-    this.color = kPrimaryColor,
-  }) : super(key: key);
+class Social_Login_Button extends StatelessWidget {
+  const Social_Login_Button({key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -20,16 +12,16 @@ class DefaultButton extends StatelessWidget {
       width: double.infinity,
       height: getProportionateScreenHeight(56),
       child: FlatButton(
-        color: color,
+        // color: Colors,
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(5),
         ),
-        onPressed: press,
+        onPressed: (){},
         child: Text(
-          text,
+          "text",
           style: TextStyle(
             fontSize: getProportionateScreenWidth(18),
-            color: Colors.white,
+            // color: Colors.white,
           ),
         ),
       ),

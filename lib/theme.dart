@@ -5,6 +5,7 @@ import 'constants.dart';
 ThemeData theme() {
   return ThemeData(
     scaffoldBackgroundColor: Colors.white,
+    dividerColor: Colors.transparent,
     fontFamily: "Muli",
     primarySwatch: Colors.cyan,
     appBarTheme: appBarTheme(),
@@ -12,7 +13,7 @@ ThemeData theme() {
     inputDecorationTheme: inputDecorationTheme(),
     visualDensity: VisualDensity.adaptivePlatformDensity,
     snackBarTheme: SnackBarThemeData(
-      backgroundColor: Colors.black,
+      backgroundColor: kPrimaryColor,
       contentTextStyle: TextStyle(
         color: Colors.white,
       ),

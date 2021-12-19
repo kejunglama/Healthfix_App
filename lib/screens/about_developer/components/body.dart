@@ -42,14 +42,11 @@ class Body extends StatelessWidget {
                 ),
                 SizedBox(height: getProportionateScreenHeight(30)),
                 Text(
-                  '" Rahul Badgujar "',
-                  style: TextStyle(
-                    fontSize: 25,
-                    fontWeight: FontWeight.w900,
-                  ),
+                  'SiteUX Developers',
+                  style: cusCenterHeadingStyle(),
                 ),
                 Text(
-                  "PCCoE Pune",
+                  "Kupondole Heights, Kathmandu",
                   style: TextStyle(
                     fontSize: 21,
                     fontWeight: FontWeight.w500,
@@ -68,7 +65,7 @@ class Body extends StatelessWidget {
                       iconSize: 40,
                       padding: EdgeInsets.all(16),
                       onPressed: () async {
-                        const String githubUrl = "https://github.com/imRB7here";
+                        const String githubUrl = "https://github.com/";
                         await launchUrl(githubUrl);
                       },
                     ),
@@ -81,7 +78,7 @@ class Body extends StatelessWidget {
                       padding: EdgeInsets.all(16),
                       onPressed: () async {
                         const String linkedInUrl =
-                            "https://www.linkedin.com/in/imrb7here";
+                            "https://www.linkedin.com/";
                         await launchUrl(linkedInUrl);
                       },
                     ),
@@ -92,7 +89,7 @@ class Body extends StatelessWidget {
                       padding: EdgeInsets.all(16),
                       onPressed: () async {
                         const String instaUrl =
-                            "https://www.instagram.com/_rahul.badgujar_";
+                            "https://www.instagram.com/siteux.np";
                         await launchUrl(instaUrl);
                       },
                     ),
@@ -149,7 +146,7 @@ class Body extends StatelessWidget {
             return CircleAvatar(
               radius: SizeConfig.screenWidth * 0.3,
               backgroundColor: kTextColor.withOpacity(0.75),
-              backgroundImage: NetworkImage(url),
+              backgroundImage: NetworkImage("https://site-ux.com/wp-content/uploads/2021/03/Logo-SiteUX-Square-shaped-1.png"),
             );
           } else if (snapshot.hasError) {
             final error = snapshot.error.toString();

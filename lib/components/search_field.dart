@@ -7,16 +7,17 @@ class SearchField extends StatelessWidget {
   final Function onSubmit;
   const SearchField({
     Key key,
-    @required this.onSubmit,
+    this.onSubmit,
   }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
     return Container(
       height: 40,
+      margin: EdgeInsets.symmetric(horizontal: 8),
       decoration: BoxDecoration(
-        color: kSecondaryColor.withOpacity(0.1),
-        borderRadius: BorderRadius.circular(50),
+        // color: kSecondaryColor.withOpacity(0.1),
+        borderRadius: BorderRadius.circular(5),
         border: Border.all(
           width: 0.3,
           color: Colors.grey,
@@ -30,14 +31,14 @@ class SearchField extends StatelessWidget {
           filled: true,
           focusedBorder: OutlineInputBorder(
             borderSide: BorderSide(color: Colors.white),
-            borderRadius: BorderRadius.circular(50),
+            borderRadius: BorderRadius.circular(10),
           ),
-          enabledBorder: UnderlineInputBorder(
+          enabledBorder: OutlineInputBorder(
             borderSide: BorderSide(color: Colors.white),
-            borderRadius: BorderRadius.circular(50),
+            borderRadius: BorderRadius.circular(10),
           ),
           // enabledBorder: InputBorder.none,
-          hintText: "Search Product",
+          hintText: "Search...",
           prefixIcon: Icon(
             Icons.search_rounded,
             color: Colors.cyan,

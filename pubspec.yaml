@@ -31,6 +31,13 @@ dependencies:
   firebase_core: ^0.5.3
   firebase_auth: ^0.18.4+1
   firebase_storage: ^5.2.0
+  carousel_slider: ^4.0.0
+  google_fonts: ^1.1.2
+  animated_splash_screen: ^1.1.0
+  page_transition: ^2.0.1-nullsafety.0
+  flutter_slider_indicator: ^1.0.0
+  flex_color_picker: ^2.2.0
+  pretty_json: ^2.0.0
 
 dev_dependencies:
   flutter_test:
@@ -47,7 +54,7 @@ flutter:
   assets:
     - assets/images/
     - assets/icons/
-    - assets/icons/app-bar/
+    - assets/icons/app/
     - assets/logo/
 
   fonts:

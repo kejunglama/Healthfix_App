@@ -28,43 +28,43 @@ class Body extends StatelessWidget {
             width: double.infinity,
             child: Column(
               children: [
-                SizedBox(height: getProportionateScreenHeight(10)),
-                Text(
-                  "Search Result",
-                  style: headingStyle,
-                ),
-                Text.rich(
-                  TextSpan(
-                    text: "$searchQuery",
-                    style: TextStyle(
-                      fontWeight: FontWeight.bold,
-                      fontStyle: FontStyle.italic,
-                    ),
-                    children: [
-                      TextSpan(
-                        text: " in ",
-                        style: TextStyle(
-                          fontWeight: FontWeight.normal,
-                          fontStyle: FontStyle.normal,
-                        ),
-                      ),
-                      TextSpan(
-                        text: "$searchIn",
-                        style: TextStyle(
-                          decoration: TextDecoration.underline,
-                          fontWeight: FontWeight.normal,
-                          fontStyle: FontStyle.normal,
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-                SizedBox(height: getProportionateScreenHeight(30)),
+                // SizedBox(height: getProportionateScreenHeight(10)),
+                // Text(
+                //   "Search Result",
+                //   style: headingStyle,
+                // ),
+                // Text.rich(
+                //   TextSpan(
+                //     text: "$searchQuery",
+                //     style: TextStyle(
+                //       fontWeight: FontWeight.bold,
+                //       fontStyle: FontStyle.italic,
+                //     ),
+                //     children: [
+                //       TextSpan(
+                //         text: " in ",
+                //         style: TextStyle(
+                //           fontWeight: FontWeight.normal,
+                //           fontStyle: FontStyle.normal,
+                //         ),
+                //       ),
+                //       TextSpan(
+                //         text: "$searchIn",
+                //         style: TextStyle(
+                //           decoration: TextDecoration.underline,
+                //           fontWeight: FontWeight.normal,
+                //           fontStyle: FontStyle.normal,
+                //         ),
+                //       ),
+                //     ],
+                //   ),
+                // ),
+                SizedBox(height: getProportionateScreenHeight(12)),
                 SizedBox(
-                  height: SizeConfig.screenHeight * 0.75,
+                  height: SizeConfig.screenHeight * 0.8,
                   child: buildProductsGrid(),
                 ),
-                SizedBox(height: getProportionateScreenHeight(30)),
+                SizedBox(height: getProportionateScreenHeight(12)),
               ],
             ),
           ),
@@ -77,12 +77,12 @@ class Body extends StatelessWidget {
     return Container(
       padding: EdgeInsets.symmetric(
         horizontal: 8,
-        vertical: 16,
+        // vertical: 16,
       ),
-      decoration: BoxDecoration(
-        color: Color(0xFFF5F6F9),
-        borderRadius: BorderRadius.circular(15),
-      ),
+      // decoration: BoxDecoration(
+      //   // color: Color(0xFFF5F6F9),
+      //   borderRadius: BorderRadius.circular(15),
+      // ),
       child: Builder(
         builder: (context) {
           if (searchResultProductsId.length > 0) {
@@ -91,9 +91,9 @@ class Body extends StatelessWidget {
               physics: BouncingScrollPhysics(),
               gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
                 crossAxisCount: 2,
-                childAspectRatio: 0.7,
-                crossAxisSpacing: 4,
-                mainAxisSpacing: 4,
+                childAspectRatio: 0.66,
+                crossAxisSpacing: 12,
+                mainAxisSpacing: 12,
               ),
               itemCount: searchResultProductsId.length,
               itemBuilder: (context, index) {

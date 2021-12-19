@@ -1,10 +1,9 @@
+import 'package:flutter/material.dart';
 import 'package:healthfix/constants.dart';
 
-import 'sign_in_form.dart';
-
-import '../../../size_config.dart';
-import 'package:flutter/material.dart';
 import '../../../components/no_account_text.dart';
+import '../../../size_config.dart';
+import 'sign_in_form.dart';
 
 class Body extends StatelessWidget {
   @override
@@ -13,27 +12,43 @@ class Body extends StatelessWidget {
       child: SizedBox(
         width: double.infinity,
         child: Padding(
-          padding: EdgeInsets.symmetric(
-              horizontal: getProportionateScreenWidth(screenPadding)),
+          padding: EdgeInsets.symmetric(horizontal: getProportionateScreenWidth(screenPadding)),
           child: SingleChildScrollView(
             physics: BouncingScrollPhysics(),
-            child: Column(
-              children: [
-                SizedBox(height: SizeConfig.screenHeight * 0.04),
-                Text(
-                  "Welcome Back",
-                  style: headingStyle,
-                ),
-                Text(
-                  "Sign in with your email and password",
-                  textAlign: TextAlign.center,
-                ),
-                SizedBox(height: SizeConfig.screenHeight * 0.08),
-                SignInForm(),
-                SizedBox(height: SizeConfig.screenHeight * 0.08),
-                NoAccountText(),
-                SizedBox(height: getProportionateScreenHeight(20)),
-              ],
+            child: Container(
+              height: SizeConfig.screenHeight * 0.95,
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.spaceAround,
+                children: [
+                  // SizedBox(height: SizeConfig.screenHeight * 0.04),
+                  SizedBox(height: SizeConfig.screenHeight * 0.04),
+                  Column(
+                    children: [
+                      Container(
+                        height: SizeConfig.screenHeight * 0.10,
+                        child: ClipRRect(
+                          borderRadius: BorderRadius.circular(50),
+                          child: Image.asset("assets/logo/hf-logo-only.png"),
+                        ),
+                      ),
+                      SizedBox(height: SizeConfig.screenHeight * 0.02),
+                      // Title and Subtitle
+                      Text(
+                        "Welcome to Healthfix",
+                        style: headingStyle,
+                      ),
+                      Text(
+                        "Log in with your Email and Password",
+                        textAlign: TextAlign.center,
+                      ),
+                    ],
+                  ),
+                  SignInForm(),
+                  SizedBox(height: SizeConfig.screenHeight * 0.08),
+                  NoAccountText(),
+                  // SizedBox(height: getProportionateScreenHeight(20)),
+                ],
+              ),
             ),
           ),
         ),

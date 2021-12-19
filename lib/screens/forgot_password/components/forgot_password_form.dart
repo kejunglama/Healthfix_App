@@ -1,13 +1,12 @@
-import 'package:healthfix/components/custom_suffix_icon.dart';
-import 'package:healthfix/components/default_button.dart';
-
-import 'package:healthfix/components/no_account_text.dart';
-import 'package:healthfix/exceptions/firebaseauth/messeged_firebaseauth_exception.dart';
-import 'package:healthfix/exceptions/firebaseauth/credential_actions_exceptions.dart';
-import 'package:healthfix/services/authentification/authentification_service.dart';
-import 'package:healthfix/size_config.dart';
 import 'package:flutter/material.dart';
 import 'package:future_progress_dialog/future_progress_dialog.dart';
+import 'package:healthfix/components/custom_suffix_icon.dart';
+import 'package:healthfix/components/default_button.dart';
+import 'package:healthfix/components/no_account_text.dart';
+import 'package:healthfix/exceptions/firebaseauth/credential_actions_exceptions.dart';
+import 'package:healthfix/exceptions/firebaseauth/messeged_firebaseauth_exception.dart';
+import 'package:healthfix/services/authentification/authentification_service.dart';
+import 'package:healthfix/size_config.dart';
 import 'package:logger/logger.dart';
 
 import '../../../constants.dart';
@@ -20,6 +19,7 @@ class ForgotPasswordForm extends StatefulWidget {
 class _ForgotPasswordFormState extends State<ForgotPasswordForm> {
   final _formKey = GlobalKey<FormState>();
   final TextEditingController emailFieldController = TextEditingController();
+
   @override
   void dispose() {
     emailFieldController.dispose();
@@ -34,14 +34,14 @@ class _ForgotPasswordFormState extends State<ForgotPasswordForm> {
         children: [
           buildEmailFormField(),
           SizedBox(height: getProportionateScreenHeight(30)),
-          SizedBox(height: SizeConfig.screenHeight * 0.1),
+          // SizedBox(height: SizeConfig.screenHeight * 0.1),
           DefaultButton(
-            text: "Send verification email",
+            text: "Send Verification Email",
             press: sendVerificationEmailButtonCallback,
           ),
-          SizedBox(height: SizeConfig.screenHeight * 0.1),
+          SizedBox(height: SizeConfig.screenHeight * 0.26),
           NoAccountText(),
-          SizedBox(height: getProportionateScreenHeight(30)),
+          // SizedBox(height: getProportionateScreenHeight(30)),
         ],
       ),
     );
@@ -52,10 +52,19 @@ class _ForgotPasswordFormState extends State<ForgotPasswordForm> {
       controller: emailFieldController,
       keyboardType: TextInputType.emailAddress,
       decoration: InputDecoration(
+        enabledBorder: const OutlineInputBorder(
+          borderSide: const BorderSide(color: Colors.cyan, width: 0.1),
+        ),
+        focusedBorder: const OutlineInputBorder(
+          borderSide: const BorderSide(color: kPrimaryColor),
+        ),
+        border: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(5.0),
+        ),
         hintText: "Enter your email",
-        labelText: "Email",
+        // labelText: "Email",
         floatingLabelBehavior: FloatingLabelBehavior.always,
-        suffixIcon: CustomSuffixIcon(
+        prefixIcon: CustomSuffixIcon(
           svgIcon: "assets/icons/Mail.svg",
         ),
       ),
@@ -67,7 +76,7 @@ class _ForgotPasswordFormState extends State<ForgotPasswordForm> {
         }
         return null;
       },
-      autovalidateMode: AutovalidateMode.onUserInteraction,
+      // autovalidateMode: AutovalidateMode.onUserInteraction,
     );
   }
 
@@ -78,9 +87,8 @@ class _ForgotPasswordFormState extends State<ForgotPasswordForm> {
       bool resultStatus;
       String snackbarMessage;
       try {
-        final resultFuture =
-            AuthentificationService().resetPasswordForEmail(emailInput);
-        resultFuture.then((value) => resultStatus = value);
+        final resultFuture = AuthentificationService().resetPasswordForEmail(emailInput);
+        resultFuture.then((value) => resultStatus = value).catchError( (e) => snackbarMessage = e.toString());
         resultStatus = await showDialog(
           context: context,
           builder: (context) {
@@ -92,17 +100,19 @@ class _ForgotPasswordFormState extends State<ForgotPasswordForm> {
         );
         if (resultStatus == true) {
           snackbarMessage = "Password Reset Link sent to your email";
-        } else {
-          throw FirebaseCredentialActionAuthUnknownReasonFailureException(
-              message:
-                  "Sorry, could not process your request now, try again later");
+        }
+        else {
+          throw snackbarMessage ?? FirebaseCredentialActionAuthUnknownReasonFailureException(message: "Sorry, could not process your request now, try again later");
         }
       } on MessagedFirebaseAuthException catch (e) {
         snackbarMessage = e.message;
       } catch (e) {
+        // print(e.code);
+        // print(e.message);
         snackbarMessage = e.toString();
       } finally {
         Logger().i(snackbarMessage);
+        print(snackbarMessage);
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
             content: Text(snackbarMessage),
