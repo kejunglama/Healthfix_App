@@ -3,30 +3,33 @@ import 'package:healthfix/constants.dart';
 
 class SectionTile extends StatelessWidget {
   final String title;
-  final GestureTapCallback press;
+  final GestureTapCallback onPress;
 
   const SectionTile({
     Key key,
     @required this.title,
-    @required this.press,
+    @required this.onPress,
   }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
-    return SizedBox(
-      width: double.infinity,
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        children: [
-          Text(
-            title,
-            style: cusHeadingStyle(),
-          ),
-          Text(
-            "See More >",
-            style: cusHeadingLinkStyle,
-          ),
-        ],
+    return GestureDetector(
+      onTap: onPress,
+      child: SizedBox(
+        width: double.infinity,
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            Text(
+              title,
+              style: cusHeadingStyle(),
+            ),
+            Text(
+              "See More >",
+              style: cusHeadingLinkStyle,
+            ),
+          ],
+        ),
       ),
     );
   }

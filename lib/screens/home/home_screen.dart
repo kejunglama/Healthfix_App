@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:flutter_svg/flutter_svg.dart';
 import 'package:healthfix/constants.dart';
 import 'package:healthfix/screens/cart/cart_screen.dart';
 import 'package:healthfix/screens/category/category_screen.dart';
@@ -55,7 +54,6 @@ class _HomeScreenState extends State<HomeScreen> {
         // Use [dark] for white status bar and [light] for black status bar.
         statusBarBrightness: Brightness.dark,
       ),
-
       child: GestureDetector(
         onTap: () => FocusManager.instance.primaryFocus?.unfocus(),
         child: Scaffold(
@@ -83,8 +81,8 @@ class _HomeScreenState extends State<HomeScreen> {
     return BottomNavigationBar(
       items: <BottomNavigationBarItem>[
         BottomNavigationBarItem(
-          icon: SvgPicture.asset("assets/icons/app/icons-home.svg"),
-          activeIcon: SvgPicture.asset("assets/icons/app/icons-filled-home.svg"),
+          icon: Icon(Icons.home_outlined),
+          activeIcon: Icon(Icons.home),
           label: 'Home',
         ),
         // BottomNavigationBarItem(
@@ -94,28 +92,29 @@ class _HomeScreenState extends State<HomeScreen> {
         //   // backgroundColor: Colors.pink,
         // ),
         BottomNavigationBarItem(
-          icon: SvgPicture.asset("assets/icons/app/icons-explore.svg"),
-          activeIcon: SvgPicture.asset("assets/icons/app/icons-filled-explore.svg"),
+          icon: Icon(Icons.loyalty_outlined),
+          activeIcon: Icon(Icons.loyalty),
           label: 'Explore',
 
           // backgroundColor: Colors.green,
         ),
         BottomNavigationBarItem(
-          icon: SvgPicture.asset("assets/icons/app/icons-category.svg"),
-          activeIcon: SvgPicture.asset("assets/icons/app/icons-filled-category.svg"),
+          icon: Icon(Icons.grid_view),
+          activeIcon: Icon(Icons.grid_view_rounded),
           label: 'Categories',
           // backgroundColor: Colors.pink,
         ),
         BottomNavigationBarItem(
-          icon: SvgPicture.asset("assets/icons/app/icons-cart.svg"),
-          activeIcon: SvgPicture.asset("assets/icons/app/icons-filled-cart.svg"),
+          icon: Icon(Icons.shopping_bag_outlined),
+          activeIcon: Icon(Icons.shopping_bag_rounded),
           label: 'Cart',
           // backgroundColor: Colors.purple,
         ),
       ],
       currentIndex: _selectedIndex,
       selectedItemColor: Colors.cyan,
-      showUnselectedLabels: true,
+      // showUnselectedLabels: false,
+      // showSelectedLabels: false,
       unselectedItemColor: Colors.grey,
       backgroundColor: Colors.white,
       type: BottomNavigationBarType.fixed,
@@ -123,7 +122,7 @@ class _HomeScreenState extends State<HomeScreen> {
     );
   }
 
-  void goToCategory(){
+  void goToCategory() {
     setState(() {
       _selectedIndex = 2;
       _onItemTapped(2);

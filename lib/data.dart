@@ -46,13 +46,14 @@ final PdctSubCategories = {
     "Explore Fitness",
   ],
   "Sports Nutrition": [
+    // "All Sports Nutrition",
     "Proteins",
     "Gainers",
     "Protein Foods",
     "Pre/Post Workout",
-    "All Sports",
   ],
   "Vitamin/Supplement": [
+    // "All Vitamin/Supplement",
     "Omega Fatty Acids ",
     "Multi-Vitamins",
     "Minerals",
@@ -60,6 +61,7 @@ final PdctSubCategories = {
     "All Vitamins",
   ],
   "Health Food & Drink": [
+    // "All Health Food & Drink",
     "Weight Loss Foods",
     "Vinegar & Health Juices",
     "Protein Foods & Bars",
@@ -67,12 +69,14 @@ final PdctSubCategories = {
     "Healthy Beverages",
   ],
   "Clothing Apparel": [
+    // "All Clothing Apparel",
     "Men Clothing",
     "Women Clothing",
     "Fitness Clothing",
     "Sports Apparel",
   ],
   "Explore Fitness": [
+    // "All Explore Fitness",
     "Gym Equipment",
     "Gym Accessories",
     "Gym Supports",

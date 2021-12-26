@@ -1,3 +1,5 @@
+import 'package:firebase_core/firebase_core.dart';
+import 'package:flutter/material.dart';
 import 'package:healthfix/components/default_button.dart';
 import 'package:healthfix/components/nothingtoshow_container.dart';
 import 'package:healthfix/constants.dart';
@@ -6,12 +8,15 @@ import 'package:healthfix/screens/manage_addresses/components/address_short_deta
 import 'package:healthfix/services/data_streams/addresses_stream.dart';
 import 'package:healthfix/services/database/user_database_helper.dart';
 import 'package:healthfix/size_config.dart';
-import 'package:firebase_core/firebase_core.dart';
-import 'package:flutter/material.dart';
 import 'package:logger/logger.dart';
+
 import '../components/address_box.dart';
 
 class Body extends StatefulWidget {
+  bool isSelectAddressScreen;
+
+  Body(this.isSelectAddressScreen);
+
   @override
   _BodyState createState() => _BodyState();
 }
@@ -39,32 +44,39 @@ class _BodyState extends State<Body> {
         child: SingleChildScrollView(
           physics: AlwaysScrollableScrollPhysics(),
           child: Padding(
-            padding: EdgeInsets.symmetric(
-                horizontal: getProportionateScreenWidth(screenPadding)),
+            padding: EdgeInsets.symmetric(horizontal: getProportionateScreenWidth(screenPadding)),
             child: SizedBox(
               width: double.infinity,
               child: Column(
                 children: [
                   SizedBox(height: getProportionateScreenHeight(10)),
                   Text(
-                    "Manage Addresses",
-                    style: headingStyle,
+                    widget.isSelectAddressScreen ? "Select Address" : "Manage Addresses",
+                    style: cusHeadingStyle(28),
                   ),
+                  SizedBox(height: getProportionateScreenHeight(4)),
                   Text(
                     "Swipe LEFT to Edit, Swipe RIGHT to Delete",
                     style: TextStyle(fontSize: 12),
                   ),
-                  SizedBox(height: getProportionateScreenHeight(20)),
-                  DefaultButton(
-                    text: "Add New Address",
-                    press: () async {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (context) => EditAddressScreen(),
+                  Visibility(
+                    visible: !widget.isSelectAddressScreen,
+                    child: Column(
+                      children: [
+                        SizedBox(height: getProportionateScreenHeight(20)),
+                        DefaultButton(
+                          text: "Add New Address",
+                          press: () async {
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) => EditAddressScreen(),
+                              ),
+                            );
+                          },
                         ),
-                      );
-                    },
+                      ],
+                    ),
                   ),
                   SizedBox(height: getProportionateScreenHeight(30)),
                   SizedBox(
@@ -86,10 +98,9 @@ class _BodyState extends State<Body> {
                               physics: BouncingScrollPhysics(),
                               itemCount: addresses.length,
                               itemBuilder: (context, index) {
-                                return buildAddressItemCard(addresses[index]);
+                                return buildAddressItemCard(addresses[index], widget.isSelectAddressScreen);
                               });
-                        } else if (snapshot.connectionState ==
-                            ConnectionState.waiting) {
+                        } else if (snapshot.connectionState == ConnectionState.waiting) {
                           return Center(
                             child: CircularProgressIndicator(),
                           );
@@ -122,8 +133,7 @@ class _BodyState extends State<Body> {
     return Future<void>.value();
   }
 
-  Future<bool> deleteButtonCallback(
-      BuildContext context, String addressId) async {
+  Future<bool> deleteButtonCallback(BuildContext context, String addressId) async {
     final confirmDeletion = await showDialog(
       context: context,
       builder: (context) {
@@ -152,8 +162,7 @@ class _BodyState extends State<Body> {
       bool status = false;
       String snackbarMessage;
       try {
-        status =
-            await UserDatabaseHelper().deleteAddressForCurrentUser(addressId);
+        status = await UserDatabaseHelper().deleteAddressForCurrentUser(addressId);
         if (status == true) {
           snackbarMessage = "Address deleted successfully";
         } else {
@@ -179,18 +188,13 @@ class _BodyState extends State<Body> {
     return false;
   }
 
-  Future<bool> editButtonCallback(
-      BuildContext context, String addressId) async {
-    await Navigator.push(
-        context,
-        MaterialPageRoute(
-            builder: (context) =>
-                EditAddressScreen(addressIdToEdit: addressId)));
+  Future<bool> editButtonCallback(BuildContext context, String addressId) async {
+    await Navigator.push(context, MaterialPageRoute(builder: (context) => EditAddressScreen(addressIdToEdit: addressId)));
     await refreshPage();
     return false;
   }
 
-  Future<void> addressItemTapCallback(String addressId) async {
+  Future<void> addressItemTapCallback(String addressId, [bool isSelectAddressScreen]) async {
     await showDialog(
       context: context,
       builder: (context) {
@@ -198,6 +202,7 @@ class _BodyState extends State<Body> {
           backgroundColor: Colors.transparent,
           title: AddressBox(
             addressId: addressId,
+            isSelectAddressScreen: isSelectAddressScreen,
           ),
           titlePadding: EdgeInsets.zero,
         );
@@ -206,7 +211,7 @@ class _BodyState extends State<Body> {
     await refreshPage();
   }
 
-  Widget buildAddressItemCard(String addressId) {
+  Widget buildAddressItemCard(String addressId, bool isSelectAddressScreen) {
     return Padding(
       padding: const EdgeInsets.symmetric(
         vertical: 6,
@@ -223,7 +228,7 @@ class _BodyState extends State<Body> {
         child: AddressShortDetailsCard(
           addressId: addressId,
           onTap: () async {
-            await addressItemTapCallback(addressId);
+            await addressItemTapCallback(addressId, isSelectAddressScreen);
           },
         ),
         confirmDismiss: (direction) async {

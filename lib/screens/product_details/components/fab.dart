@@ -1,9 +1,9 @@
-import 'package:healthfix/constants.dart';
-import 'package:healthfix/services/authentification/authentification_service.dart';
-import 'package:healthfix/services/database/user_database_helper.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:future_progress_dialog/future_progress_dialog.dart';
+import 'package:healthfix/constants.dart';
+import 'package:healthfix/services/authentification/authentification_service.dart';
+import 'package:healthfix/services/database/user_database_helper.dart';
 import 'package:healthfix/size_config.dart';
 import 'package:logger/logger.dart';
 
@@ -13,9 +13,11 @@ class AddToCartFAB extends StatelessWidget {
   const AddToCartFAB({
     Key key,
     @required this.productId,
+    @required this.variations,
   }) : super(key: key);
 
   final String productId;
+  final Map variations;
 
   @override
   Widget build(BuildContext context) {
@@ -46,7 +48,7 @@ class AddToCartFAB extends StatelessWidget {
         String snackbarMessage;
         try {
           addedSuccessfully =
-              await UserDatabaseHelper().addProductToCart(productId);
+              await UserDatabaseHelper().addProductToCart(productId, variations);
           if (addedSuccessfully == true) {
             snackbarMessage = "Product added successfully";
           } else {
@@ -66,7 +68,7 @@ class AddToCartFAB extends StatelessWidget {
             ),
           );
         }
-      },
+      },elevation: 3,
       label: Text(
         "Add to Cart",
         style: cusHeadingStyle(getProportionateScreenHeight(14),Colors.white),

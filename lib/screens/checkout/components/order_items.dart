@@ -1,0 +1,174 @@
+import 'package:flutter/material.dart';
+import 'package:healthfix/components/nothingtoshow_container.dart';
+import 'package:healthfix/components/product_short_detail_card.dart';
+import 'package:healthfix/models/Product.dart';
+import 'package:healthfix/screens/product_details/product_details_screen.dart';
+import 'package:healthfix/services/data_streams/cart_items_stream.dart';
+import 'package:healthfix/services/database/product_database_helper.dart';
+import 'package:logger/logger.dart';
+
+import '../../../constants.dart';
+import '../../../size_config.dart';
+
+class OrderItems extends StatefulWidget {
+  const OrderItems({
+    Key key,
+  }) : super(key: key);
+
+  @override
+  State<OrderItems> createState() => _OrderItemsState();
+}
+
+class _OrderItemsState extends State<OrderItems> {
+  final CartItemsStream cartItemsStream = CartItemsStream();
+
+  @override
+  void initState() {
+    super.initState();
+    cartItemsStream.init();
+  }
+
+  @override
+  void dispose() {
+    super.dispose();
+    cartItemsStream.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      children: [
+        Row(
+          children: [
+            Icon(Icons.markunread_mailbox_outlined, color: Colors.grey),
+            sizedBoxOfWidth(12),
+            Text("OrderItems", style: cusCenterHeadingStyle(null, null, getProportionateScreenHeight(18))),
+          ],
+        ),
+        SizedBox(height: SizeConfig.screenHeight * 0.14, child: buildCartItemsList()),
+      ],
+    );
+  }
+
+  Widget buildCartItemsList() {
+    return StreamBuilder<List<String>>(
+      stream: cartItemsStream.stream,
+      builder: (context, snapshot) {
+        if (snapshot.hasData) {
+          List<String> cartItemsId = snapshot.data;
+          if (cartItemsId.length == 0) {
+            return Center(
+              child: NothingToShowContainer(
+                iconPath: "assets/icons/empty_cart.svg",
+                secondaryMessage: "Your cart is empty",
+              ),
+            );
+          }
+
+          return Column(
+            children: [
+              // SizedBox(height: getProportionateScreenHeight(20)),
+              Expanded(
+                child: ListView.builder(
+                  scrollDirection: Axis.horizontal,
+                  padding: EdgeInsets.symmetric(vertical: 16),
+                  physics: BouncingScrollPhysics(),
+                  itemCount: cartItemsId.length,
+                  itemBuilder: (context, index) {
+                    if (index >= cartItemsId.length) {
+                      return SizedBox(height: getProportionateScreenHeight(80));
+                    }
+                    return buildCartItem(cartItemsId[index], index);
+                  },
+                ),
+              ),
+              // DefaultButton(
+              //   text: "Proceed to Payment",
+              //   press: () {
+              //     bottomSheetHandler = Scaffold.of(context).showBottomSheet(
+              //       (context) {
+              //         return CheckoutCard(
+              //           onCheckoutPressed: checkoutButtonCallback,
+              //         );
+              //       },
+              //     );
+              //   },
+              // ),
+            ],
+          );
+        } else if (snapshot.connectionState == ConnectionState.waiting) {
+          return Center(
+            child: CircularProgressIndicator(),
+          );
+        } else if (snapshot.hasError) {
+          final error = snapshot.error;
+          Logger().w(error.toString());
+        }
+        return Center(
+          child: NothingToShowContainer(
+            iconPath: "assets/icons/network_error.svg",
+            primaryMessage: "Something went wrong",
+            secondaryMessage: "Unable to connect to Database",
+          ),
+        );
+      },
+    );
+  }
+
+  Widget buildCartItem(String cartItemId, int index) {
+    return Container(
+      width: SizeConfig.screenWidth * 0.7,
+      padding: EdgeInsets.only(
+        bottom: 4,
+        top: 4,
+        right: 4,
+      ),
+      margin: EdgeInsets.symmetric(vertical: 4, horizontal: 4),
+      decoration: BoxDecoration(
+        border: Border.all(color: kTextColor.withOpacity(0.15)),
+        borderRadius: BorderRadius.circular(5),
+      ),
+      child: FutureBuilder<Product>(
+        future: ProductDatabaseHelper().getProductWithID(cartItemId),
+        builder: (context, snapshot) {
+          if (snapshot.hasData) {
+            Product product = snapshot.data;
+            return SizedBox(
+              child: ProductShortDetailCard(
+                productId: product.id,
+                onPressed: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => ProductDetailsScreen(
+                        productId: product.id,
+                      ),
+                    ),
+                  );
+                },
+              ),
+            );
+          } else if (snapshot.connectionState == ConnectionState.waiting) {
+            return Center(
+              child: CircularProgressIndicator(),
+            );
+          } else if (snapshot.hasError) {
+            final error = snapshot.error;
+            Logger().w(error.toString());
+            return Center(
+              child: Text(
+                error.toString(),
+              ),
+            );
+          } else {
+            return Center(
+              child: Icon(
+                Icons.error,
+              ),
+            );
+          }
+        },
+      ),
+    );
+  }
+}

@@ -29,8 +29,10 @@ class CategoryProductsStream extends DataStream<List<String>> {
       print(searchString);
       print(category);
       print(subCategory);
+      allProductsFuture = ProductDatabaseHelper().getCategoryProductsList(category, subCategory);
     }
-    allProductsFuture = ProductDatabaseHelper().getCategoryProductsList(category, subCategory);
+
+    print(allProductsFuture);
 
     allProductsFuture.then((favProducts) {
       addData(favProducts);

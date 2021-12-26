@@ -13,7 +13,7 @@ class ExpandableText extends StatelessWidget {
     Key key,
     @required this.title,
     @required this.content,
-    this.maxLines = 3,
+    this.maxLines = 10,
   }) : super(key: key);
 
   @override

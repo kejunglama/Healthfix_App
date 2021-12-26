@@ -46,6 +46,8 @@ class _BodyState extends State<Body> {
   void initState() {
     super.initState();
     categoryProductsStream.init();
+    // print(widget.productTypes);
+
     // Fetch Category
     category = widget.productTypes.where((type) => type["product_type"] == widget.productType).first;
     _categoryName = category["title"];
@@ -133,7 +135,7 @@ class _BodyState extends State<Body> {
                 margin: EdgeInsets.only(right: 20),
                 child: Text(
                   _subCat,
-                  style: _selectedSubCat == _subCat ? cusBodyStyle(14, FontWeight.w600, kPrimaryColor, 0.5) : cusBodyStyle(14),
+                  style: _selectedSubCat == _subCat ? cusBodyStyle(14, FontWeight.w500, kPrimaryColor, 0.5) : cusBodyStyle(14),
                 ),
               ),
             ),
@@ -186,11 +188,14 @@ class _BodyState extends State<Body> {
       height: getProportionateScreenHeight(22),
       child: Row(
         children: [
-          RoundedIconButton(
-            iconData: Icons.arrow_back_ios_rounded,
-            press: () {
-              Navigator.pop(context);
-            },
+          Container(
+            height: getProportionateScreenHeight(40),
+            child: RoundedIconButton(
+              iconData: Icons.arrow_back_ios_rounded,
+              press: () {
+                Navigator.pop(context);
+              },
+            ),
           ),
           SizedBox(width: 10),
           // Expanded(
@@ -292,6 +297,7 @@ class _BodyState extends State<Body> {
     categoryProductsStream.dispose();
     widget.productType = category["product_type"];
     categoryProductsStream = CategoryProductsStream(widget.productType, selectedSubCat ?? null, searchString ?? null);
+    // print(categoryProductsStream.stream.first);
     categoryProductsStream.init();
 
     // print(categoryProductsStream.category);

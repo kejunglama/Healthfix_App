@@ -8,6 +8,7 @@ import 'package:healthfix/screens/product_details/components/product_actions_sec
 import 'package:healthfix/screens/product_details/components/product_images.dart';
 import 'package:healthfix/services/database/product_database_helper.dart';
 import 'package:healthfix/size_config.dart';
+import 'package:intl/intl.dart';
 import 'package:logger/logger.dart';
 
 import 'fab.dart';
@@ -29,6 +30,8 @@ class _BodyState extends State<Body> {
   Product product;
   String _selectedColor;
   String _selectedSize;
+  Map selectedVariations;
+  var numFormat = NumberFormat('#,##,000');
 
   @override
   void initState() {
@@ -38,13 +41,14 @@ class _BodyState extends State<Body> {
   void setSelectedVariant(String size, String color) {
     _selectedColor = color;
     _selectedSize = size;
-    print("Variant Ayo hai $_selectedColor $_selectedSize");
+    print("Variants: $_selectedColor $_selectedSize");
 
     List variant =
         product.variations.where((variant) => variant["size"] == _selectedSize).where((variant) => variant["color"] == _selectedColor).toList();
     // print(variant.first["price"]);
     setState(() {
       _productDisPrice = int.parse(variant.first["price"]);
+      _productOriPrice = 1.2 * _productDisPrice;
     });
   }
 
@@ -61,7 +65,7 @@ class _BodyState extends State<Body> {
               // print(product);
               if (_productDisPrice == null) {
                 _productDisPrice = product.discountPrice;
-                _productOriPrice = product.originalPrice;
+                _productOriPrice = 1.2 * _productDisPrice;
               }
               return Stack(
                 children: [
@@ -99,6 +103,7 @@ class _BodyState extends State<Body> {
                                           margin: EdgeInsets.only(right: getProportionateScreenWidth(8)),
                                           child: Icon(
                                             Icons.search_rounded,
+                                            color: kPrimaryColor,
                                           ),
                                         ),
                                         GestureDetector(
@@ -111,7 +116,8 @@ class _BodyState extends State<Body> {
                                           child: Container(
                                             margin: EdgeInsets.only(right: getProportionateScreenWidth(8)),
                                             child: Icon(
-                                              Icons.shopping_cart_outlined,
+                                              Icons.shopping_bag,
+                                              color: kPrimaryColor,
                                             ),
                                           ),
                                         ),
@@ -172,8 +178,8 @@ class _BodyState extends State<Body> {
             ),
           ],
         ),
-        padding: EdgeInsets.symmetric(horizontal: getProportionateScreenWidth(8)),
-        height: getProportionateScreenHeight(60),
+        padding: EdgeInsets.symmetric(horizontal: getProportionateScreenWidth(20)),
+        height: getProportionateScreenHeight(70),
         width: SizeConfig.screenWidth,
         child: Row(
           children: [
@@ -181,26 +187,30 @@ class _BodyState extends State<Body> {
               child: SizedBox(
                 height: getProportionateScreenHeight(60),
                 child: Center(
-                  child: Row(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    mainAxisAlignment: MainAxisAlignment.center,
                     children: [
                       Text(
-                        "Rs. ${_productDisPrice}  ",
-                        style: cusPdctPageDisPriceStyle(getProportionateScreenHeight(32), Colors.black),
+                        "Rs. ${numFormat.format(_productDisPrice)}  ",
+                        style: cusPdctPageDisPriceStyle(getProportionateScreenHeight(26), Colors.black),
                       ),
-                      Column(
+                      Row(
                         crossAxisAlignment: CrossAxisAlignment.start,
-                        mainAxisAlignment: MainAxisAlignment.center,
+                        // mainAxisAlignment: MainAxisAlignment.center,
                         children: [
                           Text(
-                            "Rs. ${_productOriPrice}",
-                            style: cusPdctOriPriceStyle(14),
+                            "Rs. ${numFormat.format(_productOriPrice)}",
+                            style: cusPdctOriPriceStyle(getProportionateScreenHeight(12)),
                           ),
+                          sizedBoxOfWidth(8),
                           Text(
-                            "${product.calculatePercentageDiscount()}% OFF",
+                            // "${product.calculatePercentageDiscount()}% OFF",
+                            "20% OFF",
                             style: GoogleFonts.poppins(
                               textStyle: TextStyle(
                                 color: Colors.red,
-                                fontSize: getProportionateScreenHeight(10),
+                                fontSize: getProportionateScreenHeight(12),
                                 fontWeight: FontWeight.w600,
                                 letterSpacing: getProportionateScreenHeight(0.5),
                               ),
@@ -217,26 +227,79 @@ class _BodyState extends State<Body> {
             //   thickness: 1,
             //   color: Colors.white,
             // ),
-            AddToCartFAB(productId: product.id),
-            // GestureDetector(
+
+            // AddToCartFAB(productId: product.id),
+            // InkWell(
             //   onTap: () {
-            //     AddToCartFAB(productId: product.id);
+            //     // print(product);
+            //     if (product.variations != null) {
+            //       if (_selectedSize == null) {
+            //         ScaffoldMessenger.of(context).showSnackBar(
+            //           SnackBar(
+            //             content: Text("Please Select a Size"),
+            //           ),
+            //         );
+            //       } else if (_selectedColor == null) {
+            //         ScaffoldMessenger.of(context).showSnackBar(
+            //           SnackBar(
+            //             content: Text("Please Select a Color"),
+            //           ),
+            //         );
+            //       } else {
+            //         selectedVariations = {"size": _selectedSize, "color": _selectedColor};
+            //         print(selectedVariations);
+            //       }
+            //     } else {
+            //       selectedVariations = {};
+            //     }
             //   },
-            //   child: TextButton.icon(
-            //     onPressed: () {},
-            //     icon: Icon(
-            //       Icons.shopping_bag_outlined,
-            //       color: kPrimaryColor,
-            //     ),
-            //     label: Text(
-            //       "Add to Cart",
-            //       style: cusHeadingStyle(
-            //         getProportionateScreenHeight(14),
-            //         kPrimaryColor,
-            //       ),
-            //     ),
+            //   child: Container(
+            //     child: Text("Check"),
             //   ),
             // ),
+
+            GestureDetector(
+              onTap: () {
+                if (product.variations != null) {
+                  if (_selectedSize == null) {
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      SnackBar(
+                        content: Text("Please Select a Size"),
+                      ),
+                    );
+                  } else if (_selectedColor == null) {
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      SnackBar(
+                        content: Text("Please Select a Color"),
+                      ),
+                    );
+                  } else {
+                    selectedVariations = {"size": _selectedSize, "color": _selectedColor};
+                    print(selectedVariations);
+                  }
+                } else {
+                  selectedVariations = {};
+                }
+                AddToCartFAB(
+                  productId: product.id,
+                  variations: selectedVariations,
+                );
+              },
+              child: TextButton.icon(
+                onPressed: () {},
+                icon: Icon(
+                  Icons.shopping_bag_outlined,
+                  color: kPrimaryColor,
+                ),
+                label: Text(
+                  "Add to Cart",
+                  style: cusHeadingStyle(
+                    getProportionateScreenHeight(14),
+                    kPrimaryColor,
+                  ),
+                ),
+              ),
+            ),
           ],
         ),
       ),

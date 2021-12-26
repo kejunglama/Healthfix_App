@@ -45,7 +45,7 @@ class ProductDescription extends StatelessWidget {
     // print(product.variations);
 
     return Container(
-      margin: EdgeInsets.symmetric(horizontal: getProportionateScreenWidth(8)),
+      margin: EdgeInsets.symmetric(horizontal: getProportionateScreenWidth(20)),
       child: Stack(
         children: [
           Column(
@@ -133,21 +133,22 @@ class _ProductVariationDescriptionState extends State<ProductVariationDescriptio
   List _colors = [];
   String _selectedSize;
   String _selectedColor;
+  num _selectedColorIndex;
 
   setSizeAndFetchColors(String size, List colors) {
     setState(() {
       _selectedSize = size;
-      // _selectedColor = colors[0];
+      _selectedColorIndex = 0;
       _colors = colors;
+      setColor(_colors[0]);
     });
-    setColor(colors[0]);
   }
 
   setColor(String color) {
     setState(() {
       _selectedColor = color;
-      // print(_selectedColor);
       if (_selectedColor != null && _selectedSize != null) widget.setSelectedVariant(_selectedSize, _selectedColor);
+      // print(_selectedColor + " " + _selectedSize);
     });
   }
 
@@ -168,7 +169,7 @@ class _ProductVariationDescriptionState extends State<ProductVariationDescriptio
                     margin: EdgeInsets.only(right: getProportionateScreenWidth(12)),
                     child: Text(
                       "Size: ",
-                      style: cusHeadingStyle(getProportionateScreenWidth(16), Colors.grey),
+                      style: cusHeadingStyle(getProportionateScreenWidth(12), Colors.grey),
                     ),
                   ),
                   // SizedBox(height: getProportionateScreenHeight(12)),
@@ -184,12 +185,12 @@ class _ProductVariationDescriptionState extends State<ProductVariationDescriptio
                     margin: EdgeInsets.only(right: getProportionateScreenWidth(12)),
                     child: Text(
                       "Available Colors: ",
-                      style: cusHeadingStyle(getProportionateScreenWidth(16), Colors.grey),
+                      style: cusHeadingStyle(getProportionateScreenWidth(12), Colors.grey),
                     ),
                   ),
                   // SizedBox(height: getProportionateScreenHeight(12)),
                   ColorvariantsBuilder(
-                    selectedIndex: 0,
+                    selectedIndex: _selectedColorIndex ?? 0,
                     colors: _colors.isNotEmpty ? _colors : widget.colors.toList(),
                     selectable: _colors.isNotEmpty,
                     setColor: setColor,

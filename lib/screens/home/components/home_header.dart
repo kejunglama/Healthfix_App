@@ -43,13 +43,38 @@ class HomeHeader extends StatelessWidget {
                     child: Image.asset('assets/logo/HF-logo.png')),
               ),
 
+              // Icons
               Container(
                 margin: EdgeInsets.symmetric(horizontal: getProportionateScreenWidth(8)),
                 child: Row(
                   children: [
+                    // Btn - Search
+                    Container(
+                      width: getProportionateScreenWidth(35),
+                      child: IconButton(
+                        // onPressed: () async {
+                        //   List searchedProductsId = await ProductDatabaseHelper().searchInProducts("");
+                        //   await Navigator.push(
+                        //     context,
+                        //     MaterialPageRoute(
+                        //       builder: (context) => CategoryProductsScreen(
+                        //         productType: ProductType.All,
+                        //         productTypes: pdctCategories,
+                        //         subProductType: "",
+                        //       ),
+                        //     ),
+                        //   );
+                        // },
+                        onPressed: (){},
+                        icon: Icon(Icons.favorite_border_outlined),
+                        color: kPrimaryColor,
+                        splashRadius: 20,
+                      ),
+                    ),
+
                     // Btn - Account
                     Container(
-                      width: getProportionateScreenWidth(40),
+                      width: getProportionateScreenWidth(35),
                       child: IconButton(
                         onPressed: () {
                           Navigator.push(
@@ -63,28 +88,6 @@ class HomeHeader extends StatelessWidget {
                       ),
                     ),
 
-                    // Btn - Search
-                    Container(
-                      width: getProportionateScreenWidth(40),
-                      child: IconButton(
-                        onPressed: () async {
-                          List searchedProductsId = await ProductDatabaseHelper().searchInProducts("");
-                          await Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                              builder: (context) => CategoryProductsScreen(
-                                productType: ProductType.All,
-                                productTypes: pdctCategories,
-                                subProductType: "",
-                              ),
-                            ),
-                          );
-                        },
-                        icon: Icon(Icons.search_rounded),
-                        color: kPrimaryColor,
-                        splashRadius: 20,
-                      ),
-                    ),
                   ],
                 ),
               ),
@@ -119,7 +122,52 @@ class HomeHeader extends StatelessWidget {
         //     ),
         //   ],
         // ),
+        searchBar(context),
       ],
+    );
+  }
+
+  Widget searchBar(BuildContext context) {
+    return GestureDetector(
+      onTap: () {
+        Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder: (context) => CategoryProductsScreen(
+              productType: ProductType.All,
+              productTypes: pdctCategories,
+              subProductType: "",
+            ),
+          ),
+        );
+      },
+      child: Container(
+        margin: EdgeInsets.symmetric(horizontal: getProportionateScreenHeight(8)),
+        decoration: BoxDecoration(
+          borderRadius: BorderRadius.circular(5),
+          border: Border.all(width: 0.3, color: Colors.grey),
+        ),
+        child: Container(
+          padding: EdgeInsets.all(getProportionateScreenHeight(10)),
+          height: getProportionateScreenHeight(40),
+          child: Row(
+            children: [
+              Icon(
+                Icons.search_rounded,
+                color: Colors.cyan,
+                size: getProportionateScreenHeight(20),
+              ),
+              Container(
+                margin: EdgeInsets.only(left: getProportionateScreenWidth(10)),
+                child: Text(
+                  "Search Products, Brands, Vendors",
+                  style: cusHeadingStyle(14, Colors.grey, null, FontWeight.w400),
+                ),
+              ),
+            ],
+          ),
+        ),
+      ),
     );
   }
 }

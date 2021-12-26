@@ -12,9 +12,9 @@ class CategoryScreen extends StatelessWidget {
       appBar: AppBar(
         title: Text(
           "Shop by Category",
-          style: cusCenterHeadingStyle(),
+          style: cusCenterHeadingStyle(Colors.white),
         ),
-        elevation: 0.5,
+        backgroundColor: kPrimaryColor.withOpacity(0.9),
       ),
       body: Body(),
     );

@@ -37,8 +37,8 @@ cusHeadingStyle([double fs, Color color, bool hasShadow, FontWeight fw]) => Goog
           if (hasShadow ?? false)
             Shadow(
               // offset: Offset(10.0, 10.0),
-              blurRadius: 10.0,
-              color: Color.fromARGB(150, 0, 0, 0),
+              blurRadius: 100.0,
+              color: Color.fromARGB(200, 0, 0, 0),
             ),
           if (hasShadow ?? false)
             Shadow(
@@ -92,9 +92,9 @@ var cusPdctCatNameStyle = GoogleFonts.poppins(
   ),
 );
 
-cusPdctDisPriceStyle([double fs]) => GoogleFonts.poppins(
+cusPdctDisPriceStyle([double fs, Color color]) => GoogleFonts.poppins(
       textStyle: TextStyle(
-        color: kPrimaryColor,
+        color: color ?? kPrimaryColor,
         // fontWeight: FontWeight.w600,
         fontSize: fs ?? getProportionateScreenHeight(16),
         letterSpacing: 0.5,

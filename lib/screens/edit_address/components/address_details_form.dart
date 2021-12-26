@@ -72,18 +72,18 @@ class _AddressDetailsFormState extends State<AddressDetailsForm> {
           SizedBox(height: getProportionateScreenHeight(30)),
           buildAddressLine1Field(),
           SizedBox(height: getProportionateScreenHeight(30)),
-          buildAddressLine2Field(),
-          SizedBox(height: getProportionateScreenHeight(30)),
+          // buildAddressLine2Field(),
+          // SizedBox(height: getProportionateScreenHeight(30)),
           buildCityField(),
           SizedBox(height: getProportionateScreenHeight(30)),
-          buildDistrictField(),
-          SizedBox(height: getProportionateScreenHeight(30)),
-          buildStateField(),
-          SizedBox(height: getProportionateScreenHeight(30)),
+          // buildDistrictField(),
+          // SizedBox(height: getProportionateScreenHeight(30)),
+          // buildStateField(),
+          // SizedBox(height: getProportionateScreenHeight(30)),
           buildLandmarkField(),
           SizedBox(height: getProportionateScreenHeight(30)),
-          buildPincodeField(),
-          SizedBox(height: getProportionateScreenHeight(30)),
+          // buildPincodeField(),
+          // SizedBox(height: getProportionateScreenHeight(30)),
           buildPhoneField(),
           SizedBox(height: getProportionateScreenHeight(30)),
           DefaultButton(
@@ -99,12 +99,12 @@ class _AddressDetailsFormState extends State<AddressDetailsForm> {
       titleFieldController.text = widget.addressToEdit.title;
       receiverFieldController.text = widget.addressToEdit.receiver;
       addressLine1FieldController.text = widget.addressToEdit.addresLine1;
-      addressLine2FieldController.text = widget.addressToEdit.addressLine2;
+      // addressLine2FieldController.text = widget.addressToEdit.addressLine2;
       cityFieldController.text = widget.addressToEdit.city;
-      districtFieldController.text = widget.addressToEdit.district;
-      stateFieldController.text = widget.addressToEdit.state;
+      // districtFieldController.text = widget.addressToEdit.district;
+      // stateFieldController.text = widget.addressToEdit.state;
       landmarkFieldController.text = widget.addressToEdit.landmark;
-      pincodeFieldController.text = widget.addressToEdit.pincode;
+      // pincodeFieldController.text = widget.addressToEdit.pincode;
       phoneFieldController.text = widget.addressToEdit.phone;
     }
     return form;
@@ -119,6 +119,17 @@ class _AddressDetailsFormState extends State<AddressDetailsForm> {
         hintText: "Enter a title for address",
         labelText: "Title",
         floatingLabelBehavior: FloatingLabelBehavior.always,
+        enabledBorder: OutlineInputBorder(
+          borderSide: BorderSide(color: Colors.cyan, width: 0.1),
+        ),
+        focusedBorder: OutlineInputBorder(
+          borderSide: BorderSide(color: kPrimaryColor),
+        ),
+        border: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(5.0),
+        ),
+        contentPadding: EdgeInsets.all(10),
+        hintStyle: cusHeadingStyle(14, Colors.grey, null, FontWeight.w400),
       ),
       validator: (value) {
         if (titleFieldController.text.isEmpty) {
@@ -138,6 +149,17 @@ class _AddressDetailsFormState extends State<AddressDetailsForm> {
         hintText: "Enter Full Name of Receiver",
         labelText: "Receiver Name",
         floatingLabelBehavior: FloatingLabelBehavior.always,
+        enabledBorder: OutlineInputBorder(
+          borderSide: BorderSide(color: Colors.cyan, width: 0.1),
+        ),
+        focusedBorder: OutlineInputBorder(
+          borderSide: BorderSide(color: kPrimaryColor),
+        ),
+        border: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(5.0),
+        ),
+        contentPadding: EdgeInsets.all(10),
+        hintStyle: cusHeadingStyle(14, Colors.grey, null, FontWeight.w400),
       ),
       validator: (value) {
         if (receiverFieldController.text.isEmpty) {
@@ -157,6 +179,17 @@ class _AddressDetailsFormState extends State<AddressDetailsForm> {
         hintText: "Enter Address Line No. 1",
         labelText: "Address Line 1",
         floatingLabelBehavior: FloatingLabelBehavior.always,
+        enabledBorder: OutlineInputBorder(
+          borderSide: BorderSide(color: Colors.cyan, width: 0.1),
+        ),
+        focusedBorder: OutlineInputBorder(
+          borderSide: BorderSide(color: kPrimaryColor),
+        ),
+        border: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(5.0),
+        ),
+        contentPadding: EdgeInsets.all(10),
+        hintStyle: cusHeadingStyle(14, Colors.grey, null, FontWeight.w400),
       ),
       validator: (value) {
         if (addressLine1FieldController.text.isEmpty) {
@@ -176,6 +209,17 @@ class _AddressDetailsFormState extends State<AddressDetailsForm> {
         hintText: "Enter Address Line No. 2",
         labelText: "Address Line 2",
         floatingLabelBehavior: FloatingLabelBehavior.always,
+        enabledBorder: OutlineInputBorder(
+          borderSide: BorderSide(color: Colors.cyan, width: 0.1),
+        ),
+        focusedBorder: OutlineInputBorder(
+          borderSide: BorderSide(color: kPrimaryColor),
+        ),
+        border: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(5.0),
+        ),
+        contentPadding: EdgeInsets.all(10),
+        hintStyle: cusHeadingStyle(14, Colors.grey, null, FontWeight.w400),
       ),
       validator: (value) {
         if (addressLine2FieldController.text.isEmpty) {
@@ -195,7 +239,17 @@ class _AddressDetailsFormState extends State<AddressDetailsForm> {
         hintText: "Enter City",
         labelText: "City",
         floatingLabelBehavior: FloatingLabelBehavior.always,
-      ),
+      enabledBorder: OutlineInputBorder(
+          borderSide: BorderSide(color: Colors.cyan, width: 0.1),
+        ),
+        focusedBorder: OutlineInputBorder(
+          borderSide: BorderSide(color: kPrimaryColor),
+        ),
+        border: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(5.0),
+        ),
+        contentPadding: EdgeInsets.all(10),
+        hintStyle: cusHeadingStyle(14, Colors.grey, null, FontWeight.w400),),
       validator: (value) {
         if (cityFieldController.text.isEmpty) {
           return FIELD_REQUIRED_MSG;
@@ -214,7 +268,17 @@ class _AddressDetailsFormState extends State<AddressDetailsForm> {
         hintText: "Enter District",
         labelText: "District",
         floatingLabelBehavior: FloatingLabelBehavior.always,
-      ),
+      enabledBorder: OutlineInputBorder(
+          borderSide: BorderSide(color: Colors.cyan, width: 0.1),
+        ),
+        focusedBorder: OutlineInputBorder(
+          borderSide: BorderSide(color: kPrimaryColor),
+        ),
+        border: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(5.0),
+        ),
+        contentPadding: EdgeInsets.all(10),
+        hintStyle: cusHeadingStyle(14, Colors.grey, null, FontWeight.w400),),
       validator: (value) {
         if (districtFieldController.text.isEmpty) {
           return FIELD_REQUIRED_MSG;
@@ -233,7 +297,17 @@ class _AddressDetailsFormState extends State<AddressDetailsForm> {
         hintText: "Enter State",
         labelText: "State",
         floatingLabelBehavior: FloatingLabelBehavior.always,
-      ),
+      enabledBorder: OutlineInputBorder(
+          borderSide: BorderSide(color: Colors.cyan, width: 0.1),
+        ),
+        focusedBorder: OutlineInputBorder(
+          borderSide: BorderSide(color: kPrimaryColor),
+        ),
+        border: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(5.0),
+        ),
+        contentPadding: EdgeInsets.all(10),
+        hintStyle: cusHeadingStyle(14, Colors.grey, null, FontWeight.w400),),
       validator: (value) {
         if (stateFieldController.text.isEmpty) {
           return FIELD_REQUIRED_MSG;
@@ -252,7 +326,17 @@ class _AddressDetailsFormState extends State<AddressDetailsForm> {
         hintText: "Enter PINCODE",
         labelText: "PINCODE",
         floatingLabelBehavior: FloatingLabelBehavior.always,
-      ),
+      enabledBorder: OutlineInputBorder(
+          borderSide: BorderSide(color: Colors.cyan, width: 0.1),
+        ),
+        focusedBorder: OutlineInputBorder(
+          borderSide: BorderSide(color: kPrimaryColor),
+        ),
+        border: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(5.0),
+        ),
+        contentPadding: EdgeInsets.all(10),
+        hintStyle: cusHeadingStyle(14, Colors.grey, null, FontWeight.w400),),
       validator: (value) {
         if (pincodeFieldController.text.isEmpty) {
           return FIELD_REQUIRED_MSG;
@@ -275,7 +359,17 @@ class _AddressDetailsFormState extends State<AddressDetailsForm> {
         hintText: "Enter Landmark",
         labelText: "Landmark",
         floatingLabelBehavior: FloatingLabelBehavior.always,
-      ),
+      enabledBorder: OutlineInputBorder(
+          borderSide: BorderSide(color: Colors.cyan, width: 0.1),
+        ),
+        focusedBorder: OutlineInputBorder(
+          borderSide: BorderSide(color: kPrimaryColor),
+        ),
+        border: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(5.0),
+        ),
+        contentPadding: EdgeInsets.all(10),
+        hintStyle: cusHeadingStyle(14, Colors.grey, null, FontWeight.w400),),
       validator: (value) {
         if (landmarkFieldController.text.isEmpty) {
           return FIELD_REQUIRED_MSG;
@@ -294,7 +388,17 @@ class _AddressDetailsFormState extends State<AddressDetailsForm> {
         hintText: "Enter Phone Number",
         labelText: "Phone Number",
         floatingLabelBehavior: FloatingLabelBehavior.always,
-      ),
+      enabledBorder: OutlineInputBorder(
+          borderSide: BorderSide(color: Colors.cyan, width: 0.1),
+        ),
+        focusedBorder: OutlineInputBorder(
+          borderSide: BorderSide(color: kPrimaryColor),
+        ),
+        border: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(5.0),
+        ),
+        contentPadding: EdgeInsets.all(10),
+        hintStyle: cusHeadingStyle(14, Colors.grey, null, FontWeight.w400),),
       validator: (value) {
         if (phoneFieldController.text.isEmpty) {
           return FIELD_REQUIRED_MSG;
@@ -377,12 +481,12 @@ class _AddressDetailsFormState extends State<AddressDetailsForm> {
       title: titleFieldController.text,
       receiver: receiverFieldController.text,
       addresLine1: addressLine1FieldController.text,
-      addressLine2: addressLine2FieldController.text,
+      // addressLine2: addressLine2FieldController.text,
       city: cityFieldController.text,
-      district: districtFieldController.text,
-      state: stateFieldController.text,
+      // district: districtFieldController.text,
+      // state: stateFieldController.text,
       landmark: landmarkFieldController.text,
-      pincode: pincodeFieldController.text,
+      // pincode: pincodeFieldController.text,
       phone: phoneFieldController.text,
     );
   }

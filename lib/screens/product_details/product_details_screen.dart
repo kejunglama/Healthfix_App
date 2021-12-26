@@ -8,6 +8,7 @@ import '../../size_config.dart';
 import 'components/body.dart';
 
 class ProductDetailsScreen extends StatelessWidget {
+
   final String productId;
   Product product;
 

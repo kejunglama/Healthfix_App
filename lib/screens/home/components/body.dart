@@ -1,7 +1,10 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:future_progress_dialog/future_progress_dialog.dart';
+import 'package:healthfix/data.dart';
+import 'package:healthfix/models/Product.dart';
 import 'package:healthfix/screens/cart/cart_screen.dart';
+import 'package:healthfix/screens/category_products/category_products_screen.dart';
 import 'package:healthfix/screens/home/components/DietPlannerBanner.dart';
 import 'package:healthfix/screens/home/components/our_feature_section.dart';
 import 'package:healthfix/screens/home/components/product_categories.dart';
@@ -25,6 +28,7 @@ import 'products_section.dart';
 // Cleaning
 class Body extends StatefulWidget {
   void Function() goToCategory;
+
   Body(this.goToCategory);
 
   @override
@@ -272,6 +276,19 @@ class _BodyState extends State<Body> {
         productsStreamController: allProductsStream,
         emptyListMessage: "Looks like all Stores are closed",
         onProductCardTapped: onProductCardTapped,
+        onSeeMorePress: () {
+          print("BOOBOBOB");
+          Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder: (context) => CategoryProductsScreen(
+                productType: ProductType.All,
+                productTypes: pdctCategories,
+                subProductType: "",
+              ),
+            ),
+          );
+        },
       ),
     );
   }

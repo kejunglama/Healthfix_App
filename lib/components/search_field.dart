@@ -10,7 +10,8 @@ class SearchField extends StatelessWidget {
 
   const SearchField({
     Key key,
-    this.onSubmit, this.searchQuery,
+    this.onSubmit,
+    this.searchQuery,
   }) : super(key: key);
 
   @override

@@ -82,6 +82,8 @@ class _ProductImagesState extends State<ProductImages> {
                 options: CarouselOptions(
                   height: SizeConfig.screenWidth * 0.8,
                   autoPlay: true,
+                  // reverse: false,
+                  enableInfiniteScroll: false,
                   autoPlayAnimationDuration: Duration(seconds: 1),
                   autoPlayInterval: Duration(seconds: 10),
                   viewportFraction: 1,

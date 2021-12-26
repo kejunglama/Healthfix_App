@@ -13,6 +13,7 @@ class ProductsSection extends StatelessWidget {
   final DataStream productsStreamController;
   final String emptyListMessage;
   final Function onProductCardTapped;
+  final Function onSeeMorePress;
 
   const ProductsSection({
     Key key,
@@ -20,6 +21,7 @@ class ProductsSection extends StatelessWidget {
     @required this.productsStreamController,
     this.emptyListMessage = "No Products to show here",
     @required this.onProductCardTapped,
+    @required this.onSeeMorePress,
   }) : super(key: key);
 
   @override
@@ -35,7 +37,7 @@ class ProductsSection extends StatelessWidget {
         children: [
           SectionTile(
             title: sectionTitle,
-            press: () {},
+            onPress: onSeeMorePress,
           ),
           sizedBoxOfHeight(12),
           Expanded(child: buildProductsList()),

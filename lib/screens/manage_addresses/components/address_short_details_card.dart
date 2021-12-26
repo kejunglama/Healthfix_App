@@ -18,7 +18,7 @@ class AddressShortDetailsCard extends StatelessWidget {
       onTap: onTap,
       child: SizedBox(
         width: double.infinity,
-        height: SizeConfig.screenHeight * 0.15,
+        height: SizeConfig.screenHeight * 0.10,
         child: FutureBuilder<Address>(
           future: UserDatabaseHelper().getAddressFromId(addressId),
           builder: (context, snapshot) {
@@ -33,10 +33,10 @@ class AddressShortDetailsCard extends StatelessWidget {
                       padding:
                           EdgeInsets.symmetric(horizontal: 8, vertical: 12),
                       decoration: BoxDecoration(
-                        color: kTextColor.withOpacity(0.24),
+                        color: Colors.cyan.withOpacity(0.24),
                         borderRadius: BorderRadius.only(
-                          topLeft: Radius.circular(15),
-                          bottomLeft: Radius.circular(15),
+                          topLeft: Radius.circular(5),
+                          bottomLeft: Radius.circular(5),
                         ),
                       ),
                       child: Center(
@@ -55,14 +55,14 @@ class AddressShortDetailsCard extends StatelessWidget {
                     flex: 8,
                     child: Container(
                       padding: EdgeInsets.symmetric(
-                        horizontal: 8,
+                        horizontal: 16,
                         vertical: 12,
                       ),
                       decoration: BoxDecoration(
-                        border: Border.all(color: kTextColor.withOpacity(0.24)),
+                        border: Border.all(color: Colors.cyan.withOpacity(0.24),),
                         borderRadius: BorderRadius.only(
-                          topRight: Radius.circular(15),
-                          bottomRight: Radius.circular(15),
+                          topRight: Radius.circular(5),
+                          bottomRight: Radius.circular(5),
                         ),
                       ),
                       child: Column(
@@ -77,8 +77,13 @@ class AddressShortDetailsCard extends StatelessWidget {
                               fontSize: 15,
                             ),
                           ),
-                          Text("City: ${address.city}"),
-                          Text("Phone: ${address.phone}"),
+                          Text("${address.landmark}"),
+                          Row(
+                            children: [
+                              Text("${address.addresLine1}, "),
+                              Text("${address.city}"),
+                            ],
+                          ),
                         ],
                       ),
                     ),

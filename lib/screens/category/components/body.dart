@@ -17,7 +17,7 @@ class Body extends StatelessWidget {
 
   Future scrollToCat([GlobalKey key]) async {
     final context = key.currentContext;
-    await Scrollable.ensureVisible(context, duration: Duration(milliseconds: 500));
+    await Scrollable.ensureVisible(context, duration: Duration(milliseconds: 500), alignment: 1);
   }
 
   @override
@@ -50,10 +50,10 @@ class CategoryHierarchyList extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    Map _ch = categoryHierarchy;
+    Map _ch = new Map.from(categoryHierarchy);
     _ch.remove("All Products");
+    print(_ch);
     var i = 1;
-    var j = 0;
 
     return Expanded(
       flex: 4,
@@ -62,10 +62,10 @@ class CategoryHierarchyList extends StatelessWidget {
           children: [
             for (var entry in _ch.entries)
               Column(
+                key: keyList[i++],
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Container(
-                    key: keyList[i++],
                     alignment: Alignment.centerLeft,
                     margin: EdgeInsets.fromLTRB(40, 20, 20, 10),
                     child: GestureDetector(
@@ -86,7 +86,7 @@ class CategoryHierarchyList extends StatelessWidget {
                     Container(
                       margin: EdgeInsets.symmetric(vertical: 10, horizontal: 40),
                       child: GestureDetector(
-                        onTap: (){
+                        onTap: () {
                           Navigator.push(
                               context,
                               MaterialPageRoute(

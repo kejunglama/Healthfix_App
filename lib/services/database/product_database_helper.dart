@@ -27,16 +27,19 @@ class ProductDatabaseHelper {
 
   Future<List<String>> searchInProducts(String query, [ProductType productType, String productSubType]) async {
     Query queryRef;
+    query = query.toLowerCase();
     // print(query);
-    if (productType == null) {
+    // print(query);
+    if (productType == null || productType == ProductType.All) {
       queryRef = firestore.collection(PRODUCTS_COLLECTION_NAME);
-    } else if (productSubType == null) {
+    } else if (productSubType == null || productSubType.isEmpty) {
       final productTypeStr = EnumToString.convertToString(productType);
-      print(productTypeStr);
-      queryRef = firestore.collection(PRODUCTS_COLLECTION_NAME).where(Product.PRODUCT_TYPE_KEY, isEqualTo: productTypeStr);
+      // print("productTypeStr");
+      queryRef = firestore.collection(PRODUCTS_COLLECTION_NAME)
+          .where(Product.PRODUCT_TYPE_KEY, isEqualTo: productTypeStr);
     } else {
       final productTypeStr = EnumToString.convertToString(productType);
-      print(productTypeStr);
+      // print("productSubType");
       queryRef = firestore
           .collection(PRODUCTS_COLLECTION_NAME)
           .where(Product.PRODUCT_TYPE_KEY, isEqualTo: productTypeStr)
@@ -48,7 +51,12 @@ class ProductDatabaseHelper {
     for (final doc in querySearchInTags.docs) {
       productsId.add(doc.id);
     }
+    // print(productsId);
     final queryRefDocs = await queryRef.get();
+    // print("queryRef.get()");
+    // print(queryRefDocs.docs);
+
+
     for (final doc in queryRefDocs.docs) {
       final product = Product.fromMap(doc.data(), id: doc.id);
       if (product.title.toString().toLowerCase().contains(query) ||
@@ -161,7 +169,7 @@ class ProductDatabaseHelper {
     final productsCollectionReference = firestore.collection(PRODUCTS_COLLECTION_NAME);
     List productsId = List<String>();
     var queryResult;
-    if(productType == ProductType.All) productType = null;
+    if (productType == ProductType.All) productType = null;
     if (productSubType != null) {
       queryResult = await productsCollectionReference
           .where(Product.PRODUCT_TYPE_KEY, isEqualTo: EnumToString.convertToString(productType))

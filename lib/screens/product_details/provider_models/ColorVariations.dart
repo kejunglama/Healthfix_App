@@ -12,7 +12,8 @@ class ColorvariantsBuilder extends StatefulWidget {
     Key key,
     this.colors,
     this.selectable,
-    this.setColor, this.selectedIndex,
+    this.setColor,
+    this.selectedIndex,
   }) : super(key: key);
 
   @override
@@ -21,14 +22,25 @@ class ColorvariantsBuilder extends StatefulWidget {
 
 class _ColorvariantsBuilderState extends State<ColorvariantsBuilder> {
   num _selectedIndex;
+  List _colorsDup;
+
   @override
   void initState() {
     _selectedIndex = widget.selectedIndex;
     super.initState();
   }
+
+  @override
+  void dispose() {
+    _selectedIndex = 0;
+    super.dispose();
+  }
+
   @override
   Widget build(BuildContext context) {
     List _colors = widget.colors;
+    if (_colors != _colorsDup) _selectedIndex = widget.selectedIndex;
+    _colorsDup = _colors;
     // _selectedIndex = null;
 
     // print(int.parse("0xFF" + _colors[0]));
@@ -45,8 +57,8 @@ class _ColorvariantsBuilderState extends State<ColorvariantsBuilder> {
                   });
               },
               child: Container(
-                height: getProportionateScreenWidth(35),
-                width: getProportionateScreenWidth(35),
+                height: getProportionateScreenWidth(30),
+                width: getProportionateScreenWidth(30),
                 margin: EdgeInsets.only(
                   right: getProportionateScreenHeight(12),
                   // top: getProportionateScreenWidth(18),
@@ -66,6 +78,7 @@ class _ColorvariantsBuilderState extends State<ColorvariantsBuilder> {
                         child: Icon(
                           Icons.done_rounded,
                           color: Colors.white,
+                          size: getProportionateScreenHeight(20),
                         ),
                       ),
                     )
