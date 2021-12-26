@@ -2,11 +2,13 @@ import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:healthfix/constants.dart';
 import 'package:healthfix/data.dart';
+import 'package:healthfix/screens/category_products/category_products_screen.dart';
 import 'package:healthfix/size_config.dart';
 
 class Body extends StatelessWidget {
   Body();
 
+  final catKey_all = GlobalKey();
   final catKey_nutri = GlobalKey();
   final catKey_suppl = GlobalKey();
   final catKey_foods = GlobalKey();
@@ -21,6 +23,7 @@ class Body extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     List keyList = [
+      catKey_all,
       catKey_nutri,
       catKey_suppl,
       catKey_foods,
@@ -28,12 +31,11 @@ class Body extends StatelessWidget {
       catKey_explr,
     ];
 
-
     return SafeArea(
       child: Row(
         children: [
-          CategoryList(productCategories, scrollToCat, keyList),
-          CategoryHierarchyList(categoryHierarchy, keyList),
+          CategoryList(pdctCategories, scrollToCat, keyList),
+          CategoryHierarchyList(PdctSubCategories, keyList),
         ],
       ),
     );
@@ -49,8 +51,9 @@ class CategoryHierarchyList extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     Map _ch = categoryHierarchy;
-    print(_ch.keys);
-    var i = 0;
+    _ch.remove("All Products");
+    var i = 1;
+    var j = 0;
 
     return Expanded(
       flex: 4,
@@ -65,14 +68,39 @@ class CategoryHierarchyList extends StatelessWidget {
                     key: keyList[i++],
                     alignment: Alignment.centerLeft,
                     margin: EdgeInsets.fromLTRB(40, 20, 20, 10),
-                    child: Text(entry.key, style: cusHeadingStyle(17, kPrimaryColor)),
+                    child: GestureDetector(
+                        onTap: () {
+                          // print(j++);
+                          Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) => CategoryProductsScreen(
+                                  productType: pdctCategories.where((ele) => ele[TITLE_KEY] == entry.key).first[PRODUCT_TYPE_KEY],
+                                  productTypes: pdctCategories,
+                                ),
+                              ));
+                        },
+                        child: Text(entry.key, style: cusHeadingStyle(17, kPrimaryColor))),
                   ),
                   for (var arrValue in entry.value)
                     Container(
                       margin: EdgeInsets.symmetric(vertical: 10, horizontal: 40),
-                      child: Text(
-                        arrValue,
-                        style: cusBodyStyle(15),
+                      child: GestureDetector(
+                        onTap: (){
+                          Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) => CategoryProductsScreen(
+                                  productType: pdctCategories.where((ele) => ele[TITLE_KEY] == entry.key).first[PRODUCT_TYPE_KEY],
+                                  productTypes: pdctCategories,
+                                  subProductType: arrValue,
+                                ),
+                              ));
+                        },
+                        child: Text(
+                          arrValue,
+                          style: cusBodyStyle(15),
+                        ),
                       ),
                     ),
                 ],
@@ -116,7 +144,7 @@ class CategoryList extends StatelessWidget {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            for (int i = 0; i < categories.length; i++)
+            for (int i = 1; i < categories.length; i++)
               Material(
                 color: Colors.white,
                 child: InkWell(
@@ -125,20 +153,20 @@ class CategoryList extends StatelessWidget {
                   },
                   child: Center(
                     child: Container(
-                      height: 120,
-                      padding: EdgeInsets.symmetric(horizontal: 20),
+                      height: getProportionateScreenHeight(120),
+                      padding: EdgeInsets.symmetric(horizontal: getProportionateScreenHeight(20)),
                       child: Column(
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
                           Container(
-                            width: 40,
-                            height: 40,
-                            margin: EdgeInsets.only(bottom: 20),
+                            width: getProportionateScreenHeight(430),
+                            height: getProportionateScreenHeight(40),
+                            margin: EdgeInsets.only(bottom: getProportionateScreenHeight(20)),
                             child: SvgPicture.asset(categories[i][ICON_KEY], color: kPrimaryColor),
                           ),
                           Text(
                             categories[i][TITLE_KEY],
-                            style: cusHeadingStyle(14),
+                            style: cusHeadingStyle(getProportionateScreenHeight(14)),
                             textAlign: TextAlign.center,
                           ),
                         ],

@@ -2,6 +2,7 @@ import 'package:enum_to_string/enum_to_string.dart';
 import 'package:healthfix/models/Model.dart';
 
 enum ProductType {
+  All,
   Nutrition,
   Supplements,
   Food,
@@ -21,6 +22,7 @@ class Product extends Model {
   static const String SELLER_KEY = "seller";
   static const String OWNER_KEY = "owner";
   static const String PRODUCT_TYPE_KEY = "product_type";
+  static const String PRODUCT_SUBTYPE_KEY = "product_sub_type";
   static const String SEARCH_TAGS_KEY = "search_tags";
   static const String IS_FEATURED_KEY = "is_featured";
   static const String VARIATIONS_KEY = "variations";

@@ -17,17 +17,12 @@ class TopBrandsSection extends StatelessWidget {
           Row(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              Text(
-                "Top Brands | ",
-                style: cusCenterHeadingStyle(),
-              ),
-              Text(
-                "We Trust",
-                style: cusCenterHeadingAccentStyle,
-              ),
+              Text("Top Brands | ", style: cusCenterHeadingStyle()),
+              Text("We Trust", style: cusCenterHeadingAccentStyle),
             ],
           ),
-          SizedBox(height: getProportionateScreenHeight(12)),
+
+          sizedBoxOfHeight(12),
 
           // SizedBox(height: getProportionateScreenHeight(10)),
 

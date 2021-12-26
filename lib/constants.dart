@@ -27,12 +27,11 @@ final headingStyle = TextStyle(
 );
 
 // Custom Font Styles
-cusHeadingStyle([double fs, Color color, bool hasShadow]) =>
-    GoogleFonts.poppins(
+cusHeadingStyle([double fs, Color color, bool hasShadow, FontWeight fw]) => GoogleFonts.poppins(
       textStyle: TextStyle(
         color: color ?? Colors.black,
         fontSize: fs ?? getProportionateScreenWidth(20),
-        fontWeight: FontWeight.w500,
+        fontWeight: fw ?? FontWeight.w500,
         letterSpacing: 0.5,
         shadows: <Shadow>[
           if (hasShadow ?? false)
@@ -51,19 +50,19 @@ cusHeadingStyle([double fs, Color color, bool hasShadow]) =>
       ),
     );
 
-cusBodyStyle([double fs]) => GoogleFonts.poppins(
-  textStyle: TextStyle(
-    color: Colors.black,
-    fontSize: fs ?? getProportionateScreenWidth(12),
-    fontWeight: FontWeight.w300,
-    letterSpacing: 0.3,
-  ),
-);
+cusBodyStyle([double fs, FontWeight fw, Color color, double ls]) => GoogleFonts.poppins(
+      textStyle: TextStyle(
+        color: color ?? Colors.black,
+        fontSize: fs ?? getProportionateScreenWidth(12),
+        fontWeight: fw ?? FontWeight.w300,
+        letterSpacing: ls ?? 0.3,
+      ),
+    );
 
 var cusHeadingLinkStyle = GoogleFonts.poppins(
   textStyle: TextStyle(
     color: kPrimaryColor,
-    fontSize: getProportionateScreenWidth(14),
+    fontSize: getProportionateScreenHeight(14),
   ),
 );
 
@@ -87,7 +86,7 @@ var cusPdctCatNameStyle = GoogleFonts.poppins(
   textStyle: TextStyle(
     letterSpacing: 0.3,
     color: kTextColor.withOpacity(0.8),
-    fontSize: 12,
+    fontSize: getProportionateScreenHeight(10),
     // fontSize: getProportionateScreenHeight(8),
     fontWeight: FontWeight.w400,
   ),
@@ -97,8 +96,16 @@ cusPdctDisPriceStyle([double fs]) => GoogleFonts.poppins(
       textStyle: TextStyle(
         color: kPrimaryColor,
         // fontWeight: FontWeight.w600,
-        fontSize: fs ?? 16,
+        fontSize: fs ?? getProportionateScreenHeight(16),
         letterSpacing: 0.5,
+      ),
+    );
+cusPdctPageDisPriceStyle([double fs, Color color]) => GoogleFonts.poppins(
+      textStyle: TextStyle(
+        color: color ?? kPrimaryColor,
+        fontWeight: FontWeight.w600,
+        fontSize: fs ?? getProportionateScreenHeight(16),
+        letterSpacing: -0.3,
       ),
     );
 
@@ -107,7 +114,7 @@ cusPdctOriPriceStyle([double fs]) => GoogleFonts.poppins(
         color: kTextColor,
         decoration: TextDecoration.lineThrough,
         fontWeight: FontWeight.normal,
-        fontSize: fs ?? 14,
+        fontSize: fs ?? getProportionateScreenHeight(14),
         // letterSpacing: 0.5,
       ),
     );
@@ -116,7 +123,7 @@ var cusPdctNameStyle = GoogleFonts.poppins(
   textStyle: TextStyle(
     color: kSecondaryColor,
     fontWeight: FontWeight.w500,
-    fontSize: 14,
+    fontSize: getProportionateScreenHeight(14),
     letterSpacing: 0.5,
   ),
 );
@@ -124,8 +131,7 @@ var cusPdctNameStyle = GoogleFonts.poppins(
 const defaultDuration = Duration(milliseconds: 250);
 
 // Form Error
-final RegExp emailValidatorRegExp =
-    RegExp(r"^[a-zA-Z0-9.]+@[a-zA-Z0-9]+\.[a-zA-Z]+");
+final RegExp emailValidatorRegExp = RegExp(r"^[a-zA-Z0-9.]+@[a-zA-Z0-9]+\.[a-zA-Z]+");
 const String kEmailNullError = "Please Enter your email";
 const String kInvalidEmailError = "Please Enter Valid Email";
 const String kPassNullError = "Please Enter your password";
@@ -137,8 +143,7 @@ const String kAddressNullError = "Please Enter your address";
 const String FIELD_REQUIRED_MSG = "This field is required";
 
 final otpInputDecoration = InputDecoration(
-  contentPadding:
-      EdgeInsets.symmetric(vertical: getProportionateScreenWidth(15)),
+  contentPadding: EdgeInsets.symmetric(vertical: getProportionateScreenWidth(15)),
   border: outlineInputBorder(),
   focusedBorder: outlineInputBorder(),
   enabledBorder: outlineInputBorder(),

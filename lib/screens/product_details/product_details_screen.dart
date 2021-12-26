@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:healthfix/constants.dart';
+import 'package:healthfix/components/rounded_icon_button.dart';
+import 'package:healthfix/models/Product.dart';
 import 'package:healthfix/screens/product_details/provider_models/ProductActions.dart';
 import 'package:provider/provider.dart';
 
@@ -8,94 +9,75 @@ import 'components/body.dart';
 
 class ProductDetailsScreen extends StatelessWidget {
   final String productId;
+  Product product;
 
-  const ProductDetailsScreen({
+  ProductDetailsScreen({
     Key key,
     @required this.productId,
   }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
+    // FutureBuilder<Product>(
+    //   future: ProductDatabaseHelper().getProductWithID(productId),
+    //   builder: (context, snapshot) {
+    //     if (snapshot.hasData) {
+    //       product = snapshot.data;
+    //     } else if (snapshot.connectionState == ConnectionState.waiting) {
+    //       return Center(child: CircularProgressIndicator());
+    //     } else if (snapshot.hasError) {
+    //       final error = snapshot.error.toString();
+    //       Logger().e(error);
+    //     }
+    //     return Center(
+    //       child: Icon(
+    //         Icons.error,
+    //         color: kTextColor,
+    //         size: 60,
+    //       ),
+    //     );
+    //   },
+    // );
+
     return ChangeNotifierProvider(
       create: (context) => ProductActions(),
       child: Scaffold(
         // backgroundColor: Colors.white,
-        appBar: AppBar(
-          elevation: 0.5,
-          leadingWidth: getProportionateScreenWidth(12),
-          title: Container(
-            margin: EdgeInsets.zero,
-            alignment: Alignment.centerLeft,
-            height: getProportionateScreenHeight(30),
-            child: Image.asset('assets/logo/HF-logo.png'),
-          ),
-          actions: [
-            Container(
-              margin: EdgeInsets.only(right: getProportionateScreenWidth(8)),
-              child: Icon(
-                Icons.search_rounded,
-              ),
-            ),
-            Container(
-              margin: EdgeInsets.only(right: getProportionateScreenWidth(8)),
-              child: Icon(
-                Icons.shopping_cart_outlined,
-              ),
-            ),
-          ],
-          // backgroundColor: Colors.transparent,
-        ),
         body: Body(
           productId: productId,
         ),
         // floatingActionButton: AddToCartFAB(productId: productId),
         // floatingActionButtonLocation: FloatingActionButtonLocation.endFloat,
-        bottomNavigationBar: BottomAppBar(
-          child: Container(
-            color: kPrimaryColor,
-            height: getProportionateScreenHeight(50),
-            child: Row(
-              children: [
-                Expanded(
-                  child: TextButton.icon(
-                    onPressed: () {},
-                    icon: Icon(
-                      Icons.shopping_cart_outlined,
-                      color: Colors.white,
-                    ),
-                    label: Text(
-                      "Add to Cart",
-                      style: cusHeadingStyle(
-                        getProportionateScreenHeight(14),
-                        Colors.white,
-                      ),
-                    ),
-                  ),
-                ),
-                VerticalDivider(
-                  thickness: 1,
-                  color: Colors.white,
-                ),
-                Expanded(
-                  child: TextButton.icon(
-                    onPressed: () {},
-                    icon: Icon(
-                      Icons.shopping_bag_outlined,
-                      color: Colors.white,
-                    ),
-                    label: Text(
-                      "Buy Now",
-                      style: cusHeadingStyle(
-                        getProportionateScreenHeight(14),
-                        Colors.white,
-                      ),
-                    ),
-                  ),
-                ),
-              ],
-            ),
-          ),
-        ),
+        // bottomNavigationBar: BottomAppBar(
+        //   child: Container(
+        //     color: kPrimaryColor,
+        //     height: getProportionateScreenHeight(50),
+        //     child: Row(
+        //       children: [
+        //         VerticalDivider(
+        //           thickness: 1,
+        //           color: Colors.white,
+        //         ),
+        //         Expanded(
+        //           child: TextButton.icon(
+        //             onPressed: () {},
+        //             icon: Icon(
+        //               Icons.shopping_bag_outlined,
+        //               color: Colors.white,
+        //             ),
+        //             label: Text(
+        //               "Buy Now",
+        //               style: cusHeadingStyle(
+        //                 getProportionateScreenHeight(14),
+        //                 Colors.white,
+        //               ),
+        //             ),
+        //           ),
+        //         ),
+        //       ],
+        //     ),
+        //   ),
+        // ),
       ),
     );
   }

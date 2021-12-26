@@ -10,19 +10,21 @@ import 'package:healthfix/constants.dart';
 import 'package:healthfix/data.dart';
 import 'package:healthfix/models/Product.dart';
 import 'package:healthfix/screens/product_details/product_details_screen.dart';
-import 'package:healthfix/screens/search_result/search_result_screen.dart';
 import 'package:healthfix/services/data_streams/category_products_stream.dart';
-import 'package:healthfix/services/database/product_database_helper.dart';
 import 'package:healthfix/size_config.dart';
 import 'package:logger/logger.dart';
 
 class Body extends StatefulWidget {
-  final ProductType productType;
+  ProductType productType;
+  final String subProductType;
+  String searchString;
   final List<Map> productTypes;
 
   Body({
     this.productType,
+    this.searchString,
     this.productTypes,
+    this.subProductType,
   });
 
   @override
@@ -30,11 +32,12 @@ class Body extends StatefulWidget {
 }
 
 class _BodyState extends State<Body> {
-  final CategoryProductsStream categoryProductsStream;
+  CategoryProductsStream categoryProductsStream;
 
   Map category;
   String _categoryName;
-  List<String> _categoryList = [];
+  String _selectedSubCat;
+  List<dynamic> _categoryList = [];
   List<String> _subCatList = [];
 
   _BodyState({@required this.categoryProductsStream});
@@ -48,15 +51,14 @@ class _BodyState extends State<Body> {
     _categoryName = category["title"];
 
     // Fetch All Product Types
-    _categoryList.length = 0;
     widget.productTypes.forEach((pt) {
-      _categoryList.add(EnumToString.convertToString(pt['product_type']));
+      _categoryList.add([EnumToString.convertToString(pt['product_type']), pt["title"]]);
     });
 
     // Fetch Sub Categories
     fetchSubCategories(_categoryName);
-
-    print(widget.productType);
+    _selectedSubCat = (widget.subProductType != null) ? widget.subProductType : "";
+    // if (category["product_type"] == ProductType.All) {}
   }
 
   @override
@@ -78,117 +80,14 @@ class _BodyState extends State<Body> {
               width: double.infinity,
               child: Column(
                 children: [
-                  SizedBox(height: getProportionateScreenHeight(20)),
+                  sizedBoxOfHeight(20),
                   buildHeadBar(),
-                  SizedBox(height: getProportionateScreenHeight(20)),
-                  // SizedBox(
-                  //   height: SizeConfig.screenHeight * 0.13,
-                  //   child: buildCategoryBanner(),
-                  // ),
-                  // SizedBox(
-                  //   height: SizeConfig.screenHeight * 0.13,
-                  //   child: Container(
-                  //     child: Text(
-                  //       EnumToString.convertToString(widget.productType),
-                  //     ),
-                  //   ),
-                  // ),
-
-                  // Category Selector
-                  Container(
-                    alignment: Alignment.centerLeft,
-                    child: DropdownButtonHideUnderline(
-                      child: DropdownButton(
-                        elevation: 1,
-                        dropdownColor: Colors.white,
-                        hint: _categoryName == null
-                            ? Text('Dropdown')
-                            : Text(
-                                _categoryName,
-                                style: cusHeadingStyle(22, kPrimaryColor),
-                              ),
-                        // isExpanded: true,
-                        iconSize: 30.0,
-                        icon: Icon(
-                          Icons.keyboard_arrow_down_rounded,
-                          color: kPrimaryColor.withOpacity(0.6),
-                        ),
-                        style: TextStyle(color: kPrimaryColor),
-                        items: _categoryList.map(
-                          (val) {
-                            return DropdownMenuItem<String>(
-                              value: val,
-                              child: Text(
-                                val,
-                                style: cusHeadingLinkStyle,
-                              ),
-                            );
-                          },
-                        ).toList(),
-                        onChanged: (val) {
-                          setState(() {
-                            fetchCategoryWithName(val);
-                            fetchSubCategories(_categoryName);
-                            _categoryName = category["title"];
-                          });
-                        },
-                      ),
-                    ),
-                  ),
-
-                  // Sub-Category
-                  Container(
-                    height: 20,
-                    child: ListView(
-                      children: [
-                        for (String _subCat in _subCatList)
-                          Container(
-                            margin: EdgeInsets.only(right: 20),
-                            child: Text(
-                              _subCat,
-                              style: cusBodyStyle(14),
-                            ),
-                          ),
-                      ],
-                      scrollDirection: Axis.horizontal,
-                    ),
-                  ),
-
-                  // SizedBox(height: getProportionateScreenHeight(20)),
-                  SizedBox(
-                    // height: SizeConfig.screenHeight * 0.68,
-                    child: StreamBuilder<List<String>>(
-                      stream: categoryProductsStream.stream,
-                      builder: (context, snapshot) {
-                        if (snapshot.hasData) {
-                          List<String> productsId = snapshot.data;
-                          if (productsId.length == 0) {
-                            return Center(
-                              child: NothingToShowContainer(
-                                secondaryMessage: "No Products in ${EnumToString.convertToString(widget.productType)}",
-                              ),
-                            );
-                          }
-                          return buildProductsGrid(productsId);
-                        } else if (snapshot.connectionState == ConnectionState.waiting) {
-                          return Center(
-                            child: CircularProgressIndicator(),
-                          );
-                        } else if (snapshot.hasError) {
-                          final error = snapshot.error;
-                          Logger().w(error.toString());
-                        }
-                        return Center(
-                          child: NothingToShowContainer(
-                            iconPath: "assets/icons/network_error.svg",
-                            primaryMessage: "Something went wrong",
-                            secondaryMessage: "Unable to connect to Database",
-                          ),
-                        );
-                      },
-                    ),
-                  ),
-                  SizedBox(height: getProportionateScreenHeight(20)),
+                  sizedBoxOfHeight(20),
+                  subCategory(),
+                  sizedBoxOfHeight(10),
+                  searchBar(),
+                  buildProductCatalog(),
+                  sizedBoxOfHeight(20),
                 ],
               ),
             ),
@@ -198,94 +97,239 @@ class _BodyState extends State<Body> {
     );
   }
 
-  Widget buildHeadBar() {
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-      children: [
-        RoundedIconButton(
-          iconData: Icons.arrow_back_ios,
-          press: () {
-            Navigator.pop(context);
-          },
-        ),
-        SizedBox(width: 5),
-        Expanded(
-          child: SearchField(
-            onSubmit: (value) async {
-              final query = value.toString();
-              if (query.length <= 0) return;
-              List<String> searchedProductsId;
-              try {
-                searchedProductsId = await ProductDatabaseHelper().searchInProducts(query.toLowerCase(), productType: widget.productType);
-                if (searchedProductsId != null) {
-                  await Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (context) => SearchResultScreen(
-                        searchQuery: query,
-                        searchResultProductsId: searchedProductsId,
-                        searchIn: EnumToString.convertToString(widget.productType),
-                      ),
-                    ),
-                  );
-                  await refreshPage();
-                } else {
-                  throw "Couldn't perform search due to some unknown reason";
-                }
-              } catch (e) {
-                final error = e.toString();
-                Logger().e(error);
-                ScaffoldMessenger.of(context).showSnackBar(
-                  SnackBar(
-                    content: Text("$error"),
+  Container searchBar() {
+    return Container(
+      child: SearchField(
+        onSubmit: (value) {
+          setState(() {
+            widget.searchString = value;
+          });
+          reInitProductStream("", widget.searchString);
+        },
+      ),
+    );
+  }
+
+  Container subCategory() {
+    return Container(
+      height: getProportionateScreenHeight(20),
+      child: ListView(
+        children: [
+          for (String _subCat in _subCatList)
+            GestureDetector(
+              onTap: () {
+                setState(() {
+                  _selectedSubCat = _subCat;
+                  if (_categoryName == "All Products") {
+                    fetchCategoryWithTypeName(fetchTypeNameWithName(_subCat));
+                    reInitProductStream();
+                    _categoryName = category["title"];
+                    fetchSubCategories(_categoryName);
+                  } else
+                    reInitProductStream(_selectedSubCat);
+                });
+              },
+              child: Container(
+                margin: EdgeInsets.only(right: 20),
+                child: Text(
+                  _subCat,
+                  style: _selectedSubCat == _subCat ? cusBodyStyle(14, FontWeight.w600, kPrimaryColor, 0.5) : cusBodyStyle(14),
+                ),
+              ),
+            ),
+        ],
+        scrollDirection: Axis.horizontal,
+      ),
+    );
+  }
+
+  SizedBox buildProductCatalog() {
+    return SizedBox(
+      child: StreamBuilder<List<String>>(
+        stream: categoryProductsStream.stream,
+        builder: (context, snapshot) {
+          if (snapshot.hasData) {
+            List<String> productsId = snapshot.data;
+            if (productsId.length == 0) {
+              return Container(
+                height: SizeConfig.screenHeight * 0.5,
+                child: Center(
+                  child: NothingToShowContainer(
+                    secondaryMessage: "No Products in ${EnumToString.convertToString(widget.productType)}",
                   ),
-                );
-              }
+                ),
+              );
+            }
+            return buildProductsGrid(productsId);
+          } else if (snapshot.connectionState == ConnectionState.waiting) {
+            return Center(
+              child: CircularProgressIndicator(),
+            );
+          } else if (snapshot.hasError) {
+            final error = snapshot.error;
+            Logger().w(error.toString());
+          }
+          return Center(
+            child: NothingToShowContainer(
+              iconPath: "assets/icons/network_error.svg",
+              primaryMessage: "Something went wrong",
+              secondaryMessage: "Unable to connect to Database",
+            ),
+          );
+        },
+      ),
+    );
+  }
+
+  Widget buildHeadBar() {
+    return SizedBox(
+      height: getProportionateScreenHeight(22),
+      child: Row(
+        children: [
+          RoundedIconButton(
+            iconData: Icons.arrow_back_ios_rounded,
+            press: () {
+              Navigator.pop(context);
             },
           ),
-        ),
-      ],
+          SizedBox(width: 10),
+          // Expanded(
+          //   child: SearchField(
+          //     onSubmit: (value) async {
+          //       final query = value.toString();
+          //       if (query.length <= 0) return;
+          //       List<String> searchedProductsId;
+          //       try {
+          //         searchedProductsId = await ProductDatabaseHelper().searchInProducts(query.toLowerCase(), productType: widget.productType);
+          //         if (searchedProductsId != null) {
+          //           await Navigator.push(
+          //             context,
+          //             MaterialPageRoute(
+          //               builder: (context) => SearchResultScreen(
+          //                 searchQuery: query,
+          //                 searchResultProductsId: searchedProductsId,
+          //                 searchIn: EnumToString.convertToString(widget.productType),
+          //               ),
+          //             ),
+          //           );
+          //           await refreshPage();
+          //         } else {
+          //           throw "Couldn't perform search due to some unknown reason";
+          //         }
+          //       } catch (e) {
+          //         final error = e.toString();
+          //         Logger().e(error);
+          //         ScaffoldMessenger.of(context).showSnackBar(
+          //           SnackBar(
+          //             content: Text("$error"),
+          //           ),
+          //         );
+          //       }
+          //     },
+          //   ),
+          // ),
+
+          // Category Selector
+          Expanded(
+            // flex: 2,
+            child: Container(
+              alignment: Alignment.center,
+              child: DropdownButtonHideUnderline(
+                child: DropdownButton(
+                  elevation: 1,
+                  dropdownColor: Colors.white,
+                  hint: _categoryName == null
+                      ? Text('Dropdown')
+                      : Text(
+                          _categoryName,
+                          style: cusHeadingStyle(getProportionateScreenHeight(20), kPrimaryColor),
+                        ),
+                  // isExpanded: true,
+                  iconSize: getProportionateScreenHeight(20),
+                  icon: Icon(
+                    Icons.keyboard_arrow_down_rounded,
+                    color: kPrimaryColor,
+                  ),
+                  style: TextStyle(color: kPrimaryColor),
+                  items: _categoryList.map(
+                    (val) {
+                      return DropdownMenuItem<String>(
+                        value: val[0],
+                        child: Text(
+                          val[1],
+                          style: cusHeadingLinkStyle,
+                        ),
+                      );
+                    },
+                  ).toList(),
+                  onChanged: (val) {
+                    setState(() {
+                      fetchCategoryWithTypeName(val);
+                      _categoryName = category["title"];
+                      // _categoryName == "All Products"
+                      // ? _subCatList = ["Sports Nutrition", "Vitamin/Supplement", "Health Food & Drink", "Clothing Apparel", "Explore Fitness"]
+                      fetchSubCategories(_categoryName);
+                      reInitProductStream();
+                      _selectedSubCat = "";
+                      // buildProductCatalog();
+                    });
+                  },
+                ),
+              ),
+            ),
+          ),
+        ],
+      ),
     );
   }
 
   Future<void> refreshPage() {
-    categoryProductsStream.reload();
+    reInitProductStream();
     return Future<void>.value();
   }
 
-  Widget buildCategoryBanner() {
-    return Stack(
-      children: [
-        Container(
-          decoration: BoxDecoration(
-            image: DecorationImage(
-              image: AssetImage(bannerFromProductType()),
-              fit: BoxFit.fill,
-              colorFilter: ColorFilter.mode(
-                kPrimaryColor,
-                BlendMode.hue,
-              ),
-            ),
-            borderRadius: BorderRadius.circular(30),
-          ),
-        ),
-        Align(
-          alignment: Alignment.centerLeft,
-          child: Padding(
-            padding: const EdgeInsets.only(left: 16),
-            child: Text(
-              EnumToString.convertToString(widget.productType),
-              style: TextStyle(
-                color: Colors.white,
-                fontWeight: FontWeight.w900,
-                fontSize: 24,
-              ),
-            ),
-          ),
-        ),
-      ],
-    );
+  reInitProductStream([String selectedSubCat, String searchString]) {
+    categoryProductsStream.dispose();
+    widget.productType = category["product_type"];
+    categoryProductsStream = CategoryProductsStream(widget.productType, selectedSubCat ?? null, searchString ?? null);
+    categoryProductsStream.init();
+
+    // print(categoryProductsStream.category);
   }
+
+  // Widget buildCategoryBanner() {
+  //   return Stack(
+  //     children: [
+  //       Container(
+  //         decoration: BoxDecoration(
+  //           image: DecorationImage(
+  //             image: AssetImage(bannerFromProductType()),
+  //             fit: BoxFit.fill,
+  //             colorFilter: ColorFilter.mode(
+  //               kPrimaryColor,
+  //               BlendMode.hue,
+  //             ),
+  //           ),
+  //           borderRadius: BorderRadius.circular(30),
+  //         ),
+  //       ),
+  //       Align(
+  //         alignment: Alignment.centerLeft,
+  //         child: Padding(
+  //           padding: const EdgeInsets.only(left: 16),
+  //           child: Text(
+  //             EnumToString.convertToString(widget.productType),
+  //             style: TextStyle(
+  //               color: Colors.white,
+  //               fontWeight: FontWeight.w900,
+  //               fontSize: 24,
+  //             ),
+  //           ),
+  //         ),
+  //       ),
+  //     ],
+  //   );
+  // }
 
   Widget buildProductsGrid(List<String> productsId) {
     return Container(
@@ -322,8 +366,8 @@ class _BodyState extends State<Body> {
         },
         gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
           crossAxisCount: 2,
-          childAspectRatio: 2/3,
-          crossAxisSpacing: 2,
+          childAspectRatio: 2 / 3,
+          crossAxisSpacing: 8,
           mainAxisSpacing: 8,
         ),
         padding: EdgeInsets.symmetric(
@@ -334,24 +378,24 @@ class _BodyState extends State<Body> {
     );
   }
 
-  String bannerFromProductType() {
-    switch (widget.productType) {
-      case ProductType.Nutrition:
-        return "assets/images/electronics_banner.jpg";
-      case ProductType.Supplements:
-        return "assets/images/books_banner.jpg";
-      case ProductType.Food:
-        return "assets/images/fashions_banner.jpg";
-      case ProductType.Clothing:
-        return "assets/images/groceries_banner.jpg";
-      case ProductType.Explore:
-        return "assets/images/arts_banner.jpg";
-      // case ProductType.Others:
-      //   return "assets/images/others_banner.jpg";
-      default:
-        return "assets/images/others_banner.jpg";
-    }
-  }
+  // String bannerFromProductType() {
+  //   switch (widget.productType) {
+  //     case ProductType.Nutrition:
+  //       return "assets/images/electronics_banner.jpg";
+  //     case ProductType.Supplements:
+  //       return "assets/images/books_banner.jpg";
+  //     case ProductType.Food:
+  //       return "assets/images/fashions_banner.jpg";
+  //     case ProductType.Clothing:
+  //       return "assets/images/groceries_banner.jpg";
+  //     case ProductType.Explore:
+  //       return "assets/images/arts_banner.jpg";
+  //     // case ProductType.Others:
+  //     //   return "assets/images/others_banner.jpg";
+  //     default:
+  //       return "assets/images/others_banner.jpg";
+  //   }
+  // }
 
   // ProductType nameToProductType() {
   //   switch (_category) {
@@ -372,32 +416,32 @@ class _BodyState extends State<Body> {
   //   }
   // }
   //
-  // num indexFromProductType() {
-  //   print(widget.productType);
-  //   switch (widget.productType) {
-  //     case ProductType.Nutrition:
-  //       return 0;
-  //     case ProductType.Supplements:
-  //       return 1;
-  //     case ProductType.Clothing:
-  //       return 2;
-  //     case ProductType.Food:
-  //       return 3;
-  //     case ProductType.Explore:
-  //       return 4;
-  //     // case ProductType.Others:
-  //     //   return "assets/images/others_banner.jpg";
-  //     default:
-  //       return 0;
-  //   }
-  // }
+  String fetchTypeNameWithName(String name) {
+    switch (name) {
+      case "Sports Nutrition":
+        return "Nutrition";
+      case "Vitamin/Supplement":
+        return "Supplements";
+      case "Health Food & Drink":
+        return "Food";
+      case "Clothing Apparel":
+        return "Clothing";
+      case "Explore Fitness":
+        return "Explore";
+      default:
+        return "";
+    }
+  }
 
-  fetchCategoryWithName(String name) {
-    category = widget.productTypes.where((type) => EnumToString.convertToString(type["product_type"]) == name).first;
+  fetchCategoryWithTypeName(String typeName) {
+    // print(name == "All" ? "Wow" : "");
+    category = (typeName == "All")
+        ? {"title": "All Products"}
+        : widget.productTypes.where((type) => EnumToString.convertToString(type["product_type"]) == typeName).first;
   }
 
   fetchSubCategories(String cat) {
-    categoryHierarchy.forEach((key, value) {
+    PdctSubCategories.forEach((key, value) {
       if (cat == key) _subCatList = value;
     });
   }

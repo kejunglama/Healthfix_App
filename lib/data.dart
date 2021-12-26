@@ -1,35 +1,50 @@
+import 'package:healthfix/models/Product.dart';
+
 String ICON_KEY = "icon";
 String TITLE_KEY = "title";
+String PRODUCT_TYPE_KEY = "product_type";
 
-final productCategories = <Map>[
+final pdctCategories = <Map>[
+  <String, dynamic>{
+    ICON_KEY: "assets/icons/app/icons-dumbell.svg",
+    TITLE_KEY: "All Products",
+    PRODUCT_TYPE_KEY: ProductType.All,
+  },
   <String, dynamic>{
     ICON_KEY: "assets/icons/app/icons-dumbell.svg",
     TITLE_KEY: "Sports Nutrition",
-    // PRODUCT_TYPE_KEY: ProductType.Electronics,
+    PRODUCT_TYPE_KEY: ProductType.Nutrition,
   },
   <String, dynamic>{
     ICON_KEY: "assets/icons/app/icons-suppliment.svg",
     TITLE_KEY: "Vitamin/Supplement",
-    // PRODUCT_TYPE_KEY: ProductType.Books,
+    PRODUCT_TYPE_KEY: ProductType.Supplements,
   },
   <String, dynamic>{
     ICON_KEY: "assets/icons/app/icons-veg.svg",
     TITLE_KEY: "Health Food & Drink",
-    // PRODUCT_TYPE_KEY: ProductType.Fashion,
+    PRODUCT_TYPE_KEY: ProductType.Food,
   },
   <String, dynamic>{
     ICON_KEY: "assets/icons/app/icons-shop.svg",
     TITLE_KEY: "Clothing Apparel",
-    // PRODUCT_TYPE_KEY: ProductType.Art,
+    PRODUCT_TYPE_KEY: ProductType.Clothing,
   },
   <String, dynamic>{
     ICON_KEY: "assets/icons/app/icons-explore.svg",
     TITLE_KEY: "Explore Fitness",
-    // PRODUCT_TYPE_KEY: ProductType.Others,
+    PRODUCT_TYPE_KEY: ProductType.Explore,
   },
 ];
 
-final categoryHierarchy = {
+final PdctSubCategories = {
+  "All Products": [
+    "Sports Nutrition",
+    "Vitamin/Supplement",
+    "Health Food & Drink",
+    "Clothing Apparel",
+    "Explore Fitness",
+  ],
   "Sports Nutrition": [
     "Proteins",
     "Gainers",

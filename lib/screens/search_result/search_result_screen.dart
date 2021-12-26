@@ -3,6 +3,7 @@ import 'package:healthfix/components/search_field.dart';
 import 'package:healthfix/constants.dart';
 import 'package:healthfix/services/data_streams/all_products_stream.dart';
 import 'package:healthfix/services/database/product_database_helper.dart';
+import 'package:healthfix/size_config.dart';
 import 'package:logger/logger.dart';
 
 import 'components/body.dart';
@@ -45,8 +46,7 @@ class _SearchResultScreenState extends State<SearchResultScreen> {
       if (query.length <= 0) return;
       List<String> searchedProductsId;
       try {
-        searchedProductsId =
-            await ProductDatabaseHelper().searchInProducts(query.toLowerCase());
+        searchedProductsId = await ProductDatabaseHelper().searchInProducts(query.toLowerCase());
         if (searchedProductsId != null) {
           await Navigator.pushReplacement(
             context,
@@ -76,18 +76,30 @@ class _SearchResultScreenState extends State<SearchResultScreen> {
     return Scaffold(
       resizeToAvoidBottomInset: false,
       appBar: AppBar(
-        title: Text("Search Products", style: cusHeadingStyle(),),
+        title: Text(
+          "Search Products",
+          style: cusHeadingStyle(),
+        ),
         leadingWidth: 20,
-        actions: [
-          Container(
-              margin: EdgeInsets.symmetric(horizontal: 8),
-              child: Icon(Icons.filter_list_rounded)),
-        ],
+        actions: [],
       ),
       body: Column(
         children: [
-          SearchField(
-            onSubmit: onSearchSubmitted,
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Container(
+                width: SizeConfig.screenWidth * 0.9,
+                child: SearchField(
+                  onSubmit: onSearchSubmitted,
+                    searchQuery: widget.searchQuery,
+                ),
+              ),
+              Container(
+                margin: EdgeInsets.symmetric(horizontal: 8),
+                child: Icon(Icons.filter_list_rounded),
+              ),
+            ],
           ),
           Body(
             searchQuery: widget.searchQuery,

@@ -1,6 +1,6 @@
+import 'package:flutter/material.dart';
 import 'package:healthfix/models/Product.dart';
 import 'package:healthfix/services/database/product_database_helper.dart';
-import 'package:flutter/material.dart';
 import 'package:logger/logger.dart';
 
 import '../constants.dart';
@@ -9,6 +9,7 @@ import '../size_config.dart';
 class ProductShortDetailCard extends StatelessWidget {
   final String productId;
   final VoidCallback onPressed;
+
   const ProductShortDetailCard({
     Key key,
     @required this.productId,
@@ -29,9 +30,13 @@ class ProductShortDetailCard extends StatelessWidget {
                 SizedBox(
                   width: getProportionateScreenWidth(88),
                   child: AspectRatio(
-                    aspectRatio: 0.88,
-                    child: Padding(
-                      padding: EdgeInsets.all(10),
+                    aspectRatio: 1,
+                    child: Container(
+                      decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(5),
+                        color: Colors.grey.withOpacity(0.03),
+                      ),
+                      margin: EdgeInsets.all(10),
                       child: product.images.length > 0
                           ? Image.network(
                               product.images[0],
@@ -50,33 +55,18 @@ class ProductShortDetailCard extends StatelessWidget {
                         product.title,
                         softWrap: true,
                         overflow: TextOverflow.ellipsis,
-                        style: TextStyle(
-                          fontSize: 13,
-                          fontWeight: FontWeight.bold,
-                          color: kTextColor,
-                        ),
+                        style: cusPdctNameStyle,
                         maxLines: 2,
                       ),
                       SizedBox(height: 10),
                       Text.rich(
                         TextSpan(
-                            text: "\₹${product.discountPrice}    ",
-                            style: TextStyle(
-                              color: kPrimaryColor,
-                              fontWeight: FontWeight.w700,
-                              fontSize: 12,
-                            ),
-                            children: [
-                              TextSpan(
-                                text: "\₹${product.originalPrice}",
-                                style: TextStyle(
-                                  color: kTextColor,
-                                  decoration: TextDecoration.lineThrough,
-                                  fontWeight: FontWeight.normal,
-                                  fontSize: 11,
-                                ),
-                              ),
-                            ]),
+                          text: "\Rs. ${product.discountPrice}  ",
+                          style: cusPdctDisPriceStyle(),
+                          children: [
+                            TextSpan(text: "\Rs. ${product.originalPrice}", style: cusPdctOriPriceStyle()),
+                          ],
+                        ),
                       ),
                     ],
                   ),

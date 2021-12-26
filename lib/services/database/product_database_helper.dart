@@ -25,14 +25,22 @@ class ProductDatabaseHelper {
     return _firebaseFirestore;
   }
 
-  Future<List<String>> searchInProducts(String query, {ProductType productType}) async {
+  Future<List<String>> searchInProducts(String query, [ProductType productType, String productSubType]) async {
     Query queryRef;
+    // print(query);
     if (productType == null) {
       queryRef = firestore.collection(PRODUCTS_COLLECTION_NAME);
-    } else {
+    } else if (productSubType == null) {
       final productTypeStr = EnumToString.convertToString(productType);
       print(productTypeStr);
       queryRef = firestore.collection(PRODUCTS_COLLECTION_NAME).where(Product.PRODUCT_TYPE_KEY, isEqualTo: productTypeStr);
+    } else {
+      final productTypeStr = EnumToString.convertToString(productType);
+      print(productTypeStr);
+      queryRef = firestore
+          .collection(PRODUCTS_COLLECTION_NAME)
+          .where(Product.PRODUCT_TYPE_KEY, isEqualTo: productTypeStr)
+          .where(Product.PRODUCT_SUBTYPE_KEY, isEqualTo: productSubType);
     }
 
     Set productsId = Set<String>();
@@ -51,6 +59,7 @@ class ProductDatabaseHelper {
         productsId.add(product.id);
       }
     }
+    print(productsId.toList());
     return productsId.toList();
   }
 
@@ -148,10 +157,20 @@ class ProductDatabaseHelper {
     return docRef.id;
   }
 
-  Future<List<String>> getCategoryProductsList(ProductType productType) async {
+  Future<List<String>> getCategoryProductsList(ProductType productType, [String productSubType]) async {
     final productsCollectionReference = firestore.collection(PRODUCTS_COLLECTION_NAME);
-    final queryResult = await productsCollectionReference.where(Product.PRODUCT_TYPE_KEY, isEqualTo: EnumToString.convertToString(productType)).get();
     List productsId = List<String>();
+    var queryResult;
+    if(productType == ProductType.All) productType = null;
+    if (productSubType != null) {
+      queryResult = await productsCollectionReference
+          .where(Product.PRODUCT_TYPE_KEY, isEqualTo: EnumToString.convertToString(productType))
+          .where(Product.PRODUCT_SUBTYPE_KEY, isEqualTo: productSubType)
+          .get();
+      print(queryResult.docs);
+    } else {
+      queryResult = await productsCollectionReference.where(Product.PRODUCT_TYPE_KEY, isEqualTo: EnumToString.convertToString(productType)).get();
+    }
     for (final product in queryResult.docs) {
       final id = product.id;
       productsId.add(id);

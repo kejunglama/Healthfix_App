@@ -1,11 +1,13 @@
+import 'package:flutter/material.dart';
 import 'package:healthfix/components/default_button.dart';
 import 'package:healthfix/services/database/user_database_helper.dart';
-import 'package:flutter/material.dart';
 
+import '../../../constants.dart';
 import '../../../size_config.dart';
 
 class CheckoutCard extends StatelessWidget {
   final VoidCallback onCheckoutPressed;
+
   const CheckoutCard({
     Key key,
     @required this.onCheckoutPressed,
@@ -26,7 +28,7 @@ class CheckoutCard extends StatelessWidget {
         ),
         boxShadow: [
           BoxShadow(
-            color: Color(0xFFDADADA).withOpacity(0.6),
+            color: Color(0xFFDADADA).withOpacity(0.1),
             offset: Offset(0, -15),
             blurRadius: 20,
           ),
@@ -46,16 +48,16 @@ class CheckoutCard extends StatelessWidget {
                     if (snapshot.hasData) {
                       final cartTotal = snapshot.data;
                       return Text.rich(
-                        TextSpan(text: "Total\n", children: [
-                          TextSpan(
-                            text: "\₹$cartTotal",
-                            style: TextStyle(
-                              fontSize: 18,
-                              color: Colors.black,
-                              fontWeight: FontWeight.w700,
+                        TextSpan(
+                          text: "Total\n",
+                          style: cusPdctNameStyle,
+                          children: [
+                            TextSpan(
+                              text: "Rs. $cartTotal",
+                              style: TextStyle(fontSize: 20, color: Colors.black, fontWeight: FontWeight.w700),
                             ),
-                          ),
-                        ]),
+                          ],
+                        ),
                       );
                     }
                     return Center(child: CircularProgressIndicator());

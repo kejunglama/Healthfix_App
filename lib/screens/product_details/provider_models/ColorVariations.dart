@@ -5,11 +5,14 @@ import '../../../size_config.dart';
 class ColorvariantsBuilder extends StatefulWidget {
   List colors;
   bool selectable; // Will be selectable when Size is Selected
+  Function setColor;
+  num selectedIndex;
 
   ColorvariantsBuilder({
     Key key,
     this.colors,
     this.selectable,
+    this.setColor, this.selectedIndex,
   }) : super(key: key);
 
   @override
@@ -17,11 +20,17 @@ class ColorvariantsBuilder extends StatefulWidget {
 }
 
 class _ColorvariantsBuilderState extends State<ColorvariantsBuilder> {
-  int _selectedIndex;
-
+  num _selectedIndex;
+  @override
+  void initState() {
+    _selectedIndex = widget.selectedIndex;
+    super.initState();
+  }
   @override
   Widget build(BuildContext context) {
     List _colors = widget.colors;
+    // _selectedIndex = null;
+
     // print(int.parse("0xFF" + _colors[0]));
     return Container(
       child: Row(
@@ -32,6 +41,7 @@ class _ColorvariantsBuilderState extends State<ColorvariantsBuilder> {
                 if (widget.selectable)
                   setState(() {
                     _selectedIndex = i;
+                    widget.setColor(_colors[i]);
                   });
               },
               child: Container(
@@ -39,16 +49,15 @@ class _ColorvariantsBuilderState extends State<ColorvariantsBuilder> {
                 width: getProportionateScreenWidth(35),
                 margin: EdgeInsets.only(
                   right: getProportionateScreenHeight(12),
-                  top: getProportionateScreenWidth(18),
-                  bottom: getProportionateScreenWidth(18),
+                  // top: getProportionateScreenWidth(18),
+                  // bottom: getProportionateScreenWidth(18),
                 ),
                 child: Stack(
                   children: [
                     Container(
                       decoration: BoxDecoration(
                         color: Color(int.parse("0xFF" + _colors[i])),
-                        borderRadius: BorderRadius.circular(
-                            getProportionateScreenWidth(20)),
+                        borderRadius: BorderRadius.circular(getProportionateScreenWidth(20)),
                       ),
                     ),
                     Visibility(

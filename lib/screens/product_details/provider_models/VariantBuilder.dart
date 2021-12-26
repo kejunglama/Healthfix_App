@@ -7,10 +7,10 @@ import '../../../constants.dart';
 class variantsBuilder extends StatefulWidget {
   final List variants;
   final List json;
-  final setVariant;
+  final setSize;
 
   const variantsBuilder(
-      {Key key, @required this.variants, this.json, this.setVariant})
+      {Key key, @required this.variants, this.json, this.setSize})
       : super(key: key);
 
   @override
@@ -26,6 +26,7 @@ class _variantsState extends State<variantsBuilder> {
     List _json = widget.json;
 
     return Row(
+      // mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
         for (var i = 0; i < _variant.length; i++)
           GestureDetector(
@@ -33,7 +34,8 @@ class _variantsState extends State<variantsBuilder> {
               setState(() {
                 _selected = i;
               });
-              widget.setVariant(
+              widget.setSize(
+                _variant[i],
                 fetchValuesFromVariant(
                   "color",
                   findVariantWithKey(_variant[i], "size", _json),
@@ -51,23 +53,26 @@ class _variantsState extends State<variantsBuilder> {
             child: Container(
               margin: EdgeInsets.only(
                 right: getProportionateScreenHeight(12),
-                top: getProportionateScreenWidth(18),
-                bottom: getProportionateScreenWidth(18),
+                // top: getProportionateScreenWidth(18),
+                // bottom: getProportionateScreenWidth(18),
               ),
               width: getProportionateScreenWidth(35),
               height: getProportionateScreenWidth(35),
               decoration: BoxDecoration(
-                border: Border.all(
-                  width: 1,
-                  color: i == _selected ? kPrimaryColor : Colors.grey,
-                ),
+                color: i == _selected ? kPrimaryColor.withOpacity(0.4) : Colors.transparent,
+                // border: Border.all(
+                //   width: 1,
+                //   color: i == _selected ? kPrimaryColor : Colors.transparent,
+                // ),
+                borderRadius: BorderRadius.circular(8),
               ),
               child: Center(
                 child: Text(
                   _variant[i],
                   style: TextStyle(
-                    fontSize: getProportionateScreenWidth(18),
-                    color: i == _selected ? kPrimaryColor : Colors.grey,
+                    fontSize: getProportionateScreenWidth(16),
+                    fontWeight: FontWeight.w600,
+                    color: Colors.black,
                   ),
                 ),
               ),

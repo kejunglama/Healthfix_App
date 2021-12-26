@@ -35,7 +35,8 @@ class ExpandableText extends StatelessWidget {
             //   endIndent: 16,
             // ),
             Text(
-              content.trim(),softWrap: true,
+              content.trim().replaceAll("\\n", "\n"),
+              softWrap: true,
               style: cusBodyStyle(),
               maxLines: expandText.isExpanded ? null : maxLines,
               textAlign: TextAlign.left,

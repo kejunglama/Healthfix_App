@@ -1,16 +1,16 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:healthfix/components/rounded_icon_button.dart';
-import 'package:healthfix/components/search_field.dart';
-import 'package:healthfix/screens/explore_fitness/explore_screen.dart';
-import 'package:healthfix/screens/search/search_screen.dart';
-import 'package:healthfix/screens/search_result/search_result_screen.dart';
+import 'package:healthfix/data.dart';
+import 'package:healthfix/models/Product.dart';
+import 'package:healthfix/screens/category_products/category_products_screen.dart';
+import 'package:healthfix/screens/checkout/checkout_screen.dart';
 import 'package:healthfix/services/database/product_database_helper.dart';
 import 'package:healthfix/size_config.dart';
 
 import '../../../constants.dart';
 import 'home_screen_drawer.dart';
 
+// Cleaning
 class HomeHeader extends StatelessWidget {
   final Function onSearchSubmitted;
   final Function onCartButtonPressed;
@@ -26,45 +26,30 @@ class HomeHeader extends StatelessWidget {
     return Column(
       children: [
         Container(
-          // color: kPrimaryColor,
           child: Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              Row(
-                children: [
-                  // RoundedIconButton(
-                  //   iconData: Icons.menu,
-                  //   press: () {
-                  //     Scaffold.of(context).openDrawer();
-                  //   },
-                  // ),
-                  SizedBox(width: getProportionateScreenWidth(12)),
-                  Container(
-                    height: 30,
-                    // height: 0,
-                    child: Image.asset('assets/logo/HF-logo.png'),
-                  ),
-                ],
-              ),
-              // IconButton(
-              //   onPressed: () {Scaffold.of(context).openDrawer();},
-              //   icon: Icon(Icons.menu),
-              //   color: kPrimaryColor,
-              //   splashRadius: 20,
-              // ),
-
-              // Container(
-              //   width: 300,
-              //   child: SearchField(
-              //     onSubmit: onSearchSubmitted,
-              //   ),
-              // ),
+              // Logo
               Container(
-                margin: EdgeInsets.symmetric(horizontal: 8),
+                margin: EdgeInsets.only(left: getProportionateScreenWidth(12)),
+                height: getProportionateScreenHeight(30),
+                child: GestureDetector(
+                    onTap: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(builder: (context) => CheckoutScreen()),
+                      );
+                    },
+                    child: Image.asset('assets/logo/HF-logo.png')),
+              ),
+
+              Container(
+                margin: EdgeInsets.symmetric(horizontal: getProportionateScreenWidth(8)),
                 child: Row(
                   children: [
+                    // Btn - Account
                     Container(
-                      width: 40,
+                      width: getProportionateScreenWidth(40),
                       child: IconButton(
                         onPressed: () {
                           Navigator.push(
@@ -77,18 +62,20 @@ class HomeHeader extends StatelessWidget {
                         splashRadius: 20,
                       ),
                     ),
+
+                    // Btn - Search
                     Container(
-                      width: 40,
+                      width: getProportionateScreenWidth(40),
                       child: IconButton(
-                        onPressed: () async{
+                        onPressed: () async {
                           List searchedProductsId = await ProductDatabaseHelper().searchInProducts("");
                           await Navigator.push(
                             context,
                             MaterialPageRoute(
-                              builder: (context) => SearchResultScreen(
-                                searchQuery: "",
-                                searchResultProductsId: searchedProductsId,
-                                searchIn: "All Products",
+                              builder: (context) => CategoryProductsScreen(
+                                productType: ProductType.All,
+                                productTypes: pdctCategories,
+                                subProductType: "",
                               ),
                             ),
                           );
@@ -104,13 +91,14 @@ class HomeHeader extends StatelessWidget {
             ],
           ),
         ),
-        Container(
-          margin: EdgeInsets.fromLTRB(8,2,8,8),
-          // width: 300,
-          child: SearchField(
-            onSubmit: onSearchSubmitted,
-          ),
-        ),
+
+        // Search Bar
+        // Container(
+        //   margin: EdgeInsets.fromLTRB(
+        //       getProportionateScreenWidth(8), getProportionateScreenHeight(2), getProportionateScreenWidth(8), getProportionateScreenHeight(8)),
+        //   child: SearchField(onSubmit: onSearchSubmitted),
+        // ),
+
         // Row(
         //   mainAxisAlignment: MainAxisAlignment.spaceBetween,
         //   children: [

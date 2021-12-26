@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:google_fonts/google_fonts.dart';
 import 'package:healthfix/models/Product.dart';
 import 'package:healthfix/screens/product_details/provider_models/ColorVariations.dart';
 import 'package:healthfix/screens/product_details/provider_models/VariantBuilder.dart';
@@ -12,6 +11,7 @@ class ProductDescription extends StatelessWidget {
   final Product product;
   final sizes = new Set();
   final colors = new Set();
+  void Function(String size, String color) setSelectedVariant;
 
   //
   // List jsonArray = [
@@ -27,6 +27,7 @@ class ProductDescription extends StatelessWidget {
   ProductDescription({
     Key key,
     @required this.product,
+    this.setSelectedVariant,
   }) : super(key: key);
 
   @override
@@ -41,7 +42,7 @@ class ProductDescription extends StatelessWidget {
       });
     }
 
-    print(product.variations);
+    // print(product.variations);
 
     return Container(
       margin: EdgeInsets.symmetric(horizontal: getProportionateScreenWidth(8)),
@@ -54,7 +55,7 @@ class ProductDescription extends StatelessWidget {
               Text.rich(
                 TextSpan(
                   text: product.title.capitalize(),
-                  style: cusCenterHeadingStyle(),
+                  style: cusHeadingStyle(20, kSecondaryColor),
                   children: [
                     TextSpan(
                       text: "\n${product.variant.capitalize()} ",
@@ -66,17 +67,18 @@ class ProductDescription extends StatelessWidget {
                   ],
                 ),
               ),
-              const SizedBox(height: 16),
+              // const SizedBox(height: 16),
               // Text(product.highlights),
               // const SizedBox(height: 16),
 
               // Product Variation with Price
-                ProductVariationDescription(
-                  product: product,
-                  sizes: sizes,
-                  jsonArray: jsonArray,
-                  colors: colors,
-                ),
+              ProductVariationDescription(
+                product: product,
+                sizes: sizes,
+                jsonArray: jsonArray,
+                colors: colors,
+                setSelectedVariant: setSelectedVariant,
+              ),
 
               const SizedBox(height: 16),
               ExpandableText(
@@ -87,8 +89,7 @@ class ProductDescription extends StatelessWidget {
               Text.rich(
                 TextSpan(
                   text: "By ",
-                  style: cusHeadingStyle(
-                      getProportionateScreenHeight(14), Colors.black87),
+                  style: cusHeadingStyle(getProportionateScreenHeight(14), Colors.black87),
                   children: [
                     TextSpan(
                       text: "${product.seller}",
@@ -108,12 +109,15 @@ class ProductDescription extends StatelessWidget {
 }
 
 class ProductVariationDescription extends StatefulWidget {
-  const ProductVariationDescription({
+  void Function(String size, String color) setSelectedVariant;
+
+  ProductVariationDescription({
     Key key,
     @required this.product,
     @required this.sizes,
     @required this.jsonArray,
     @required this.colors,
+    this.setSelectedVariant,
   }) : super(key: key);
 
   final Product product;
@@ -122,93 +126,78 @@ class ProductVariationDescription extends StatefulWidget {
   final Set colors;
 
   @override
-  State<ProductVariationDescription> createState() =>
-      _ProductVariationDescriptionState();
+  State<ProductVariationDescription> createState() => _ProductVariationDescriptionState();
 }
 
-class _ProductVariationDescriptionState
-    extends State<ProductVariationDescription> {
+class _ProductVariationDescriptionState extends State<ProductVariationDescription> {
   List _colors = [];
+  String _selectedSize;
+  String _selectedColor;
 
-  setColors(List colors) {
+  setSizeAndFetchColors(String size, List colors) {
     setState(() {
+      _selectedSize = size;
+      // _selectedColor = colors[0];
       _colors = colors;
+    });
+    setColor(colors[0]);
+  }
+
+  setColor(String color) {
+    setState(() {
+      _selectedColor = color;
+      // print(_selectedColor);
+      if (_selectedColor != null && _selectedSize != null) widget.setSelectedVariant(_selectedSize, _selectedColor);
     });
   }
 
   @override
   Widget build(BuildContext context) {
-    bool hasVariations =  widget.jsonArray != null;
+    bool hasVariations = widget.jsonArray != null;
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        SizedBox(
-          height: getProportionateScreenHeight(55),
-          child: Text.rich(
-            TextSpan(
-              text: "Rs. ${widget.product.discountPrice}   ",
-              style: cusPdctDisPriceStyle(25),
-              children: [
-                TextSpan(
-                  text: "\nRs. ${widget.product.originalPrice}",
-                  style: cusPdctOriPriceStyle(18),
-                ),
-                TextSpan(
-                  text:
-                      "   ${widget.product.calculatePercentageDiscount()}% OFF",
-                  style: GoogleFonts.poppins(
-                    textStyle: TextStyle(
-                      color: Colors.red,
-                      fontSize: getProportionateScreenHeight(20),
-                      fontWeight: FontWeight.w600,
-                      letterSpacing: 0.5,
+        if (hasVariations)
+          Column(
+            children: [
+              SizedBox(height: getProportionateScreenHeight(12)),
+              Row(
+                children: [
+                  Container(
+                    alignment: Alignment.centerLeft,
+                    margin: EdgeInsets.only(right: getProportionateScreenWidth(12)),
+                    child: Text(
+                      "Size: ",
+                      style: cusHeadingStyle(getProportionateScreenWidth(16), Colors.grey),
                     ),
                   ),
-                  // textAlign: TextAlign.right,
-                ),
-              ],
-            ),
+                  // SizedBox(height: getProportionateScreenHeight(12)),
+                  variantsBuilder(variants: widget.sizes.toList(), json: widget.jsonArray, setSize: setSizeAndFetchColors),
+                ],
+              ),
+              // SizedBox(height: getProportionateScreenHeight(20)),
+              sizedBoxOfHeight(12),
+              Row(
+                children: [
+                  Container(
+                    alignment: Alignment.centerLeft,
+                    margin: EdgeInsets.only(right: getProportionateScreenWidth(12)),
+                    child: Text(
+                      "Available Colors: ",
+                      style: cusHeadingStyle(getProportionateScreenWidth(16), Colors.grey),
+                    ),
+                  ),
+                  // SizedBox(height: getProportionateScreenHeight(12)),
+                  ColorvariantsBuilder(
+                    selectedIndex: 0,
+                    colors: _colors.isNotEmpty ? _colors : widget.colors.toList(),
+                    selectable: _colors.isNotEmpty,
+                    setColor: setColor,
+                  ),
+                ],
+              ),
+            ],
           ),
-        ),
-        if(hasVariations) Column(
-          children: [
-            SizedBox(height: getProportionateScreenHeight(12)),
-            Column(
-              children: [
-                Container(
-                  alignment: Alignment.centerLeft,
-                  child: Text(
-                    "Select Size",
-                    style: cusHeadingStyle(getProportionateScreenWidth(16)),
-                  ),
-                ),
-                // SizedBox(height: getProportionateScreenHeight(12)),
-                variantsBuilder(
-                    variants: widget.sizes.toList(),
-                    json: widget.jsonArray,
-                    setVariant: setColors),
-              ],
-            ),
-            // SizedBox(height: getProportionateScreenHeight(20)),
-            Column(
-              children: [
-                Container(
-                  alignment: Alignment.centerLeft,
-                  child: Text(
-                    "Available Colors",
-                    style: cusHeadingStyle(getProportionateScreenWidth(16)),
-                  ),
-                ),
-                // SizedBox(height: getProportionateScreenHeight(12)),
-                ColorvariantsBuilder(
-                  colors: _colors.isNotEmpty ? _colors : widget.colors.toList(),
-                  selectable: _colors.isNotEmpty,
-                ),
-              ],
-            ),
-          ],
-        ),
-
       ],
     );
   }

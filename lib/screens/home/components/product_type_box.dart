@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
-import 'package:google_fonts/google_fonts.dart';
 
 import '../../../constants.dart';
 import '../../../size_config.dart';
 
+// Cleaned
 class ProductTypeBox extends StatelessWidget {
   final String icon;
   final String title;
@@ -19,27 +19,23 @@ class ProductTypeBox extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-
     return InkWell(
       onTap: onPress,
       child: Column(
         children: [
           Container(
-            height: 80,
-            width: 80,
+            height: getProportionateScreenHeight(70),
+            width: getProportionateScreenHeight(70),
             margin: EdgeInsets.only(
-              right: 12,
+              right: getProportionateScreenHeight(12),
             ),
-            padding: EdgeInsets.all(17),
+            padding: EdgeInsets.all(getProportionateScreenHeight(18)),
             decoration: BoxDecoration(
               color: kPrimaryColor.withOpacity(0.09),
               borderRadius: BorderRadius.circular(5),
-              // border: Border.all(
-              //   color: kPrimaryColor.withOpacity(0.18),
-              // ),
             ),
             child: Padding(
-              padding: const EdgeInsets.all(6.0),
+              padding: EdgeInsets.all(getProportionateScreenWidth(6)),
               child: AspectRatio(
                 aspectRatio: 1,
                 child: SvgPicture.asset(
@@ -51,11 +47,8 @@ class ProductTypeBox extends StatelessWidget {
           ),
           // SizedBox(height: 2),
           Container(
-            margin: EdgeInsets.only(
-              right: 12,
-              top: 5,
-            ),
-            width: 70,
+            margin: EdgeInsets.only(right: getProportionateScreenHeight(12), top: getProportionateScreenHeight(5)),
+            width: getProportionateScreenWidth(70),
             child: Text(
               title,
               textAlign: TextAlign.center,

@@ -14,10 +14,11 @@ import '../../../utils.dart';
 
 class ProductActionsSection extends StatelessWidget {
   final Product product;
+  void Function(String size, String color) setSelectedVariant;
 
-  const ProductActionsSection({
+  ProductActionsSection({
     Key key,
-    @required this.product,
+    @required this.product, this.setSelectedVariant,
   }) : super(key: key);
 
   @override
@@ -26,7 +27,7 @@ class ProductActionsSection extends StatelessWidget {
       children: [
         Stack(
           children: [
-            ProductDescription(product: product),
+            ProductDescription(product: product,setSelectedVariant:setSelectedVariant),
             // Align(
             //   alignment: Alignment.topCenter,
             //   child: buildFavouriteButton(),
@@ -35,17 +36,17 @@ class ProductActionsSection extends StatelessWidget {
         ),
       ],
     );
-    UserDatabaseHelper().isProductFavourite(product.id).then(
-      (value) {
-        final productActions =
-            Provider.of<ProductActions>(context, listen: false);
-        productActions.productFavStatus = value;
-      },
-    ).catchError(
-      (e) {
-        Logger().w("$e");
-      },
-    );
+    // UserDatabaseHelper().isProductFavourite(product.id).then(
+    //   (value) {
+    //     final productActions =
+    //         Provider.of<ProductActions>(context, listen: false);
+    //     productActions.productFavStatus = value;
+    //   },
+    // ).catchError(
+    //   (e) {
+    //     Logger().w("$e");
+    //   },
+    // );
     return column;
   }
 

@@ -53,14 +53,9 @@ class _BodyState extends State<Body> {
               width: double.infinity,
               child: Column(
                 children: [
-                  SizedBox(height: getProportionateScreenHeight(10)),
-                  Text(
-                    "Your Cart",
-                    style: headingStyle,
-                  ),
-                  SizedBox(height: getProportionateScreenHeight(20)),
+                  // SizedBox(height: getProportionateScreenHeight(20)),
                   SizedBox(
-                    height: SizeConfig.screenHeight * 0.75,
+                    height: SizeConfig.screenHeight * 0.8,
                     child: Center(
                       child: buildCartItemsList(),
                     ),
@@ -96,19 +91,7 @@ class _BodyState extends State<Body> {
 
           return Column(
             children: [
-              DefaultButton(
-                text: "Proceed to Payment",
-                press: () {
-                  bottomSheetHandler = Scaffold.of(context).showBottomSheet(
-                    (context) {
-                      return CheckoutCard(
-                        onCheckoutPressed: checkoutButtonCallback,
-                      );
-                    },
-                  );
-                },
-              ),
-              SizedBox(height: getProportionateScreenHeight(20)),
+              // SizedBox(height: getProportionateScreenHeight(20)),
               Expanded(
                 child: ListView.builder(
                   padding: EdgeInsets.symmetric(vertical: 16),
@@ -122,6 +105,18 @@ class _BodyState extends State<Body> {
                         context, cartItemsId[index], index);
                   },
                 ),
+              ),
+              DefaultButton(
+                text: "Proceed to Payment",
+                press: () {
+                  bottomSheetHandler = Scaffold.of(context).showBottomSheet(
+                        (context) {
+                      return CheckoutCard(
+                        onCheckoutPressed: checkoutButtonCallback,
+                      );
+                    },
+                  );
+                },
               ),
             ],
           );
@@ -208,7 +203,7 @@ class _BodyState extends State<Body> {
       margin: EdgeInsets.symmetric(vertical: 4),
       decoration: BoxDecoration(
         border: Border.all(color: kTextColor.withOpacity(0.15)),
-        borderRadius: BorderRadius.circular(15),
+        borderRadius: BorderRadius.circular(5),
       ),
       child: FutureBuilder<Product>(
         future: ProductDatabaseHelper().getProductWithID(cartItemId),
@@ -239,13 +234,13 @@ class _BodyState extends State<Body> {
                 Expanded(
                   flex: 1,
                   child: Container(
-                    padding: EdgeInsets.symmetric(
-                      horizontal: 2,
-                      vertical: 12,
-                    ),
+                    // padding: EdgeInsets.symmetric(
+                    //   horizontal: 2,
+                    //   vertical: 12,
+                    // ),
                     decoration: BoxDecoration(
-                      color: kTextColor.withOpacity(0.05),
-                      borderRadius: BorderRadius.circular(15),
+                      // color: kTextColor.withOpacity(0.05),
+                      borderRadius: BorderRadius.circular(5),
                     ),
                     child: Column(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -253,7 +248,7 @@ class _BodyState extends State<Body> {
                         InkWell(
                           child: Icon(
                             Icons.arrow_drop_up,
-                            color: kTextColor,
+                            color: kPrimaryColor,
                           ),
                           onTap: () async {
                             await arrowUpCallback(cartItemId);
@@ -286,7 +281,7 @@ class _BodyState extends State<Body> {
                         InkWell(
                           child: Icon(
                             Icons.arrow_drop_down,
-                            color: kTextColor,
+                            color: kPrimaryColor,
                           ),
                           onTap: () async {
                             await arrowDownCallback(cartItemId);

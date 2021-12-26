@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:healthfix/models/Product.dart';
 import 'package:healthfix/services/database/product_database_helper.dart';
+import 'package:healthfix/size_config.dart';
 import 'package:logger/logger.dart';
 
 import '../constants.dart';
@@ -28,7 +29,7 @@ class ProductCard extends StatelessWidget {
           ),
         ),
         child: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 15, vertical: 15),
+          padding: EdgeInsets.symmetric(horizontal: getProportionateScreenHeight(15), vertical: getProportionateScreenHeight(15)),
           child: FutureBuilder<Product>(
             future: ProductDatabaseHelper().getProductWithID(productId),
             builder: (context, snapshot) {
@@ -61,8 +62,9 @@ class ProductCard extends StatelessWidget {
     return Column(
       // mainAxisAlignment: MainAxisAlignment.center,
       children: [
-        AspectRatio(
-          aspectRatio: 1,
+        Container(
+          width: getProportionateScreenHeight(110),
+          height: getProportionateScreenHeight(110),
           child: ClipRRect(
             borderRadius: BorderRadius.circular(5),
             child: Image.network(
@@ -70,7 +72,7 @@ class ProductCard extends StatelessWidget {
             ),
           ),
         ),
-        SizedBox(height: 10),
+        SizedBox(height: getProportionateScreenHeight(10)),
         Container(
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
@@ -81,7 +83,7 @@ class ProductCard extends StatelessWidget {
                 maxLines: 2,
                 overflow: TextOverflow.ellipsis,
               ),
-              SizedBox(height: 10),
+              SizedBox(height: getProportionateScreenHeight(10)),
               Column(
                 // mainAxisAlignment: MainAxisAlignment.center,
                 crossAxisAlignment: CrossAxisAlignment.start,
@@ -93,21 +95,17 @@ class ProductCard extends StatelessWidget {
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
-                      Text(
-                        "\Rs. ${product.originalPrice}",
-                        style: cusPdctOriPriceStyle()
-                      ),
+                      Text("\Rs. ${product.originalPrice}", style: cusPdctOriPriceStyle()),
                       Text(
                         "${product.calculatePercentageDiscount()}% OFF",
                         style: TextStyle(
                           color: Colors.red,
-                          fontSize: 13,
+                          fontSize: getProportionateScreenHeight(13),
                           fontWeight: FontWeight.w900,
                         ),
                       ),
                     ],
                   ),
-
                 ],
               ),
             ],

@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:healthfix/constants.dart';
+import 'package:healthfix/screens/cart/cart_screen.dart';
 import 'package:healthfix/screens/category/category_screen.dart';
 import 'package:healthfix/screens/explore_fitness/explore_screen.dart';
 
@@ -32,7 +33,7 @@ class _HomeScreenState extends State<HomeScreen> {
   }
 
   void _onItemTapped(int index) {
-    print(index);
+    // print(index);
     _tabsPageController.animateToPage(
       index,
       duration: Duration(seconds: 1),
@@ -54,21 +55,26 @@ class _HomeScreenState extends State<HomeScreen> {
         // Use [dark] for white status bar and [light] for black status bar.
         statusBarBrightness: Brightness.dark,
       ),
-      child: Scaffold(
-        body: PageView(
-            controller: _tabsPageController,
-            onPageChanged: (num) {
-              setState(() {
-                _selectedIndex = num;
-              });
-            },
-            children: [
-              Body(),
-              ExploreScreen(),
-              CategoryScreen(),
-            ]),
-        // drawer: HomeScreenDrawer(),
-        bottomNavigationBar: buildBottomNavigationBar(),
+
+      child: GestureDetector(
+        onTap: () => FocusManager.instance.primaryFocus?.unfocus(),
+        child: Scaffold(
+          body: PageView(
+              controller: _tabsPageController,
+              onPageChanged: (num) {
+                setState(() {
+                  _selectedIndex = num;
+                });
+              },
+              children: [
+                Body(goToCategory),
+                ExploreScreen(),
+                CategoryScreen(),
+                CartScreen(),
+              ]),
+          // drawer: HomeScreenDrawer(),
+          bottomNavigationBar: buildBottomNavigationBar(),
+        ),
       ),
     );
   }
@@ -81,16 +87,17 @@ class _HomeScreenState extends State<HomeScreen> {
           activeIcon: SvgPicture.asset("assets/icons/app/icons-filled-home.svg"),
           label: 'Home',
         ),
-        BottomNavigationBarItem(
-          icon: SvgPicture.asset("assets/icons/app/icons-shop.svg"),
-          activeIcon: SvgPicture.asset("assets/icons/app/icons-filled-shop.svg"),
-          label: 'Shop',
-          // backgroundColor: Colors.pink,
-        ),
+        // BottomNavigationBarItem(
+        //   icon: SvgPicture.asset("assets/icons/app/icons-shop.svg"),
+        //   activeIcon: SvgPicture.asset("assets/icons/app/icons-filled-shop.svg"),
+        //   label: 'Shop',
+        //   // backgroundColor: Colors.pink,
+        // ),
         BottomNavigationBarItem(
           icon: SvgPicture.asset("assets/icons/app/icons-explore.svg"),
           activeIcon: SvgPicture.asset("assets/icons/app/icons-filled-explore.svg"),
           label: 'Explore',
+
           // backgroundColor: Colors.green,
         ),
         BottomNavigationBarItem(
@@ -114,5 +121,12 @@ class _HomeScreenState extends State<HomeScreen> {
       type: BottomNavigationBarType.fixed,
       onTap: _onItemTapped,
     );
+  }
+
+  void goToCategory(){
+    setState(() {
+      _selectedIndex = 2;
+      _onItemTapped(2);
+    });
   }
 }
