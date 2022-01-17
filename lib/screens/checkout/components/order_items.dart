@@ -1,17 +1,19 @@
 import 'package:flutter/material.dart';
 import 'package:healthfix/components/nothingtoshow_container.dart';
 import 'package:healthfix/components/product_short_detail_card.dart';
+import 'package:healthfix/models/CartItem.dart';
 import 'package:healthfix/models/Product.dart';
 import 'package:healthfix/screens/product_details/product_details_screen.dart';
 import 'package:healthfix/services/data_streams/cart_items_stream.dart';
 import 'package:healthfix/services/database/product_database_helper.dart';
+import 'package:healthfix/services/database/user_database_helper.dart';
 import 'package:logger/logger.dart';
 
 import '../../../constants.dart';
 import '../../../size_config.dart';
 
 class OrderItems extends StatefulWidget {
-  const OrderItems({
+  OrderItems({
     Key key,
   }) : super(key: key);
 
@@ -45,7 +47,8 @@ class _OrderItemsState extends State<OrderItems> {
             Text("OrderItems", style: cusCenterHeadingStyle(null, null, getProportionateScreenHeight(18))),
           ],
         ),
-        SizedBox(height: SizeConfig.screenHeight * 0.14, child: buildCartItemsList()),
+        // SizedBox(height: SizeConfig.screenHeight * 0.14, child: buildCartItemsList()),
+        buildCartItemsList(),
       ],
     );
   }
@@ -56,6 +59,8 @@ class _OrderItemsState extends State<OrderItems> {
       builder: (context, snapshot) {
         if (snapshot.hasData) {
           List<String> cartItemsId = snapshot.data;
+          // print(snapshot.data);
+
           if (cartItemsId.length == 0) {
             return Center(
               child: NothingToShowContainer(
@@ -65,36 +70,39 @@ class _OrderItemsState extends State<OrderItems> {
             );
           }
 
-          return Column(
-            children: [
-              // SizedBox(height: getProportionateScreenHeight(20)),
-              Expanded(
-                child: ListView.builder(
-                  scrollDirection: Axis.horizontal,
-                  padding: EdgeInsets.symmetric(vertical: 16),
-                  physics: BouncingScrollPhysics(),
-                  itemCount: cartItemsId.length,
-                  itemBuilder: (context, index) {
-                    if (index >= cartItemsId.length) {
-                      return SizedBox(height: getProportionateScreenHeight(80));
-                    }
-                    return buildCartItem(cartItemsId[index], index);
-                  },
+          return Container(
+            height: SizeConfig.screenHeight * 0.14,
+            child: Column(
+              children: [
+                // SizedBox(height: getProportionateScreenHeight(20)),
+                Expanded(
+                  child: ListView.builder(
+                    scrollDirection: Axis.horizontal,
+                    padding: EdgeInsets.symmetric(vertical: 16),
+                    physics: BouncingScrollPhysics(),
+                    itemCount: cartItemsId.length,
+                    itemBuilder: (context, index) {
+                      if (index >= cartItemsId.length) {
+                        return SizedBox(height: getProportionateScreenHeight(80));
+                      }
+                      return buildCartItem(cartItemsId[index], index);
+                    },
+                  ),
                 ),
-              ),
-              // DefaultButton(
-              //   text: "Proceed to Payment",
-              //   press: () {
-              //     bottomSheetHandler = Scaffold.of(context).showBottomSheet(
-              //       (context) {
-              //         return CheckoutCard(
-              //           onCheckoutPressed: checkoutButtonCallback,
-              //         );
-              //       },
-              //     );
-              //   },
-              // ),
-            ],
+                // DefaultButton(
+                //   text: "Proceed to Payment",
+                //   press: () {
+                //     bottomSheetHandler = Scaffold.of(context).showBottomSheet(
+                //       (context) {
+                //         return CheckoutCard(
+                //           onCheckoutPressed: checkoutButtonCallback,
+                //         );
+                //       },
+                //     );
+                //   },
+                // ),
+              ],
+            ),
           );
         } else if (snapshot.connectionState == ConnectionState.waiting) {
           return Center(
@@ -116,6 +124,12 @@ class _OrderItemsState extends State<OrderItems> {
   }
 
   Widget buildCartItem(String cartItemId, int index) {
+    Future<Product> pdct = ProductDatabaseHelper().getProductWithID(cartItemId);
+    Future<CartItem> cartItem = UserDatabaseHelper().getCartItemFromId(cartItemId);
+    Map variation;
+    int i = 1;
+    int j = 1;
+
     return Container(
       width: SizeConfig.screenWidth * 0.7,
       padding: EdgeInsets.only(
@@ -128,14 +142,40 @@ class _OrderItemsState extends State<OrderItems> {
         border: Border.all(color: kTextColor.withOpacity(0.15)),
         borderRadius: BorderRadius.circular(5),
       ),
-      child: FutureBuilder<Product>(
-        future: ProductDatabaseHelper().getProductWithID(cartItemId),
+      child: FutureBuilder(
+        future: Future.wait([pdct, cartItem]),
         builder: (context, snapshot) {
           if (snapshot.hasData) {
-            Product product = snapshot.data;
+            Product product = snapshot.data[0];
+            int itemCount = 0;
+            final cartItem = snapshot.data[1];
+            // print(i);
+            if (i == 1) {
+              if (cartItem.variation != null) {
+                variation = cartItem.variation[0];
+                // print({product.id: variation});
+                itemCount = variation["item_count"];
+                // print(i);
+                print(product.title);
+              } else {
+                itemCount = cartItem.itemCount;
+                // print(product.title);
+
+                // print(itemCount);
+                print({
+                  product.id: {"item_count": itemCount}
+                });
+              }
+            }
+            i++;
+
+            // print("WW")
+
             return SizedBox(
               child: ProductShortDetailCard(
                 productId: product.id,
+                itemCount: itemCount,
+                variation: variation,
                 onPressed: () {
                   Navigator.push(
                     context,

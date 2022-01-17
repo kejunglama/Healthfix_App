@@ -41,6 +41,7 @@ class _ColorvariantsBuilderState extends State<ColorvariantsBuilder> {
     List _colors = widget.colors;
     if (_colors != _colorsDup) _selectedIndex = widget.selectedIndex;
     _colorsDup = _colors;
+    print(_colors);
     // _selectedIndex = null;
 
     // print(int.parse("0xFF" + _colors[0]));
@@ -68,7 +69,7 @@ class _ColorvariantsBuilderState extends State<ColorvariantsBuilder> {
                   children: [
                     Container(
                       decoration: BoxDecoration(
-                        color: Color(int.parse("0xFF" + _colors[i])),
+                        color: Color(int.parse("0xFF" + _colors[i]["hex"])),
                         borderRadius: BorderRadius.circular(getProportionateScreenWidth(20)),
                       ),
                     ),

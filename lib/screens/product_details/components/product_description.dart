@@ -11,7 +11,7 @@ class ProductDescription extends StatelessWidget {
   final Product product;
   final sizes = new Set();
   final colors = new Set();
-  void Function(String size, String color) setSelectedVariant;
+  void Function(String size, Map color) setSelectedVariant;
 
   //
   // List jsonArray = [
@@ -109,7 +109,7 @@ class ProductDescription extends StatelessWidget {
 }
 
 class ProductVariationDescription extends StatefulWidget {
-  void Function(String size, String color) setSelectedVariant;
+  void Function(String size, Map color) setSelectedVariant;
 
   ProductVariationDescription({
     Key key,
@@ -132,7 +132,7 @@ class ProductVariationDescription extends StatefulWidget {
 class _ProductVariationDescriptionState extends State<ProductVariationDescription> {
   List _colors = [];
   String _selectedSize;
-  String _selectedColor;
+  Map _selectedColor;
   num _selectedColorIndex;
 
   setSizeAndFetchColors(String size, List colors) {
@@ -144,7 +144,7 @@ class _ProductVariationDescriptionState extends State<ProductVariationDescriptio
     });
   }
 
-  setColor(String color) {
+  setColor(Map color) {
     setState(() {
       _selectedColor = color;
       if (_selectedColor != null && _selectedSize != null) widget.setSelectedVariant(_selectedSize, _selectedColor);

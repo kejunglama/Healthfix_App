@@ -9,15 +9,20 @@ import '../size_config.dart';
 class ProductShortDetailCard extends StatelessWidget {
   final String productId;
   final VoidCallback onPressed;
+  Map variation;
+  num itemCount;
 
-  const ProductShortDetailCard({
+  ProductShortDetailCard({
     Key key,
     @required this.productId,
     @required this.onPressed,
+    this.variation,
+    this.itemCount,
   }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
+    // print(variation != null && variation.isNotEmpty);
     return InkWell(
       onTap: onPressed,
       child: FutureBuilder<Product>(
@@ -53,11 +58,27 @@ class ProductShortDetailCard extends StatelessWidget {
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
                       Text(
-                        product.title,
+                        itemCount != null
+                            ? itemCount > 1
+                                ? "x${itemCount.toString()} ${product.title}"
+                                : product.title
+                            : product.title,
                         softWrap: true,
                         overflow: TextOverflow.ellipsis,
                         style: cusPdctNameStyle,
-                        maxLines: 2,
+                        maxLines: (product.variations == null) ? 2 : 1,
+                        // maxLines: 1,
+                      ),
+                      // Visibility(
+                      //   visible: itemCount != null,
+                      //   child: Text(itemCount.toString()),
+                      // ),
+                      Visibility(
+                        visible: (variation != null && variation.isNotEmpty),
+                        child: Text(
+                          (variation != null && variation.isNotEmpty) ? "${variation["size"]} - ${variation["color"]["name"]}" : "",
+                          style: cusPdctNameStyle,
+                        ),
                       ),
                       SizedBox(height: 10),
                       Text.rich(

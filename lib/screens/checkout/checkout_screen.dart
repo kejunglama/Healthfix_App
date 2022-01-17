@@ -22,6 +22,8 @@ class CheckoutScreen extends StatefulWidget {
 class _CheckoutScreenState extends State<CheckoutScreen> {
   num cartTotal;
   num deliveryCharge;
+  List<Map> arr;
+
   final AddressesStream addressesStream = AddressesStream();
   final TextEditingController phoneFieldController = TextEditingController();
   final TextEditingController emailFieldController = TextEditingController();
@@ -51,6 +53,8 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
 
   @override
   Widget build(BuildContext context) {
+    arr = [];
+
     return Scaffold(
       resizeToAvoidBottomInset: false,
       appBar: AppBar(
@@ -85,6 +89,7 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
                               Divider(thickness: 0.1, color: Colors.cyan),
                               sizedBoxOfHeight(12),
                               // Order Items
+                              // OrderItems(getCartPdct: getCartPdct),
                               OrderItems(),
 
                               sizedBoxOfHeight(12),
@@ -108,11 +113,15 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
                             text: "Proceed to Payment",
                             press: () {
                               if (address.phone != phoneFieldController.text) address.phone = phoneFieldController.text;
-                              print(address);
-                              print(emailFieldController.text);
+
+                              final Map _address = address.toMap();
+                              _address["email"] = emailFieldController.text;
+                              final Map totals = {"cartTotal": cartTotal, "deliveryCharge": deliveryCharge, "netTotal": cartTotal + deliveryCharge};
+
+                              print(_address);
                               print("");
-                              final totals = {"cartTotal": cartTotal, "deliveryCharge": deliveryCharge, "netTotal": cartTotal + deliveryCharge};
                               print(totals);
+
                             },
                           ),
                           // buildHintText("District"),
@@ -221,4 +230,36 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
       ),
     );
   }
+
+  // getCartPdct(Map val) {
+  //   // print(val);
+  //   arr.add(val);
+  //   // String key = val.keys.toString();
+  //   // List _arr = [];
+  //   // for (int i = 0; i < arr.length; i++) {
+  //   //   if (arr[i].keys.toString() != key) {
+  //   //     // print("arr.add(val)");
+  //   //     continue;
+  //   //   }
+  //   //   // arr.add(val);
+  //   //   // print(val);
+  //   //
+  //   // }
+  //   // print(arr);
+  //   var _arr = arr.toSet().toList();
+  //   print(arr);
+  //   // var seen = Set<Map>();
+  //   // List<Map> uniqueList = arr.where((country) => seen.add(country)).toList();
+  //   // print(uniqueList);
+  //
+  //   // arr.forEach((e) {
+  //   //   String key = val.keys.toString();
+  //   //   if (e.keys.toString() != key) {
+  //   //     print("arr.add(val)");
+  //   //     continue;
+  //   //   }
+  //   //   _arr.add(val);
+  //   // });
+  //   // print(arr);
+  // }
 }

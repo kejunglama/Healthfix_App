@@ -20,6 +20,7 @@ class NothingToShowContainer extends StatelessWidget {
       width: SizeConfig.screenWidth * 0.75,
       height: SizeConfig.screenHeight * 0.2,
       child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
         children: [
           SvgPicture.asset(
             iconPath,

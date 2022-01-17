@@ -10,28 +10,31 @@ import 'package:logger/logger.dart';
 import '../../../utils.dart';
 
 class AddToCartFAB extends StatelessWidget {
-  const AddToCartFAB({
+  final String productId;
+  Function onTap;
+
+  AddToCartFAB({
     Key key,
     @required this.productId,
-    @required this.variations,
+    this.onTap,
   }) : super(key: key);
-
-  final String productId;
-  final Map variations;
 
   @override
   Widget build(BuildContext context) {
+    Map variations;
+
     return FloatingActionButton.extended(
       onPressed: () async {
+        variations = onTap();
+        // print("Variation");
+        // print(variations);
         bool allowed = AuthentificationService().currentUserVerified;
         if (!allowed) {
-          final reverify = await showConfirmationDialog(context,
-              "You haven't verified your email address. This action is only allowed for verified users.",
-              positiveResponse: "Resend verification email",
-              negativeResponse: "Go back");
+          final reverify = await showConfirmationDialog(
+              context, "You haven't verified your email address. This action is only allowed for verified users.",
+              positiveResponse: "Resend verification email", negativeResponse: "Go back");
           if (reverify) {
-            final future =
-                AuthentificationService().sendVerificationEmailToCurrentUser();
+            final future = AuthentificationService().sendVerificationEmailToCurrentUser();
             await showDialog(
               context: context,
               builder: (context) {
@@ -47,8 +50,7 @@ class AddToCartFAB extends StatelessWidget {
         bool addedSuccessfully = false;
         String snackbarMessage;
         try {
-          addedSuccessfully =
-              await UserDatabaseHelper().addProductToCart(productId, variations);
+          addedSuccessfully = await UserDatabaseHelper().addProductToCart(productId, variations);
           if (addedSuccessfully == true) {
             snackbarMessage = "Product added successfully";
           } else {
@@ -68,10 +70,11 @@ class AddToCartFAB extends StatelessWidget {
             ),
           );
         }
-      },elevation: 3,
+      },
+      elevation: 3,
       label: Text(
         "Add to Cart",
-        style: cusHeadingStyle(getProportionateScreenHeight(14),Colors.white),
+        style: cusHeadingStyle(getProportionateScreenHeight(14), Colors.white),
       ),
       icon: Icon(
         Icons.shopping_cart,

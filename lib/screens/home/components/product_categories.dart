@@ -18,7 +18,7 @@ class ProductCategories extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    List _pdctCategories = new List.from(pdctCategories);
+    List<Map> _pdctCategories = new List.from(pdctCategories);
     if(_pdctCategories[0]["product_type"] == ProductType.All) _pdctCategories.removeAt(0);
     // print(_pdctCategories);
     // print(pdctCategories);

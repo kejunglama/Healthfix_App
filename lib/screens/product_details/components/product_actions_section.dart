@@ -14,7 +14,7 @@ import '../../../utils.dart';
 
 class ProductActionsSection extends StatelessWidget {
   final Product product;
-  void Function(String size, String color) setSelectedVariant;
+  void Function(String size, Map color) setSelectedVariant;
 
   ProductActionsSection({
     Key key,

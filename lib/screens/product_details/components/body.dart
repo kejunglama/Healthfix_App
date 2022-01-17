@@ -28,7 +28,7 @@ class Body extends StatefulWidget {
 class _BodyState extends State<Body> {
   num _productDisPrice, _productOriPrice;
   Product product;
-  String _selectedColor;
+  Map _selectedColor;
   String _selectedSize;
   Map selectedVariations;
   var numFormat = NumberFormat('#,##,000');
@@ -38,18 +38,42 @@ class _BodyState extends State<Body> {
     super.initState();
   }
 
-  void setSelectedVariant(String size, String color) {
+  void setSelectedVariant(String size, Map color) {
     _selectedColor = color;
     _selectedSize = size;
-    print("Variants: $_selectedColor $_selectedSize");
+    // print("Variants: $_selectedColor $_selectedSize");
 
     List variant =
-        product.variations.where((variant) => variant["size"] == _selectedSize).where((variant) => variant["color"] == _selectedColor).toList();
+        product.variations.where((variant) => variant["size"] == _selectedSize).where((variant) => variant["color"]["name"] == _selectedColor["name"]).toList();
     // print(variant.first["price"]);
     setState(() {
       _productDisPrice = int.parse(variant.first["price"]);
       _productOriPrice = 1.2 * _productDisPrice;
     });
+  }
+
+  Map onCartTapFetchVariant() {
+    if (product.variations != null) {
+      if (_selectedSize == null) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text("Please Select a Size"),
+          ),
+        );
+      } else if (_selectedColor == null) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text("Please Select a Color"),
+          ),
+        );
+      } else {
+        selectedVariations = {"size": _selectedSize, "color": _selectedColor};
+        // print(selectedVariations);
+      }
+    } else {
+      selectedVariations = {};
+    }
+    return selectedVariations;
   }
 
   @override
@@ -258,47 +282,9 @@ class _BodyState extends State<Body> {
             //   ),
             // ),
 
-            GestureDetector(
-              onTap: () {
-                if (product.variations != null) {
-                  if (_selectedSize == null) {
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      SnackBar(
-                        content: Text("Please Select a Size"),
-                      ),
-                    );
-                  } else if (_selectedColor == null) {
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      SnackBar(
-                        content: Text("Please Select a Color"),
-                      ),
-                    );
-                  } else {
-                    selectedVariations = {"size": _selectedSize, "color": _selectedColor};
-                    print(selectedVariations);
-                  }
-                } else {
-                  selectedVariations = {};
-                }
-                AddToCartFAB(
-                  productId: product.id,
-                  variations: selectedVariations,
-                );
-              },
-              child: TextButton.icon(
-                onPressed: () {},
-                icon: Icon(
-                  Icons.shopping_bag_outlined,
-                  color: kPrimaryColor,
-                ),
-                label: Text(
-                  "Add to Cart",
-                  style: cusHeadingStyle(
-                    getProportionateScreenHeight(14),
-                    kPrimaryColor,
-                  ),
-                ),
-              ),
+            AddToCartFAB(
+              productId: product.id,
+              onTap: onCartTapFetchVariant,
             ),
           ],
         ),

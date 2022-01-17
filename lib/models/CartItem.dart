@@ -1,3 +1,5 @@
+import 'dart:ffi';
+
 import 'package:healthfix/models/Model.dart';
 
 class CartItem extends Model {
@@ -6,27 +8,40 @@ class CartItem extends Model {
   static const String VARIATION_KEY = "variation";
 
   int itemCount;
-  Map variations;
+  dynamic variation;
+
   CartItem({
     String id,
     this.itemCount = 0,
-    this.variations,
+    this.variation,
   }) : super(id);
 
-  factory CartItem.fromMap(Map<String, dynamic> map, {String id, Map variations}) {
+  factory CartItem.fromMap(Map<String, dynamic> map, {String id}) {
     return CartItem(
       id: id,
       itemCount: map[ITEM_COUNT_KEY],
-      variations: variations,
+      variation: map[VARIATION_KEY],
     );
   }
 
   @override
   Map<String, dynamic> toMap() {
-    final map = <String, dynamic>{
-      ITEM_COUNT_KEY: itemCount,
-      VARIATION_KEY: variations,
-    };
+    // print("variation in DBHELPER");
+    Map map;
+    if(variation != null){
+      if (variation.isEmpty) {
+        map = <String, dynamic>{
+          ITEM_COUNT_KEY: itemCount,
+        };
+      } else {
+        variation[ITEM_COUNT_KEY] = itemCount;
+        // print(variation);
+        map = <String, dynamic>{
+          VARIATION_KEY: [variation],
+        };
+      }
+    }
+
     return map;
   }
 

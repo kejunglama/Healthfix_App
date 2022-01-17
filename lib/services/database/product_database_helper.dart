@@ -67,7 +67,7 @@ class ProductDatabaseHelper {
         productsId.add(product.id);
       }
     }
-    print(productsId.toList());
+    // print(productsId.toList());
     return productsId.toList();
   }
 
@@ -175,7 +175,7 @@ class ProductDatabaseHelper {
           .where(Product.PRODUCT_TYPE_KEY, isEqualTo: EnumToString.convertToString(productType))
           .where(Product.PRODUCT_SUBTYPE_KEY, isEqualTo: productSubType)
           .get();
-      print(queryResult.docs);
+      // print(queryResult.docs);
     } else {
       queryResult = await productsCollectionReference.where(Product.PRODUCT_TYPE_KEY, isEqualTo: EnumToString.convertToString(productType)).get();
     }
