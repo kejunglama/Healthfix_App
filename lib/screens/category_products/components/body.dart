@@ -157,7 +157,7 @@ class _BodyState extends State<Body> {
                 height: SizeConfig.screenHeight * 0.5,
                 child: Center(
                   child: NothingToShowContainer(
-                    secondaryMessage: "No Products in ${EnumToString.convertToString(widget.productType)}",
+                    secondaryMessage: widget.productType == null ? "No Products to show." : "No Products in ${EnumToString.convertToString(widget.productType)}",
                   ),
                 ),
               );
@@ -352,29 +352,32 @@ class _BodyState extends State<Body> {
         itemCount: productsId.length,
         shrinkWrap: true,
         itemBuilder: (context, index) {
-          return ProductCard(
-            productId: productsId[index],
-            press: () {
-              Navigator.push(
-                context,
-                MaterialPageRoute(
-                  builder: (context) => ProductDetailsScreen(
-                    productId: productsId[index],
+          return Container(
+            child: ProductCard(
+              productId: productsId[index],
+              noSpacing: true,
+              press: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => ProductDetailsScreen(
+                      productId: productsId[index],
+                    ),
                   ),
-                ),
-              ).then(
-                (_) async {
-                  await refreshPage();
-                },
-              );
-            },
+                ).then(
+                  (_) async {
+                    await refreshPage();
+                  },
+                );
+              },
+            ),
           );
         },
         gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
           crossAxisCount: 2,
-          childAspectRatio: 2 / 3,
-          crossAxisSpacing: 8,
+          childAspectRatio: 0.84,
           mainAxisSpacing: 8,
+          crossAxisSpacing: 8,
         ),
         padding: EdgeInsets.symmetric(
           // horizontal: 4,

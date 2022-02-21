@@ -20,7 +20,6 @@ class Body extends StatelessWidget {
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.spaceAround,
                 children: [
-                  // SizedBox(height: SizeConfig.screenHeight * 0.04),
                   SizedBox(height: SizeConfig.screenHeight * 0.04),
                   Column(
                     children: [
@@ -46,7 +45,6 @@ class Body extends StatelessWidget {
                   SignInForm(),
                   SizedBox(height: SizeConfig.screenHeight * 0.08),
                   NoAccountText(),
-                  // SizedBox(height: getProportionateScreenHeight(20)),
                 ],
               ),
             ),

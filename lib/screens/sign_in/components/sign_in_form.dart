@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:future_progress_dialog/future_progress_dialog.dart';
-import 'package:healthfix/components/social_button.dart';
 import 'package:healthfix/exceptions/firebaseauth/messeged_firebaseauth_exception.dart';
 import 'package:healthfix/exceptions/firebaseauth/signin_exceptions.dart';
 import 'package:healthfix/screens/forgot_password/forgot_password_screen.dart';

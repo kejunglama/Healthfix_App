@@ -20,24 +20,29 @@ class ProductsSection extends StatelessWidget {
     @required this.sectionTitle,
     @required this.productsStreamController,
     this.emptyListMessage = "No Products to show here",
-    @required this.onProductCardTapped,
-    @required this.onSeeMorePress,
+    this.onProductCardTapped,
+    this.onSeeMorePress,
   }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
     return Container(
       padding: EdgeInsets.symmetric(
-        horizontal: getProportionateScreenHeight(10),
+        // horizontal: getProportionateScreenHeight(10),
         vertical: getProportionateScreenHeight(16),
       ),
 
       // Title Bar
       child: Column(
         children: [
-          SectionTile(
-            title: sectionTitle,
-            onPress: onSeeMorePress,
+          Padding(
+            padding: EdgeInsets.symmetric(
+              horizontal: getProportionateScreenHeight(10),
+            ),
+            child: SectionTile(
+              title: sectionTitle,
+              onPress: onSeeMorePress,
+            ),
           ),
           sizedBoxOfHeight(12),
           Expanded(child: buildProductsList()),
@@ -83,8 +88,9 @@ class ProductsSection extends StatelessWidget {
       scrollDirection: Axis.horizontal,
       gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
         crossAxisCount: 1,
-        mainAxisExtent: getProportionateScreenWidth(160),
-        mainAxisSpacing: getProportionateScreenWidth(12),
+        // childAspectRatio: 1,
+        mainAxisExtent: getProportionateScreenWidth(132),
+        // mainAxisSpacing: getProportionateScreenWidth(12),
       ),
       itemCount: productsId.length,
       itemBuilder: (context, index) {

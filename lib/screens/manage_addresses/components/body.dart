@@ -57,7 +57,7 @@ class _BodyState extends State<Body> {
                   SizedBox(height: getProportionateScreenHeight(4)),
                   Text(
                     "Swipe LEFT to Edit, Swipe RIGHT to Delete",
-                    style: TextStyle(fontSize: 12),
+                    style: cusBodyStyle(getProportionateScreenHeight(12))
                   ),
                   Visibility(
                     visible: !widget.isSelectAddressScreen,

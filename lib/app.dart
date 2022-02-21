@@ -17,11 +17,10 @@ class App extends StatelessWidget {
           splash: 'assets/logo/hf-logo-only.png',
           duration: 1000,
           backgroundColor: kPrimaryColor,
-          nextScreen: AuthentificationWrapper(),
+          nextScreen: AuthenticationWrapper(),
           splashTransition: SplashTransition.fadeTransition,
           pageTransitionType: PageTransitionType.fade,
         )
-        //home: AuthentificationWrapper(),
         );
   }
 }

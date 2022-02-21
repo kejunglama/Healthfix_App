@@ -9,12 +9,14 @@ import 'package:healthfix/screens/home/components/DietPlannerBanner.dart';
 import 'package:healthfix/screens/home/components/our_feature_section.dart';
 import 'package:healthfix/screens/home/components/product_categories.dart';
 import 'package:healthfix/screens/home/components/top_brands_section.dart';
+import 'package:healthfix/screens/offer_products/offer_products_screen.dart';
 import 'package:healthfix/screens/product_details/product_details_screen.dart';
 import 'package:healthfix/screens/search_result/search_result_screen.dart';
 import 'package:healthfix/services/authentification/authentification_service.dart';
 import 'package:healthfix/services/data_streams/all_products_stream.dart';
 import 'package:healthfix/services/data_streams/favourite_products_stream.dart';
 import 'package:healthfix/services/data_streams/featured_products_stream.dart';
+import 'package:healthfix/services/data_streams/flash_sales_products_stream.dart';
 import 'package:healthfix/services/database/product_database_helper.dart';
 import 'package:healthfix/size_config.dart';
 import 'package:logger/logger.dart';
@@ -25,11 +27,11 @@ import 'home_ads_banner.dart';
 import 'home_ongoing_offers.dart';
 import 'products_section.dart';
 
-// Cleaning
 class Body extends StatefulWidget {
   void Function() goToCategory;
+  void Function() showNotification;
 
-  Body(this.goToCategory);
+  Body(this.goToCategory, this.showNotification);
 
   @override
   _BodyState createState() => _BodyState();
@@ -54,12 +56,13 @@ class _BodyState extends State<Body> {
   // ];
 
   final List<String> topBrandsList = [
-    'https://i.pinimg.com/originals/49/1b/23/491b2363ff6e7272739a9a9215f273ac.jpg',
+    'https://scontent.fktm3-1.fna.fbcdn.net/v/t1.6435-9/117764675_145916383862343_2574290256692351033_n.jpg?_nc_cat=108&ccb=1-5&_nc_sid=09cbfe&_nc_ohc=3f03Voa66JgAX9TMaXG&_nc_ht=scontent.fktm3-1.fna&oh=00_AT-9_pn2sBZo8ibxkZ0qLKl0xTji25uS-bPx-f73uYuN9g&oe=627BA2D6',
     'https://media.designrush.com/inspiration_images/134805/conversions/_1512076803_93_Nike-preview.jpg',
     'https://image.shutterstock.com/image-photo/kiev-ukraine-march-31-2015-260nw-275940803.jpg',
-    'https://upload.wikimedia.org/wikipedia/commons/thumb/5/53/Reebok_2019_logo.svg/1200px-Reebok_2019_logo.svg.png',
     'https://cdn.shopify.com/s/files/1/1367/5207/files/gymshark_social_banner_1200x1200.jpg?v=1549554503',
     'https://1000logos.net/wp-content/uploads/2020/09/Optimum-Nutrition-Logo.png',
+    'https://1000logos.net/wp-content/uploads/2021/05/Skullcandy-logo.png',
+    'https://upload.wikimedia.org/wikipedia/commons/thumb/5/53/Reebok_2019_logo.svg/1200px-Reebok_2019_logo.svg.png',
   ];
 
   final String dietPlanBanner = "https://fitclic.net/wp-content/uploads/2021/10/custom-keto-diet-banner.png";
@@ -67,6 +70,7 @@ class _BodyState extends State<Body> {
   final FavouriteProductsStream favouriteProductsStream = FavouriteProductsStream();
   final AllProductsStream allProductsStream = AllProductsStream();
   final FeaturedProductsStream featuredProductsStream = FeaturedProductsStream();
+  final FlashSalesProductsStream flashSalesProductsStream = FlashSalesProductsStream();
 
   @override
   void initState() {
@@ -74,13 +78,15 @@ class _BodyState extends State<Body> {
     favouriteProductsStream.init();
     allProductsStream.init();
     featuredProductsStream.init();
+    flashSalesProductsStream.init();
   }
 
   @override
   void dispose() {
-    favouriteProductsStream.dispose();
-    allProductsStream.dispose();
-    featuredProductsStream.dispose();
+    // favouriteProductsStream.dispose();
+    // allProductsStream.dispose();
+    // featuredProductsStream.dispose();
+    // flashSalesProductsStream.dispose();
     super.dispose();
   }
 
@@ -97,6 +103,7 @@ class _BodyState extends State<Body> {
             children: [
               // Section - Home Header
               HomeHeader(
+                showNotification: widget.showNotification,
                 onSearchSubmitted: (value) async {
                   final query = value.toString();
                   if (query.length <= 0) return;
@@ -178,6 +185,9 @@ class _BodyState extends State<Body> {
               // ),
               // SizedBox(height: getProportionateScreenHeight(20)),
 
+              // Section - Flash Sales
+              flashSalesProducts(),
+
               // Section - Explore Products
               exploreProducts(),
 
@@ -187,7 +197,7 @@ class _BodyState extends State<Body> {
               // Section - Trending Products
               trendingProducts(),
 
-              // Top cat  egories
+              // Top categories
               // Container(
               //   color: kPrimaryColor.withOpacity(0.1),
               //   child: Column(
@@ -258,7 +268,7 @@ class _BodyState extends State<Body> {
 
   Container trendingProducts() {
     return Container(
-      height: getProportionateScreenHeight(310),
+      height: getProportionateScreenHeight(260),
       child: ProductsSection(
         sectionTitle: "Trending Products",
         productsStreamController: featuredProductsStream,
@@ -268,9 +278,29 @@ class _BodyState extends State<Body> {
     );
   }
 
+  Container flashSalesProducts() {
+    return Container(
+      height: getProportionateScreenHeight(260),
+      child: ProductsSection(
+        sectionTitle: "Flash Sales",
+        productsStreamController: flashSalesProductsStream,
+        emptyListMessage: "Looks like all Stores are closed",
+        onProductCardTapped: onProductCardTapped,
+          onSeeMorePress: (){
+            Navigator.push(
+              context,
+              MaterialPageRoute(
+                builder: (context) => OfferProductsScreen(),
+              ),
+            );
+          },
+      ),
+    );
+  }
+
   Container exploreProducts() {
     return Container(
-      height: getProportionateScreenHeight(310),
+      height: getProportionateScreenHeight(260),
       child: ProductsSection(
         sectionTitle: "Explore All Products",
         productsStreamController: allProductsStream,
@@ -296,6 +326,8 @@ class _BodyState extends State<Body> {
   Future<void> refreshPage() {
     favouriteProductsStream.reload();
     allProductsStream.reload();
+    featuredProductsStream.reload();
+    flashSalesProductsStream.reload();
     return Future<void>.value();
   }
 

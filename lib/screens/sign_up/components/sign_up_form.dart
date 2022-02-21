@@ -1,11 +1,11 @@
+import 'package:flutter/material.dart';
+import 'package:future_progress_dialog/future_progress_dialog.dart';
 import 'package:healthfix/components/custom_suffix_icon.dart';
 import 'package:healthfix/components/default_button.dart';
 import 'package:healthfix/exceptions/firebaseauth/messeged_firebaseauth_exception.dart';
 import 'package:healthfix/exceptions/firebaseauth/signup_exceptions.dart';
 import 'package:healthfix/services/authentification/authentification_service.dart';
 import 'package:healthfix/size_config.dart';
-import 'package:flutter/material.dart';
-import 'package:future_progress_dialog/future_progress_dialog.dart';
 import 'package:logger/logger.dart';
 
 import '../../../constants.dart';
@@ -19,8 +19,7 @@ class _SignUpFormState extends State<SignUpForm> {
   final _formKey = GlobalKey<FormState>();
   final TextEditingController emailFieldController = TextEditingController();
   final TextEditingController passwordFieldController = TextEditingController();
-  final TextEditingController confirmPasswordFieldController =
-      TextEditingController();
+  final TextEditingController confirmPasswordFieldController = TextEditingController();
 
   @override
   void dispose() {
@@ -35,8 +34,7 @@ class _SignUpFormState extends State<SignUpForm> {
     return Form(
       key: _formKey,
       child: Padding(
-        padding: EdgeInsets.symmetric(
-            horizontal: getProportionateScreenWidth(screenPadding)),
+        padding: EdgeInsets.symmetric(horizontal: getProportionateScreenWidth(screenPadding)),
         child: Column(
           children: [
             buildEmailFormField(),
@@ -79,8 +77,7 @@ class _SignUpFormState extends State<SignUpForm> {
       validator: (value) {
         if (confirmPasswordFieldController.text.isEmpty) {
           return kPassNullError;
-        } else if (confirmPasswordFieldController.text !=
-            passwordFieldController.text) {
+        } else if (confirmPasswordFieldController.text != passwordFieldController.text) {
           return kMatchPassError;
         } else if (confirmPasswordFieldController.text.length < 8) {
           return kShortPassError;
@@ -179,8 +176,7 @@ class _SignUpFormState extends State<SignUpForm> {
           },
         );
         if (signUpStatus == true) {
-          snackbarMessage =
-              "Registered successfully, Please verify your email id";
+          snackbarMessage = "Registered successfully, Please verify your email id";
         } else {
           throw FirebaseSignUpAuthUnknownReasonFailureException();
         }

@@ -1,16 +1,17 @@
-import 'package:healthfix/components/default_button.dart';
+import 'package:flutter/material.dart';
 import 'package:healthfix/constants.dart';
 import 'package:healthfix/models/Address.dart';
 import 'package:healthfix/services/database/user_database_helper.dart';
-import 'package:flutter/material.dart';
 import 'package:healthfix/size_config.dart';
 import 'package:logger/logger.dart';
 
 class AddressBox extends StatelessWidget {
   bool isSelectAddressScreen;
+
   AddressBox({
     Key key,
-    @required this.addressId, this.isSelectAddressScreen,
+    @required this.addressId,
+    this.isSelectAddressScreen,
   }) : super(key: key);
 
   final String addressId;
@@ -25,7 +26,7 @@ class AddressBox extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           SizedBox(
-            width: double.infinity,
+            width: SizeConfig.screenWidth,
             child: Container(
               padding: EdgeInsets.all(24),
               decoration: BoxDecoration(
@@ -41,88 +42,72 @@ class AddressBox extends StatelessWidget {
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           Text(
-                            "${address.title}",
-                            style: TextStyle(
-                              fontSize: 22,
-                              color: Colors.black,
-                              fontWeight: FontWeight.bold,
-                            ),
-                            textAlign: TextAlign.center,
+                            "${address.title} Address",
+                            style: cusHeadingStyle(20, kSecondaryColor),
                           ),
-                          Text(
-                            "${address.receiver}",
-                            style: TextStyle(
-                              fontSize: 16,
-                            ),
+                          sizedBoxOfHeight(12),
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              Text("Receiver's Name: ", style: cusBodyStyle(16)),
+                              Text("${address.receiver}", style: cusBodyStyle(16, FontWeight.w400)),
+                            ],
                           ),
-                          Text(
-                            "${address.addresLine1}",
-                            style: TextStyle(
-                              fontSize: 16,
-                            ),
+                          sizedBoxOfHeight(8),
+
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              Text("Address: ", style: cusBodyStyle(16)),
+                              Text("${address.address}", style: cusBodyStyle(16, FontWeight.w400)),
+                            ],
                           ),
-                          // Text(
-                          //   "${address.addressLine2}",
-                          //   style: TextStyle(
-                          //     fontSize: 16,
-                          //   ),
-                          // ),
-                          Text(
-                            "City: ${address.city}",
-                            style: TextStyle(
-                              fontSize: 16,
-                            ),
+                          sizedBoxOfHeight(8),
+
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              Text("Landmark: ", style: cusBodyStyle(16)),
+                              Text("${address.landmark}", style: cusBodyStyle(16, FontWeight.w400)),
+                            ],
                           ),
-                          // Text(
-                          //   "District: ${address.district}",
-                          //   style: TextStyle(
-                          //     fontSize: 16,
-                          //   ),
-                          // ),
-                          // Text(
-                          //   "State: ${address.state}",
-                          //   style: TextStyle(
-                          //     fontSize: 16,
-                          //   ),
-                          // ),
-                          Text(
-                            "Landmark: ${address.landmark}",
-                            style: TextStyle(
-                              fontSize: 16,
-                            ),
+                          sizedBoxOfHeight(8),
+
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              Text("City: ", style: cusBodyStyle(16)),
+                              Text("${address.city}, ${address.zone}", style: cusBodyStyle(16, FontWeight.w400)),
+                            ],
                           ),
-                          // Text(
-                          //   "PIN: ${address.pincode}",
-                          //   style: TextStyle(
-                          //     fontSize: 16,
-                          //   ),
-                          // ),
-                          Text(
-                            "Phone: ${address.phone}",
-                            style: TextStyle(
-                              fontSize: 16,
-                            ),
+                          sizedBoxOfHeight(8),
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              Text("Contact Number: ", style: cusBodyStyle(16)),
+                              Text("${address.phone}", style: cusBodyStyle(16, FontWeight.w400)),
+                            ],
                           ),
+
                           sizedBoxOfHeight(20),
                           Visibility(
                             visible: isSelectAddressScreen ?? false,
                             child: InkWell(
-                              onTap: (){
+                              onTap: () {
                                 Navigator.pop(context);
-                                Navigator.pop(context,address);
+                                Navigator.pop(context, address);
                                 // print(address.runtimeType);
                               },
                               child: Text(
                                 "Select Address",
-                                style: cusHeadingLinkStyle,
+                                style: cusBodyStyle(getProportionateScreenHeight(16), FontWeight.w500, kPrimaryColor),
                               ),
                             ),
                           ),
                           // DefaultButton(text: ,color: kPrimaryColor, press: (){},),
                         ],
                       );
-                    } else if (snapshot.connectionState ==
-                        ConnectionState.waiting) {
+                    } else if (snapshot.connectionState == ConnectionState.waiting) {
                       return Center(
                         child: CircularProgressIndicator(),
                       );

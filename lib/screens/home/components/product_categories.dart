@@ -40,35 +40,32 @@ class ProductCategories extends StatelessWidget {
         ),
         SizedBox(
           height: getProportionateScreenHeight(110),
-          child: Padding(
-            padding: EdgeInsets.symmetric(horizontal: getProportionateScreenHeight(10)),
-            child: ListView(
-              scrollDirection: Axis.horizontal,
-              physics: BouncingScrollPhysics(),
-              children: [
-                ...List.generate(
-                  _pdctCategories.length,
-                  (index) {
-                    return ProductTypeBox(
-                      icon: _pdctCategories[index][ICON_KEY],
-                      title: _pdctCategories[index][TITLE_KEY],
-                      onPress: () {
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                            builder: (context) => CategoryProductsScreen(
-                              productType: _pdctCategories[index][PRODUCT_TYPE_KEY],
-                              productTypes: _pdctCategories,
-                              subProductType: "",
-                            ),
+          child: ListView(
+            scrollDirection: Axis.horizontal,
+            physics: BouncingScrollPhysics(),
+            children: [
+              ...List.generate(
+                _pdctCategories.length,
+                (index) {
+                  return ProductTypeBox(
+                    imageLocation: _pdctCategories[index][IMAGE_LOCATION_KEY],
+                    title: _pdctCategories[index][TITLE_KEY],
+                    onPress: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => CategoryProductsScreen(
+                            productType: _pdctCategories[index][PRODUCT_TYPE_KEY],
+                            productTypes: _pdctCategories,
+                            subProductType: "",
                           ),
-                        );
-                      },
-                    );
-                  },
-                ),
-              ],
-            ),
+                        ),
+                      );
+                    },
+                  );
+                },
+              ),
+            ],
           ),
         ),
       ],

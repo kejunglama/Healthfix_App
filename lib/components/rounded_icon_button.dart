@@ -1,3 +1,5 @@
+// ignore_for_file: deprecated_member_use
+
 import 'package:flutter/material.dart';
 import 'package:healthfix/constants.dart';
 
@@ -12,7 +14,7 @@ class RoundedIconButton extends StatelessWidget {
     Key key,
     @required this.iconData,
     @required this.press,
-    @required this.size,
+    this.size,
   }) : super(key: key);
 
   @override
@@ -23,12 +25,13 @@ class RoundedIconButton extends StatelessWidget {
         alignment: Alignment.centerLeft,
         width: getProportionateScreenWidth(20),
         child: FlatButton(
+          // onPressed: (){},
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(50),
           ),
           padding: EdgeInsets.zero,
           color: Colors.white,
-          // onPressed: press,
+          onPressed: press,
           child: Icon(
             iconData,
             color: kTextColor.withOpacity(0.8),

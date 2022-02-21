@@ -16,7 +16,7 @@ class AdsBanners extends StatelessWidget {
           itemCount: imagesList.length,
           options: CarouselOptions(
             viewportFraction: 0.9,
-            height: getProportionateScreenHeight(150),
+            height: getProportionateScreenHeight(172),
             autoPlay: true,
             autoPlayInterval: Duration(seconds: 3),
             reverse: false,
@@ -31,7 +31,7 @@ class AdsBanners extends StatelessWidget {
                   borderRadius: BorderRadius.circular(5),
                   child: Image.network(
                     imagesList[i],
-                    width: 500,
+                    width: getProportionateScreenWidth(500),
                     fit: BoxFit.cover,
                   ),
                 ),

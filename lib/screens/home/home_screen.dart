@@ -1,5 +1,8 @@
+import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_local_notifications/flutter_local_notifications.dart';
+import 'package:healthfix/components/popup_dialog.dart';
 import 'package:healthfix/constants.dart';
 import 'package:healthfix/screens/cart/cart_screen.dart';
 import 'package:healthfix/screens/category/category_screen.dart';
@@ -17,26 +20,92 @@ class HomeScreen extends StatefulWidget {
 
 class _HomeScreenState extends State<HomeScreen> {
   var _selectedIndex = 0;
+  num _counter = 0;
   PageController _tabsPageController;
+  final FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin = FlutterLocalNotificationsPlugin();
+  AndroidNotificationChannel channel = AndroidNotificationChannel(
+      'high_importance_channel', // id
+      'High Importance Notifications', // title
+      description: 'This channel is used for important notifications.', // description
+      importance: Importance.high,
+      playSound: true);
 
   @override
   void initState() {
-    // TODO: implement initState
+    super.initState();
     _tabsPageController = PageController();
+    FirebaseMessaging.onMessage.listen((RemoteMessage message) {
+      RemoteNotification notification = message.notification;
+      AndroidNotification android = message.notification?.android;
+      if (notification != null && android != null) {
+        flutterLocalNotificationsPlugin.show(
+            notification.hashCode,
+            notification.title,
+            notification.body,
+            NotificationDetails(
+              android: AndroidNotificationDetails(
+                channel.id,
+                channel.name,
+                channelDescription: channel.description,
+                color: Colors.blue,
+                playSound: true,
+                icon: '@mipmap/ic_launcher',
+              ),
+            ));
+      }
+    });
+
+    FirebaseMessaging.onMessageOpenedApp.listen((RemoteMessage message) {
+      RemoteNotification notification = message.notification;
+      AndroidNotification android = message.notification?.android;
+      if (notification != null && android != null) {
+        showDialog(
+          context: context,
+          builder: (BuildContext context) => PopUpDialog(),
+        );
+        // showDialog(
+        //     context: context,
+        //     builder: (_) {
+        //       return AlertDialog(
+        //         title: Text(notification.title),
+        //         content: SingleChildScrollView(
+        //           child: Column(
+        //             crossAxisAlignment: CrossAxisAlignment.start,
+        //             children: [Text(notification.body)],
+        //           ),
+        //         ),
+        //       );
+        //     });
+      }
+    });
   }
 
   @override
   void dispose() {
-    // TODO: implement dispose
+    super.dispose();
     _tabsPageController.dispose();
   }
 
   void _onItemTapped(int index) {
-    // print(index);
     _tabsPageController.animateToPage(
       index,
       duration: Duration(seconds: 1),
       curve: Curves.easeOutCubic,
+    );
+  }
+
+  void showNotification() {
+    setState(() {
+      _counter++;
+    });
+    flutterLocalNotificationsPlugin.show(
+      0,
+      "Testing $_counter",
+      "How you doing?",
+      NotificationDetails(
+        android: AndroidNotificationDetails(channel.id, channel.name,
+            channelDescription: channel.description, importance: Importance.high, color: Colors.blue, playSound: true, icon: '@mipmap/ic_launcher'),
+      ),
     );
   }
 
@@ -54,25 +123,22 @@ class _HomeScreenState extends State<HomeScreen> {
         // Use [dark] for white status bar and [light] for black status bar.
         statusBarBrightness: Brightness.dark,
       ),
-      child: GestureDetector(
-        onTap: () => FocusManager.instance.primaryFocus?.unfocus(),
-        child: Scaffold(
-          body: PageView(
-              controller: _tabsPageController,
-              onPageChanged: (num) {
-                setState(() {
-                  _selectedIndex = num;
-                });
-              },
-              children: [
-                Body(goToCategory),
-                ExploreScreen(),
-                CategoryScreen(),
-                CartScreen(),
-              ]),
-          // drawer: HomeScreenDrawer(),
-          bottomNavigationBar: buildBottomNavigationBar(),
-        ),
+      child: Scaffold(
+        body: PageView(
+            controller: _tabsPageController,
+            onPageChanged: (num) {
+              setState(() {
+                _selectedIndex = num;
+              });
+            },
+            children: [
+              Body(goToCategory, showNotification),
+              CategoryScreen(),
+              ExploreScreen(),
+              CartScreen(),
+            ]),
+        // drawer: HomeScreenDrawer(),
+        bottomNavigationBar: buildBottomNavigationBar(),
       ),
     );
   }
@@ -81,40 +147,28 @@ class _HomeScreenState extends State<HomeScreen> {
     return BottomNavigationBar(
       items: <BottomNavigationBarItem>[
         BottomNavigationBarItem(
-          icon: Icon(Icons.home_outlined),
-          activeIcon: Icon(Icons.home),
+          icon: Icon(Icons.water_damage_outlined),
+          activeIcon: Icon(Icons.water_damage_rounded),
           label: 'Home',
-        ),
-        // BottomNavigationBarItem(
-        //   icon: SvgPicture.asset("assets/icons/app/icons-shop.svg"),
-        //   activeIcon: SvgPicture.asset("assets/icons/app/icons-filled-shop.svg"),
-        //   label: 'Shop',
-        //   // backgroundColor: Colors.pink,
-        // ),
-        BottomNavigationBarItem(
-          icon: Icon(Icons.loyalty_outlined),
-          activeIcon: Icon(Icons.loyalty),
-          label: 'Explore',
-
-          // backgroundColor: Colors.green,
         ),
         BottomNavigationBarItem(
           icon: Icon(Icons.grid_view),
           activeIcon: Icon(Icons.grid_view_rounded),
           label: 'Categories',
-          // backgroundColor: Colors.pink,
+        ),
+        BottomNavigationBarItem(
+          icon: Icon(Icons.loyalty_outlined),
+          activeIcon: Icon(Icons.loyalty),
+          label: 'Explore',
         ),
         BottomNavigationBarItem(
           icon: Icon(Icons.shopping_bag_outlined),
           activeIcon: Icon(Icons.shopping_bag_rounded),
           label: 'Cart',
-          // backgroundColor: Colors.purple,
         ),
       ],
       currentIndex: _selectedIndex,
       selectedItemColor: Colors.cyan,
-      // showUnselectedLabels: false,
-      // showSelectedLabels: false,
       unselectedItemColor: Colors.grey,
       backgroundColor: Colors.white,
       type: BottomNavigationBarType.fixed,
@@ -124,8 +178,8 @@ class _HomeScreenState extends State<HomeScreen> {
 
   void goToCategory() {
     setState(() {
-      _selectedIndex = 2;
-      _onItemTapped(2);
+      _selectedIndex = 1;
+      _onItemTapped(1);
     });
   }
 }

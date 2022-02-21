@@ -1,12 +1,13 @@
+import 'package:firebase_core/firebase_core.dart';
+import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 import 'package:healthfix/constants.dart';
 import 'package:healthfix/models/AppReview.dart';
 import 'package:healthfix/services/authentification/authentification_service.dart';
 import 'package:healthfix/services/database/app_review_database_helper.dart';
 import 'package:healthfix/services/firestore_files_access/firestore_files_access_service.dart';
 import 'package:healthfix/size_config.dart';
-import 'package:firebase_core/firebase_core.dart';
-import 'package:flutter/material.dart';
-import 'package:flutter_svg/flutter_svg.dart';
 import 'package:logger/logger.dart';
 import 'package:url_launcher/url_launcher.dart';
 
@@ -22,23 +23,22 @@ class Body extends StatelessWidget {
           padding: EdgeInsets.symmetric(
             horizontal: getProportionateScreenWidth(screenPadding),
           ),
-          child: SizedBox(
-            width: double.infinity,
+          child: Expanded(
             child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              crossAxisAlignment: CrossAxisAlignment.center,
               children: [
-                SizedBox(height: getProportionateScreenHeight(10)),
-                Text(
-                  "About Developer",
-                  style: headingStyle,
-                ),
-                SizedBox(height: getProportionateScreenHeight(50)),
+                sizedBoxOfHeight(120),
                 InkWell(
                   onTap: () async {
-                    const String linkedInUrl =
-                        "https://www.linkedin.com/in/imrb7here";
+                    const String linkedInUrl = "https://www.siteux.gq";
                     await launchUrl(linkedInUrl);
                   },
-                  child: buildDeveloperAvatar(),
+                  child: Container(
+                    height: SizeConfig.screenWidth * 0.4,
+                    width: SizeConfig.screenWidth * 0.4,
+                    child: Image.asset('assets/logo/logo-SITEUX.png'),
+                  ),
                 ),
                 SizedBox(height: getProportionateScreenHeight(30)),
                 Text(
@@ -48,7 +48,7 @@ class Body extends StatelessWidget {
                 Text(
                   "Kupondole Heights, Kathmandu",
                   style: TextStyle(
-                    fontSize: 21,
+                    fontSize: 18,
                     fontWeight: FontWeight.w500,
                   ),
                 ),
@@ -57,40 +57,30 @@ class Body extends StatelessWidget {
                   children: [
                     Spacer(),
                     IconButton(
-                      icon: SvgPicture.asset(
-                        "assets/icons/github_icon.svg",
-                        color: kTextColor.withOpacity(0.75),
-                      ),
-                      color: kTextColor.withOpacity(0.75),
-                      iconSize: 40,
-                      padding: EdgeInsets.all(16),
+                      icon: SvgPicture.asset("assets/icons/facebook.svg", color: Color(0xff4182CB)),
+                      iconSize: 50,
+                      padding: EdgeInsets.all(8),
                       onPressed: () async {
-                        const String githubUrl = "https://github.com/";
-                        await launchUrl(githubUrl);
+                        const String url = "https://facebook.com/siteux.np";
+                        await launch(url, forceSafariVC: false);
                       },
                     ),
                     IconButton(
-                      icon: SvgPicture.asset(
-                        "assets/icons/linkedin_icon.svg",
-                        color: kTextColor.withOpacity(0.75),
-                      ),
-                      iconSize: 40,
-                      padding: EdgeInsets.all(16),
+                      icon: SvgPicture.asset("assets/icons/instagram.svg", color: Color(0xff4182CB)),
+                      iconSize: 50,
+                      padding: EdgeInsets.all(8),
                       onPressed: () async {
-                        const String linkedInUrl =
-                            "https://www.linkedin.com/";
-                        await launchUrl(linkedInUrl);
+                        const String url = "https://instagram.com/siteux.np";
+                        await launch(url, forceSafariVC: false);
                       },
                     ),
                     IconButton(
-                      icon: SvgPicture.asset("assets/icons/instagram_icon.svg",
-                          color: kTextColor.withOpacity(0.75)),
-                      iconSize: 40,
-                      padding: EdgeInsets.all(16),
+                      icon: SvgPicture.asset("assets/icons/link.svg", color: Color(0xff4182CB)),
+                      iconSize: 50,
+                      padding: EdgeInsets.all(8),
                       onPressed: () async {
-                        const String instaUrl =
-                            "https://www.instagram.com/siteux.np";
-                        await launchUrl(instaUrl);
+                        const String url = "https://siteux.gq";
+                        await launch(url, forceSafariVC: false);
                       },
                     ),
                     Spacer(),
@@ -102,9 +92,9 @@ class Body extends StatelessWidget {
                   children: [
                     Spacer(),
                     IconButton(
-                      icon: Icon(Icons.thumb_up),
-                      color: kTextColor.withOpacity(0.75),
-                      iconSize: 50,
+                      icon: Icon(Icons.thumb_up_alt_rounded),
+                      color: Colors.blue.withOpacity(0.75),
+                      iconSize: 32,
                       padding: EdgeInsets.all(16),
                       onPressed: () {
                         submitAppReview(context, liked: true);
@@ -113,15 +103,15 @@ class Body extends StatelessWidget {
                     Text(
                       "Liked the app?",
                       style: TextStyle(
-                        fontWeight: FontWeight.bold,
                         fontSize: 18,
+                        color: Colors.blue,
                       ),
                     ),
                     IconButton(
-                      icon: Icon(Icons.thumb_down),
+                      icon: Icon(Icons.thumb_down_alt_rounded),
                       padding: EdgeInsets.all(16),
-                      color: kTextColor.withOpacity(0.75),
-                      iconSize: 50,
+                      color: Colors.blue.withOpacity(0.75),
+                      iconSize: 32,
                       onPressed: () {
                         submitAppReview(context, liked: false);
                       },
@@ -142,11 +132,11 @@ class Body extends StatelessWidget {
         future: FirestoreFilesAccess().getDeveloperImage(),
         builder: (context, snapshot) {
           if (snapshot.hasData) {
-            final url = snapshot.data;
+            // final url = snapshot.data;
             return CircleAvatar(
               radius: SizeConfig.screenWidth * 0.3,
               backgroundColor: kTextColor.withOpacity(0.75),
-              backgroundImage: NetworkImage("https://site-ux.com/wp-content/uploads/2021/03/Logo-SiteUX-Square-shaped-1.png"),
+              foregroundImage: Image.asset('assets/logo/HF-logo.png').image,
             );
           } else if (snapshot.hasError) {
             final error = snapshot.error.toString();
@@ -171,8 +161,7 @@ class Body extends StatelessWidget {
     }
   }
 
-  Future<void> submitAppReview(BuildContext context,
-      {bool liked = true}) async {
+  Future<void> submitAppReview(BuildContext context, {bool liked = true}) async {
     AppReview prevReview;
     try {
       prevReview = await AppReviewDatabaseHelper().getAppReviewOfCurrentUser();

@@ -1,15 +1,18 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:flutter/material.dart';
 import 'package:healthfix/components/default_button.dart';
+import 'package:healthfix/data.dart';
 import 'package:healthfix/models/Address.dart';
 import 'package:healthfix/services/database/user_database_helper.dart';
 import 'package:healthfix/size_config.dart';
-import 'package:flutter/material.dart';
 import 'package:logger/logger.dart';
 import 'package:string_validator/string_validator.dart';
+
 import '../../../constants.dart';
 
 class AddressDetailsForm extends StatefulWidget {
   final Address addressToEdit;
+
   AddressDetailsForm({
     Key key,
     this.addressToEdit,
@@ -21,16 +24,15 @@ class AddressDetailsForm extends StatefulWidget {
 
 class _AddressDetailsFormState extends State<AddressDetailsForm> {
   final _formKey = GlobalKey<FormState>();
+  String _currentSelectedZone;
+  String _currentSelectedCity;
+  bool _submitted = false;
 
   final TextEditingController titleFieldController = TextEditingController();
 
   final TextEditingController receiverFieldController = TextEditingController();
 
-  final TextEditingController addressLine1FieldController =
-      TextEditingController();
-
-  final TextEditingController addressLine2FieldController =
-      TextEditingController();
+  final TextEditingController addressFieldController = TextEditingController();
 
   final TextEditingController cityFieldController = TextEditingController();
 
@@ -48,8 +50,7 @@ class _AddressDetailsFormState extends State<AddressDetailsForm> {
   void dispose() {
     titleFieldController.dispose();
     receiverFieldController.dispose();
-    addressLine1FieldController.dispose();
-    addressLine2FieldController.dispose();
+    addressFieldController.dispose();
     cityFieldController.dispose();
     stateFieldController.dispose();
     districtFieldController.dispose();
@@ -66,31 +67,24 @@ class _AddressDetailsFormState extends State<AddressDetailsForm> {
       child: Column(
         children: [
           SizedBox(height: getProportionateScreenHeight(20)),
-          buildTitleField(),
-          SizedBox(height: getProportionateScreenHeight(30)),
-          buildReceiverField(),
-          SizedBox(height: getProportionateScreenHeight(30)),
-          buildAddressLine1Field(),
-          SizedBox(height: getProportionateScreenHeight(30)),
-          // buildAddressLine2Field(),
-          // SizedBox(height: getProportionateScreenHeight(30)),
-          buildCityField(),
-          SizedBox(height: getProportionateScreenHeight(30)),
-          // buildDistrictField(),
-          // SizedBox(height: getProportionateScreenHeight(30)),
-          // buildStateField(),
-          // SizedBox(height: getProportionateScreenHeight(30)),
-          buildLandmarkField(),
-          SizedBox(height: getProportionateScreenHeight(30)),
-          // buildPincodeField(),
-          // SizedBox(height: getProportionateScreenHeight(30)),
-          buildPhoneField(),
-          SizedBox(height: getProportionateScreenHeight(30)),
+          buildTextField(titleFieldController, "Title", "Enter a title for address"),
+          buildTextField(receiverFieldController, "Receiver Name", "Enter Receiver's Full Name"),
+          buildSelectField("Zone", "Select Zone",
+              fieldValueIsNull: _currentSelectedZone == null,
+              isEmpty: _currentSelectedZone == '',
+              dropdownButton: buildDropdownButtonForZone,
+              validator: zoneValidator),
+          buildSelectField("City", "Select City",
+              fieldValueIsNull: _currentSelectedCity == null,
+              isEmpty: _currentSelectedCity == '',
+              dropdownButton: buildDropdownButtonForCity,
+              validator: cityValidator),
+          buildTextField(addressFieldController, "Address Line", "Enter Address Line"),
+          buildTextField(landmarkFieldController, "Landmark", "Enter Landmarks near Location"),
+          buildTextField(phoneFieldController, "Phone Number", "Enter Phone Number", inputType: TextInputType.number),
           DefaultButton(
             text: "Save Address",
-            press: widget.addressToEdit == null
-                ? saveNewAddressButtonCallback
-                : saveEditedAddressButtonCallback,
+            press: widget.addressToEdit == null ? saveNewAddressButtonCallback : saveEditedAddressButtonCallback,
           ),
         ],
       ),
@@ -98,16 +92,58 @@ class _AddressDetailsFormState extends State<AddressDetailsForm> {
     if (widget.addressToEdit != null) {
       titleFieldController.text = widget.addressToEdit.title;
       receiverFieldController.text = widget.addressToEdit.receiver;
-      addressLine1FieldController.text = widget.addressToEdit.addresLine1;
-      // addressLine2FieldController.text = widget.addressToEdit.addressLine2;
-      cityFieldController.text = widget.addressToEdit.city;
-      // districtFieldController.text = widget.addressToEdit.district;
-      // stateFieldController.text = widget.addressToEdit.state;
+      addressFieldController.text = widget.addressToEdit.address;
       landmarkFieldController.text = widget.addressToEdit.landmark;
-      // pincodeFieldController.text = widget.addressToEdit.pincode;
       phoneFieldController.text = widget.addressToEdit.phone;
+      setState(() {
+        _currentSelectedCity = widget.addressToEdit.city;
+        _currentSelectedZone = widget.addressToEdit.zone;
+      });
     }
     return form;
+  }
+
+  DropdownButton buildDropdownButtonForZone(FormFieldState<String> state) {
+    return DropdownButton<String>(
+      hint: Text('Please choose a Zone'),
+      style: cusHeadingStyle(14, Colors.grey, null, FontWeight.w400),
+      value: _currentSelectedZone,
+      isDense: true,
+      onChanged: (String newValue) {
+        setState(() {
+          _currentSelectedZone = newValue;
+          _currentSelectedCity = null;
+          state.didChange(newValue);
+        });
+      },
+      items: nepalZonesAndDistricts.keys.map((String value) {
+        return DropdownMenuItem<String>(
+          value: value,
+          child: Text(value),
+        );
+      }).toList(),
+    );
+  }
+
+  DropdownButton buildDropdownButtonForCity(FormFieldState<String> state) {
+    List<String> cities = _currentSelectedZone == null ? [] : nepalZonesAndDistricts[_currentSelectedZone];
+    return DropdownButton<String>(
+      hint: Text('Please choose your City'),
+      style: cusHeadingStyle(14, Colors.grey, null, FontWeight.w400),
+      value: _currentSelectedCity,
+      isDense: true,
+      onChanged: (String newValue) {
+        setState(() {
+          _currentSelectedCity = newValue;
+          state.didChange(newValue);
+        });
+      },
+      items: cities.isEmpty
+          ? []
+          : cities.map((String value) {
+              return DropdownMenuItem<String>(value: value, child: Text(value));
+            }).toList(),
+    );
   }
 
   Widget buildTitleField() {
@@ -173,7 +209,7 @@ class _AddressDetailsFormState extends State<AddressDetailsForm> {
 
   Widget buildAddressLine1Field() {
     return TextFormField(
-      controller: addressLine1FieldController,
+      controller: addressFieldController,
       keyboardType: TextInputType.streetAddress,
       decoration: InputDecoration(
         hintText: "Enter Address Line No. 1",
@@ -192,37 +228,7 @@ class _AddressDetailsFormState extends State<AddressDetailsForm> {
         hintStyle: cusHeadingStyle(14, Colors.grey, null, FontWeight.w400),
       ),
       validator: (value) {
-        if (addressLine1FieldController.text.isEmpty) {
-          return FIELD_REQUIRED_MSG;
-        }
-        return null;
-      },
-      autovalidateMode: AutovalidateMode.onUserInteraction,
-    );
-  }
-
-  Widget buildAddressLine2Field() {
-    return TextFormField(
-      controller: addressLine2FieldController,
-      keyboardType: TextInputType.streetAddress,
-      decoration: InputDecoration(
-        hintText: "Enter Address Line No. 2",
-        labelText: "Address Line 2",
-        floatingLabelBehavior: FloatingLabelBehavior.always,
-        enabledBorder: OutlineInputBorder(
-          borderSide: BorderSide(color: Colors.cyan, width: 0.1),
-        ),
-        focusedBorder: OutlineInputBorder(
-          borderSide: BorderSide(color: kPrimaryColor),
-        ),
-        border: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(5.0),
-        ),
-        contentPadding: EdgeInsets.all(10),
-        hintStyle: cusHeadingStyle(14, Colors.grey, null, FontWeight.w400),
-      ),
-      validator: (value) {
-        if (addressLine2FieldController.text.isEmpty) {
+        if (addressFieldController.text.isEmpty) {
           return FIELD_REQUIRED_MSG;
         }
         return null;
@@ -239,7 +245,7 @@ class _AddressDetailsFormState extends State<AddressDetailsForm> {
         hintText: "Enter City",
         labelText: "City",
         floatingLabelBehavior: FloatingLabelBehavior.always,
-      enabledBorder: OutlineInputBorder(
+        enabledBorder: OutlineInputBorder(
           borderSide: BorderSide(color: Colors.cyan, width: 0.1),
         ),
         focusedBorder: OutlineInputBorder(
@@ -249,7 +255,8 @@ class _AddressDetailsFormState extends State<AddressDetailsForm> {
           borderRadius: BorderRadius.circular(5.0),
         ),
         contentPadding: EdgeInsets.all(10),
-        hintStyle: cusHeadingStyle(14, Colors.grey, null, FontWeight.w400),),
+        hintStyle: cusHeadingStyle(14, Colors.grey, null, FontWeight.w400),
+      ),
       validator: (value) {
         if (cityFieldController.text.isEmpty) {
           return FIELD_REQUIRED_MSG;
@@ -257,6 +264,151 @@ class _AddressDetailsFormState extends State<AddressDetailsForm> {
         return null;
       },
       autovalidateMode: AutovalidateMode.onUserInteraction,
+    );
+  }
+
+  Widget buildTextField(
+    TextEditingController fieldController,
+    String labelText,
+    String hintText, {
+    TextInputType inputType,
+  }) {
+    return Column(
+      children: [
+        TextFormField(
+          controller: fieldController,
+          keyboardType: inputType ?? TextInputType.name,
+          decoration: InputDecoration(
+            hintText: hintText,
+            labelText: labelText,
+            floatingLabelBehavior: FloatingLabelBehavior.always,
+            enabledBorder: OutlineInputBorder(
+              borderSide: BorderSide(color: Colors.cyan, width: 0.1),
+            ),
+            focusedBorder: OutlineInputBorder(
+              borderSide: BorderSide(color: kPrimaryColor),
+            ),
+            border: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(5.0),
+            ),
+            contentPadding: EdgeInsets.all(10),
+            hintStyle: cusHeadingStyle(14, Colors.grey, null, FontWeight.w400),
+          ),
+          validator: (value) {
+            if (fieldController.text.isEmpty) {
+              return FIELD_REQUIRED_MSG;
+            }
+            return null;
+          },
+          autovalidateMode: AutovalidateMode.onUserInteraction,
+        ),
+        SizedBox(height: getProportionateScreenHeight(30)),
+      ],
+    );
+  }
+
+  String zoneValidator(value) {
+    // if (_currentSelectedZone.isEmpty) {
+    return FIELD_REQUIRED_MSG;
+    // }
+    return null;
+  }
+
+  String cityValidator(value) {
+    if (_currentSelectedCity.isEmpty) {
+      return FIELD_REQUIRED_MSG;
+    }
+    return null;
+  }
+
+  Widget buildSelectField(
+    String labelText,
+    String hintText, {
+    bool fieldValueIsNull,
+    bool isEmpty,
+    DropdownButton dropdownButton(FormFieldState<String> state),
+    Function validator,
+  }) {
+    return Column(
+      children: [
+        FormField<String>(
+          builder: (FormFieldState<String> state) {
+            return InputDecorator(
+              decoration: InputDecoration(
+                errorText: _submitted && fieldValueIsNull ? "This field is required." : null,
+                hintText: hintText,
+                labelText: labelText,
+                floatingLabelBehavior: FloatingLabelBehavior.always,
+                enabledBorder: OutlineInputBorder(
+                  borderSide: BorderSide(color: Colors.cyan, width: 0.1),
+                ),
+                focusedBorder: OutlineInputBorder(
+                  borderSide: BorderSide(color: kPrimaryColor),
+                ),
+                border: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(5.0),
+                ),
+                contentPadding: EdgeInsets.all(10),
+                hintStyle: cusHeadingStyle(14, Colors.grey, null, FontWeight.w400),
+              ),
+              isEmpty: isEmpty,
+              child: DropdownButtonHideUnderline(
+                child: dropdownButton(state),
+              ),
+            );
+          },
+        ),
+        SizedBox(height: getProportionateScreenHeight(30)),
+      ],
+    );
+  }
+
+  Widget buildZonesField() {
+    return FormField<String>(
+      builder: (FormFieldState<String> state) {
+        return InputDecorator(
+          decoration: InputDecoration(
+            // labelStyle: textStyle,
+            errorStyle: TextStyle(color: Colors.redAccent, fontSize: 16.0),
+            hintText: 'Select Zone',
+            // hintText: "Enter City",
+            labelText: "Zone",
+            enabledBorder: OutlineInputBorder(
+              borderSide: BorderSide(color: Colors.cyan, width: 0.1),
+            ),
+            focusedBorder: OutlineInputBorder(
+              borderSide: BorderSide(color: kPrimaryColor),
+            ),
+            border: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(5.0),
+            ),
+            contentPadding: EdgeInsets.all(10),
+            hintStyle: cusHeadingStyle(14, Colors.grey, null, FontWeight.w400),
+            // border: OutlineInputBorder(
+            //   borderRadius: BorderRadius.circular(5.0),
+            // ),
+          ),
+          isEmpty: _currentSelectedZone == '',
+          child: DropdownButtonHideUnderline(
+            child: DropdownButton<String>(
+              value: _currentSelectedZone,
+              isDense: true,
+              onChanged: (String newValue) {
+                setState(() {
+                  _currentSelectedZone = newValue;
+                  state.didChange(newValue);
+                });
+              },
+              items: nepalZonesAndDistricts.keys.map((String value) {
+                return DropdownMenuItem<String>(
+                  value: value.toUpperCase(),
+                  child: Text(value.toUpperCase()),
+                );
+              }).toList(),
+            ),
+          ),
+        );
+      },
     );
   }
 
@@ -268,7 +420,7 @@ class _AddressDetailsFormState extends State<AddressDetailsForm> {
         hintText: "Enter District",
         labelText: "District",
         floatingLabelBehavior: FloatingLabelBehavior.always,
-      enabledBorder: OutlineInputBorder(
+        enabledBorder: OutlineInputBorder(
           borderSide: BorderSide(color: Colors.cyan, width: 0.1),
         ),
         focusedBorder: OutlineInputBorder(
@@ -278,7 +430,8 @@ class _AddressDetailsFormState extends State<AddressDetailsForm> {
           borderRadius: BorderRadius.circular(5.0),
         ),
         contentPadding: EdgeInsets.all(10),
-        hintStyle: cusHeadingStyle(14, Colors.grey, null, FontWeight.w400),),
+        hintStyle: cusHeadingStyle(14, Colors.grey, null, FontWeight.w400),
+      ),
       validator: (value) {
         if (districtFieldController.text.isEmpty) {
           return FIELD_REQUIRED_MSG;
@@ -297,7 +450,7 @@ class _AddressDetailsFormState extends State<AddressDetailsForm> {
         hintText: "Enter State",
         labelText: "State",
         floatingLabelBehavior: FloatingLabelBehavior.always,
-      enabledBorder: OutlineInputBorder(
+        enabledBorder: OutlineInputBorder(
           borderSide: BorderSide(color: Colors.cyan, width: 0.1),
         ),
         focusedBorder: OutlineInputBorder(
@@ -307,7 +460,8 @@ class _AddressDetailsFormState extends State<AddressDetailsForm> {
           borderRadius: BorderRadius.circular(5.0),
         ),
         contentPadding: EdgeInsets.all(10),
-        hintStyle: cusHeadingStyle(14, Colors.grey, null, FontWeight.w400),),
+        hintStyle: cusHeadingStyle(14, Colors.grey, null, FontWeight.w400),
+      ),
       validator: (value) {
         if (stateFieldController.text.isEmpty) {
           return FIELD_REQUIRED_MSG;
@@ -326,7 +480,7 @@ class _AddressDetailsFormState extends State<AddressDetailsForm> {
         hintText: "Enter PINCODE",
         labelText: "PINCODE",
         floatingLabelBehavior: FloatingLabelBehavior.always,
-      enabledBorder: OutlineInputBorder(
+        enabledBorder: OutlineInputBorder(
           borderSide: BorderSide(color: Colors.cyan, width: 0.1),
         ),
         focusedBorder: OutlineInputBorder(
@@ -336,7 +490,8 @@ class _AddressDetailsFormState extends State<AddressDetailsForm> {
           borderRadius: BorderRadius.circular(5.0),
         ),
         contentPadding: EdgeInsets.all(10),
-        hintStyle: cusHeadingStyle(14, Colors.grey, null, FontWeight.w400),),
+        hintStyle: cusHeadingStyle(14, Colors.grey, null, FontWeight.w400),
+      ),
       validator: (value) {
         if (pincodeFieldController.text.isEmpty) {
           return FIELD_REQUIRED_MSG;
@@ -359,7 +514,7 @@ class _AddressDetailsFormState extends State<AddressDetailsForm> {
         hintText: "Enter Landmark",
         labelText: "Landmark",
         floatingLabelBehavior: FloatingLabelBehavior.always,
-      enabledBorder: OutlineInputBorder(
+        enabledBorder: OutlineInputBorder(
           borderSide: BorderSide(color: Colors.cyan, width: 0.1),
         ),
         focusedBorder: OutlineInputBorder(
@@ -369,7 +524,8 @@ class _AddressDetailsFormState extends State<AddressDetailsForm> {
           borderRadius: BorderRadius.circular(5.0),
         ),
         contentPadding: EdgeInsets.all(10),
-        hintStyle: cusHeadingStyle(14, Colors.grey, null, FontWeight.w400),),
+        hintStyle: cusHeadingStyle(14, Colors.grey, null, FontWeight.w400),
+      ),
       validator: (value) {
         if (landmarkFieldController.text.isEmpty) {
           return FIELD_REQUIRED_MSG;
@@ -388,7 +544,7 @@ class _AddressDetailsFormState extends State<AddressDetailsForm> {
         hintText: "Enter Phone Number",
         labelText: "Phone Number",
         floatingLabelBehavior: FloatingLabelBehavior.always,
-      enabledBorder: OutlineInputBorder(
+        enabledBorder: OutlineInputBorder(
           borderSide: BorderSide(color: Colors.cyan, width: 0.1),
         ),
         focusedBorder: OutlineInputBorder(
@@ -398,7 +554,8 @@ class _AddressDetailsFormState extends State<AddressDetailsForm> {
           borderRadius: BorderRadius.circular(5.0),
         ),
         contentPadding: EdgeInsets.all(10),
-        hintStyle: cusHeadingStyle(14, Colors.grey, null, FontWeight.w400),),
+        hintStyle: cusHeadingStyle(14, Colors.grey, null, FontWeight.w400),
+      ),
       validator: (value) {
         if (phoneFieldController.text.isEmpty) {
           return FIELD_REQUIRED_MSG;
@@ -412,14 +569,16 @@ class _AddressDetailsFormState extends State<AddressDetailsForm> {
   }
 
   Future<void> saveNewAddressButtonCallback() async {
+    setState(() {
+      _submitted = true;
+    });
     if (_formKey.currentState.validate()) {
       _formKey.currentState.save();
       final Address newAddress = generateAddressObject();
       bool status = false;
       String snackbarMessage;
       try {
-        status =
-            await UserDatabaseHelper().addAddressForCurrentUser(newAddress);
+        status = await UserDatabaseHelper().addAddressForCurrentUser(newAddress);
         if (status == true) {
           snackbarMessage = "Address saved successfully";
         } else {
@@ -443,16 +602,18 @@ class _AddressDetailsFormState extends State<AddressDetailsForm> {
   }
 
   Future<void> saveEditedAddressButtonCallback() async {
+    setState(() {
+      _submitted = true;
+    });
+
     if (_formKey.currentState.validate()) {
       _formKey.currentState.save();
-      final Address newAddress =
-          generateAddressObject(id: widget.addressToEdit.id);
+      final Address newAddress = generateAddressObject(id: widget.addressToEdit.id);
 
       bool status = false;
       String snackbarMessage;
       try {
-        status =
-            await UserDatabaseHelper().updateAddressForCurrentUser(newAddress);
+        status = await UserDatabaseHelper().updateAddressForCurrentUser(newAddress);
         if (status == true) {
           snackbarMessage = "Address updated successfully";
         } else {
@@ -480,14 +641,13 @@ class _AddressDetailsFormState extends State<AddressDetailsForm> {
       id: id,
       title: titleFieldController.text,
       receiver: receiverFieldController.text,
-      addresLine1: addressLine1FieldController.text,
-      // addressLine2: addressLine2FieldController.text,
-      city: cityFieldController.text,
+      address: addressFieldController.text,
+      city: _currentSelectedCity,
+      zone: _currentSelectedZone,
+      landmark: landmarkFieldController.text,
+      phone: phoneFieldController.text,
       // district: districtFieldController.text,
       // state: stateFieldController.text,
-      landmark: landmarkFieldController.text,
-      // pincode: pincodeFieldController.text,
-      phone: phoneFieldController.text,
     );
   }
 }

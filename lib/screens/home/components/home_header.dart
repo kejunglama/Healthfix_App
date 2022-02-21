@@ -1,10 +1,9 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:healthfix/components/popup_dialog.dart';
 import 'package:healthfix/data.dart';
 import 'package:healthfix/models/Product.dart';
 import 'package:healthfix/screens/category_products/category_products_screen.dart';
-import 'package:healthfix/screens/checkout/checkout_screen.dart';
-import 'package:healthfix/services/database/product_database_helper.dart';
 import 'package:healthfix/size_config.dart';
 
 import '../../../constants.dart';
@@ -14,11 +13,12 @@ import 'home_screen_drawer.dart';
 class HomeHeader extends StatelessWidget {
   final Function onSearchSubmitted;
   final Function onCartButtonPressed;
+  final Function() showNotification;
 
-  const HomeHeader({
+  HomeHeader({
     Key key,
     @required this.onSearchSubmitted,
-    @required this.onCartButtonPressed,
+    @required this.onCartButtonPressed, this.showNotification,
   }) : super(key: key);
 
   @override
@@ -33,14 +33,7 @@ class HomeHeader extends StatelessWidget {
               Container(
                 margin: EdgeInsets.only(left: getProportionateScreenWidth(12)),
                 height: getProportionateScreenHeight(30),
-                child: GestureDetector(
-                    onTap: () {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(builder: (context) => CheckoutScreen()),
-                      );
-                    },
-                    child: Image.asset('assets/logo/HF-logo.png')),
+                child: Image.asset('assets/logo/HF-logo.png'),
               ),
 
               // Icons
@@ -65,7 +58,7 @@ class HomeHeader extends StatelessWidget {
                         //     ),
                         //   );
                         // },
-                        onPressed: (){},
+                        onPressed: () {},
                         icon: Icon(Icons.favorite_border_outlined),
                         color: kPrimaryColor,
                         splashRadius: 20,
@@ -82,12 +75,11 @@ class HomeHeader extends StatelessWidget {
                             MaterialPageRoute(builder: (context) => HomeScreenDrawer()),
                           );
                         },
-                        icon: Icon(Icons.account_circle_sharp),
+                        icon: Icon(Icons.account_circle_outlined),
                         color: kPrimaryColor,
                         splashRadius: 20,
                       ),
                     ),
-
                   ],
                 ),
               ),

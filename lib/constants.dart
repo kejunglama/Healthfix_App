@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:healthfix/size_config.dart';
+import 'package:intl/intl.dart';
 
 const String appName = "Healthfix";
 
@@ -11,7 +12,7 @@ const kPrimaryGradientColor = LinearGradient(
   end: Alignment.bottomRight,
   colors: [Color(0xFF01B2C6), Colors.cyan],
 );
-const kSecondaryColor = Color(0xFF223263);
+const kSecondaryColor = Colors.blue;
 const kTextColor = Color(0xFF757575);
 const kHeadingColor = Color(0xFF0d1f2d);
 
@@ -53,9 +54,9 @@ cusHeadingStyle([double fs, Color color, bool hasShadow, FontWeight fw]) => Goog
 cusBodyStyle([double fs, FontWeight fw, Color color, double ls]) => GoogleFonts.poppins(
       textStyle: TextStyle(
         color: color ?? Colors.black,
-        fontSize: fs ?? getProportionateScreenWidth(12),
+        fontSize: fs ?? getProportionateScreenWidth(14),
         fontWeight: fw ?? FontWeight.w300,
-        letterSpacing: ls ?? 0.3,
+        letterSpacing: ls ?? 0.4,
       ),
     );
 
@@ -77,16 +78,16 @@ cusCenterHeadingStyle([Color color, FontWeight fw, num fs]) => GoogleFonts.poppi
 
 var cusCenterHeadingAccentStyle = GoogleFonts.poppins(
   textStyle: TextStyle(
-    color: kPrimaryColor,
+    color: kSecondaryColor,
     fontSize: getProportionateScreenWidth(20),
   ),
 );
 
-var cusPdctCatNameStyle = GoogleFonts.poppins(
+var cusPdctCatNameStyle = GoogleFonts.montserrat(
   textStyle: TextStyle(
     letterSpacing: 0.3,
-    color: kTextColor.withOpacity(0.8),
-    fontSize: getProportionateScreenHeight(10),
+    color: kPrimaryColor,
+    fontSize: getProportionateScreenHeight(11),
     // fontSize: getProportionateScreenHeight(8),
     fontWeight: FontWeight.w400,
   ),
@@ -94,9 +95,9 @@ var cusPdctCatNameStyle = GoogleFonts.poppins(
 
 cusPdctDisPriceStyle([double fs, Color color]) => GoogleFonts.poppins(
       textStyle: TextStyle(
-        color: color ?? kPrimaryColor,
+        color: color ?? kSecondaryColor,
         // fontWeight: FontWeight.w600,
-        fontSize: fs ?? getProportionateScreenHeight(16),
+        fontSize: fs ?? getProportionateScreenHeight(14),
         letterSpacing: 0.5,
       ),
     );
@@ -104,7 +105,7 @@ cusPdctPageDisPriceStyle([double fs, Color color]) => GoogleFonts.poppins(
       textStyle: TextStyle(
         color: color ?? kPrimaryColor,
         fontWeight: FontWeight.w600,
-        fontSize: fs ?? getProportionateScreenHeight(16),
+        fontSize: fs ?? getProportionateScreenHeight(12),
         letterSpacing: -0.3,
       ),
     );
@@ -114,17 +115,17 @@ cusPdctOriPriceStyle([double fs]) => GoogleFonts.poppins(
         color: kTextColor,
         decoration: TextDecoration.lineThrough,
         fontWeight: FontWeight.normal,
-        fontSize: fs ?? getProportionateScreenHeight(14),
+        fontSize: fs ?? getProportionateScreenHeight(12),
         // letterSpacing: 0.5,
       ),
     );
 
-var cusPdctNameStyle = GoogleFonts.poppins(
+var cusPdctNameStyle = GoogleFonts.montserrat(
   textStyle: TextStyle(
-    color: kSecondaryColor,
-    fontWeight: FontWeight.w500,
-    fontSize: getProportionateScreenHeight(14),
-    letterSpacing: 0.5,
+    color: Colors.black,
+    fontWeight: FontWeight.w400,
+    fontSize: getProportionateScreenHeight(12),
+    letterSpacing: 0.2,
   ),
 );
 
@@ -161,3 +162,9 @@ extension StringExtension on String {
     return "${this[0].toUpperCase()}${this.substring(1)}";
   }
 }
+
+var currency = new NumberFormat.currency(locale: "en_US", symbol: "Rs. ", decimalDigits: 0);
+
+DateTime now = new DateTime.now();
+
+var cusDateTimeFormatter = new DateFormat('yyyy-MM-dd - hh:mm a');

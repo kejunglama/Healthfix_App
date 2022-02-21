@@ -1,10 +1,12 @@
+// ignore_for_file: deprecated_member_use
+
 import 'package:flutter/material.dart';
 
-import '../constants.dart';
+// import '../constants.dart';
 import '../size_config.dart';
 
-class Social_Login_Button extends StatelessWidget {
-  const Social_Login_Button({key}) : super(key: key);
+class SocialLoginButton extends StatelessWidget {
+  const SocialLoginButton({key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {

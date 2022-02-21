@@ -80,11 +80,11 @@ class CategoryHierarchyList extends StatelessWidget {
                                 ),
                               ));
                         },
-                        child: Text(entry.key, style: cusHeadingStyle(17, kPrimaryColor))),
+                        child: Text(entry.key, style: cusHeadingStyle(18, kPrimaryColor))),
                   ),
                   for (var arrValue in entry.value)
                     Container(
-                      margin: EdgeInsets.symmetric(vertical: 10, horizontal: 40),
+                      margin: EdgeInsets.symmetric(vertical: 8, horizontal: 40),
                       child: GestureDetector(
                         onTap: () {
                           Navigator.push(
@@ -99,7 +99,7 @@ class CategoryHierarchyList extends StatelessWidget {
                         },
                         child: Text(
                           arrValue,
-                          style: cusBodyStyle(15),
+                          style: cusBodyStyle(16),
                         ),
                       ),
                     ),
@@ -118,6 +118,7 @@ class CategoryList extends StatelessWidget {
   Future Function([GlobalKey key]) scrollToCat;
 
   String ICON_KEY = "icon";
+  String IMAGE_LOCATION_KEY = "image_location";
   String TITLE_KEY = "title";
 
   CategoryList(this.categories, this.scrollToCat, this.keyList);
@@ -160,13 +161,13 @@ class CategoryList extends StatelessWidget {
                         children: [
                           Container(
                             width: getProportionateScreenHeight(430),
-                            height: getProportionateScreenHeight(40),
-                            margin: EdgeInsets.only(bottom: getProportionateScreenHeight(20)),
-                            child: SvgPicture.asset(categories[i][ICON_KEY], color: kPrimaryColor),
+                            height: getProportionateScreenHeight(50),
+                            margin: EdgeInsets.only(bottom: getProportionateScreenHeight(12)),
+                            child: Image.asset(categories[i][IMAGE_LOCATION_KEY]),
                           ),
                           Text(
                             categories[i][TITLE_KEY],
-                            style: cusHeadingStyle(getProportionateScreenHeight(14)),
+                            style: cusHeadingStyle(getProportionateScreenHeight(14), kPrimaryColor, null, FontWeight.w300),
                             textAlign: TextAlign.center,
                           ),
                         ],

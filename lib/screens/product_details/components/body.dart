@@ -1,25 +1,27 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:healthfix/components/rounded_icon_button.dart';
 import 'package:healthfix/constants.dart';
+import 'package:healthfix/models/OrderedProduct.dart';
 import 'package:healthfix/models/Product.dart';
 import 'package:healthfix/screens/cart/cart_screen.dart';
+import 'package:healthfix/screens/checkout/checkout_screen.dart';
 import 'package:healthfix/screens/product_details/components/product_actions_section.dart';
 import 'package:healthfix/screens/product_details/components/product_images.dart';
 import 'package:healthfix/services/database/product_database_helper.dart';
+import 'package:healthfix/services/database/user_database_helper.dart';
 import 'package:healthfix/size_config.dart';
 import 'package:intl/intl.dart';
 import 'package:logger/logger.dart';
 
-import 'fab.dart';
+import 'fab_add_to_cart.dart';
+import 'fab_buy_now.dart';
 
 class Body extends StatefulWidget {
   final String productId;
 
-  Body({
-    Key key,
-    @required this.productId,
-  }) : super(key: key);
+  Body({Key key, @required this.productId}) : super(key: key);
 
   @override
   State<Body> createState() => _BodyState();
@@ -41,11 +43,12 @@ class _BodyState extends State<Body> {
   void setSelectedVariant(String size, Map color) {
     _selectedColor = color;
     _selectedSize = size;
-    // print("Variants: $_selectedColor $_selectedSize");
 
-    List variant =
-        product.variations.where((variant) => variant["size"] == _selectedSize).where((variant) => variant["color"]["name"] == _selectedColor["name"]).toList();
-    // print(variant.first["price"]);
+    List variant = product.variations
+        .where((variant) => variant["size"] == _selectedSize)
+        .where((variant) => variant["color"]["name"] == _selectedColor["name"])
+        .toList();
+
     setState(() {
       _productDisPrice = int.parse(variant.first["price"]);
       _productOriPrice = 1.2 * _productDisPrice;
@@ -85,8 +88,6 @@ class _BodyState extends State<Body> {
           builder: (context, snapshot) {
             if (snapshot.hasData) {
               product = snapshot.data;
-              // print("product");
-              // print(product);
               if (_productDisPrice == null) {
                 _productDisPrice = product.discountPrice;
                 _productOriPrice = 1.2 * _productDisPrice;
@@ -96,7 +97,7 @@ class _BodyState extends State<Body> {
                   Scaffold(
                     body: SafeArea(
                       child: SingleChildScrollView(
-                        physics: BouncingScrollPhysics(),
+                        // physics: BouncingScrollPhysics(),
                         child: Container(
                           color: Colors.white,
                           child: Column(
@@ -151,17 +152,13 @@ class _BodyState extends State<Body> {
                                 ),
                               ),
                               ProductImages(product: product),
-                              // SizedBox(height: getProportionateScreenHeight(20)),
                               ProductActionsSection(product: product, setSelectedVariant: setSelectedVariant),
                               SizedBox(height: getProportionateScreenHeight(80)),
-                              // ProductReviewsSection(product: product),
-                              // SizedBox(height: getProportionateScreenHeight(100)),
                             ],
                           ),
                         ),
                       ),
                     ),
-                    // ),
                   ),
                   bottomProductBar(),
                 ],
@@ -217,7 +214,7 @@ class _BodyState extends State<Body> {
                     children: [
                       Text(
                         "Rs. ${numFormat.format(_productDisPrice)}  ",
-                        style: cusPdctPageDisPriceStyle(getProportionateScreenHeight(26), Colors.black),
+                        style: cusPdctPageDisPriceStyle(getProportionateScreenWidth(26), Colors.black),
                       ),
                       Row(
                         crossAxisAlignment: CrossAxisAlignment.start,
@@ -225,7 +222,7 @@ class _BodyState extends State<Body> {
                         children: [
                           Text(
                             "Rs. ${numFormat.format(_productOriPrice)}",
-                            style: cusPdctOriPriceStyle(getProportionateScreenHeight(12)),
+                            style: cusPdctOriPriceStyle(getProportionateScreenWidth(12)),
                           ),
                           sizedBoxOfWidth(8),
                           Text(
@@ -234,9 +231,9 @@ class _BodyState extends State<Body> {
                             style: GoogleFonts.poppins(
                               textStyle: TextStyle(
                                 color: Colors.red,
-                                fontSize: getProportionateScreenHeight(12),
+                                fontSize: getProportionateScreenWidth(12),
                                 fontWeight: FontWeight.w600,
-                                letterSpacing: getProportionateScreenHeight(0.5),
+                                letterSpacing: getProportionateScreenWidth(0.5),
                               ),
                             ),
                           ),
@@ -247,44 +244,25 @@ class _BodyState extends State<Body> {
                 ),
               ),
             ),
-            // VerticalDivider(
-            //   thickness: 1,
-            //   color: Colors.white,
-            // ),
-
-            // AddToCartFAB(productId: product.id),
-            // InkWell(
-            //   onTap: () {
-            //     // print(product);
-            //     if (product.variations != null) {
-            //       if (_selectedSize == null) {
-            //         ScaffoldMessenger.of(context).showSnackBar(
-            //           SnackBar(
-            //             content: Text("Please Select a Size"),
-            //           ),
-            //         );
-            //       } else if (_selectedColor == null) {
-            //         ScaffoldMessenger.of(context).showSnackBar(
-            //           SnackBar(
-            //             content: Text("Please Select a Color"),
-            //           ),
-            //         );
-            //       } else {
-            //         selectedVariations = {"size": _selectedSize, "color": _selectedColor};
-            //         print(selectedVariations);
-            //       }
-            //     } else {
-            //       selectedVariations = {};
-            //     }
-            //   },
-            //   child: Container(
-            //     child: Text("Check"),
-            //   ),
-            // ),
-
             AddToCartFAB(
               productId: product.id,
               onTap: onCartTapFetchVariant,
+            ),
+            sizedBoxOfWidth(12),
+            BuyNowFAB(
+              productId: product.id,
+              onTap: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => CheckoutScreen(
+                      selectedCartItems: [product.id],
+                      onCheckoutPressed: selectedCheckoutButtonFromBuyNowCallback,
+                      isBuyNow: true,
+                    ),
+                  ),
+                );
+              },
             ),
           ],
         ),
@@ -297,5 +275,44 @@ class _BodyState extends State<Body> {
       _productDisPrice = disPrice;
       _productOriPrice = oriPrice;
     });
+  }
+
+  Future<void> selectedCheckoutButtonFromBuyNowCallback(Map orderDetails, List selectedProductsUid) async {
+    if (selectedProductsUid != null) {
+      // print(orderedProductsUid);
+      final dateTime = DateTime.now();
+      final formatedDateTime = "${dateTime.day}-${dateTime.month}-${dateTime.year}";
+      List orderedProducts = [];
+      orderedProducts.add({
+        OrderedProduct.PRODUCT_UID_KEY: selectedProductsUid[0],
+        OrderedProduct.ITEM_COUNT_KEY: 1,
+      });
+      OrderedProduct order = OrderedProduct(null, products: orderedProducts, orderDate: formatedDateTime, orderDetails: orderDetails);
+      print(order);
+
+      bool addedProductsToMyProducts = false;
+      String snackbarmMessage;
+      try {
+        addedProductsToMyProducts = await UserDatabaseHelper().addToMyOrders(order);
+        if (addedProductsToMyProducts) {
+          snackbarmMessage = "Products ordered Successfully";
+        } else {
+          throw "Could not order products due to unknown issue";
+        }
+      } on FirebaseException catch (e) {
+        Logger().e(e.toString());
+        snackbarmMessage = e.toString();
+      } catch (e) {
+        Logger().e(e.toString());
+        snackbarmMessage = e.toString();
+      } finally {
+          Navigator.of(context).popUntil((route) => route.isFirst);
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              content: Text(snackbarmMessage ?? "Something went wrong"),
+            ),
+          );
+      }
+    }
   }
 }

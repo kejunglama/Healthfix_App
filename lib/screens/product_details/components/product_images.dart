@@ -80,9 +80,9 @@ class _ProductImagesState extends State<ProductImages> {
               // Product Image Slider
               CarouselSlider(
                 options: CarouselOptions(
-                  height: SizeConfig.screenWidth * 0.8,
+                  height: SizeConfig.screenWidth,
+                  aspectRatio: 1,
                   autoPlay: true,
-                  // reverse: false,
                   enableInfiniteScroll: false,
                   autoPlayAnimationDuration: Duration(seconds: 1),
                   autoPlayInterval: Duration(seconds: 10),
@@ -96,15 +96,9 @@ class _ProductImagesState extends State<ProductImages> {
                 items: widget.product.images
                     .map(
                       (item) => Container(
-                        // color: kPrimaryColor.withOpacity(0.1),
-                        margin: EdgeInsets.symmetric(horizontal: getProportionateScreenWidth(8)),
-                        child: Center(
-                          child: Image.network(
-                            item,
-                            fit: BoxFit.cover,
-                            // height: height,
-                          ),
-                        ),
+                        height: SizeConfig.screenWidth,
+                        width: SizeConfig.screenWidth,
+                        child: Image.network(item, fit: BoxFit.cover),
                       ),
                     )
                     .toList(),
@@ -121,7 +115,7 @@ class _ProductImagesState extends State<ProductImages> {
                     margin: EdgeInsets.symmetric(vertical: 10.0, horizontal: 2.0),
                     decoration: BoxDecoration(
                       shape: BoxShape.circle,
-                      color: productImagesSwiper.currentImageIndex == index ? kPrimaryColor : kPrimaryColor.withOpacity(0.2),
+                      color: productImagesSwiper.currentImageIndex == index ? kSecondaryColor : kSecondaryColor.withOpacity(0.2),
                     ),
                   );
                 }).toList(),

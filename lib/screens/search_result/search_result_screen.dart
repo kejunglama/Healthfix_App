@@ -92,7 +92,7 @@ class _SearchResultScreenState extends State<SearchResultScreen> {
                 width: SizeConfig.screenWidth * 0.9,
                 child: SearchField(
                   onSubmit: onSearchSubmitted,
-                    searchQuery: widget.searchQuery,
+                  searchQuery: widget.searchQuery,
                 ),
               ),
               Container(

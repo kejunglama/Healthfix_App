@@ -2,8 +2,11 @@ import 'package:flutter/material.dart';
 import 'package:healthfix/components/default_button.dart';
 import 'package:healthfix/components/nothingtoshow_container.dart';
 import 'package:healthfix/models/Address.dart';
+import 'package:healthfix/models/Product.dart';
+import 'package:healthfix/screens/checkout/payment_options_screen.dart';
 import 'package:healthfix/screens/manage_addresses/manage_addresses_screen.dart';
 import 'package:healthfix/services/data_streams/addresses_stream.dart';
+import 'package:healthfix/services/database/product_database_helper.dart';
 import 'package:healthfix/services/database/user_database_helper.dart';
 import 'package:healthfix/size_config.dart';
 import 'package:logger/logger.dart';
@@ -13,7 +16,11 @@ import 'components/order_items.dart';
 import 'components/total_amounts.dart';
 
 class CheckoutScreen extends StatefulWidget {
-  CheckoutScreen({Key key}) : super(key: key);
+  Future<void> Function(Map orderDetails, List selectedProductsUid) onCheckoutPressed;
+  List selectedCartItems;
+  bool isBuyNow;
+
+  CheckoutScreen({Key key, this.onCheckoutPressed, this.selectedCartItems, this.isBuyNow}) : super(key: key);
 
   @override
   State<CheckoutScreen> createState() => _CheckoutScreenState();
@@ -32,6 +39,7 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
   void initState() {
     super.initState();
     addressesStream.init();
+    widget.isBuyNow = widget.isBuyNow ?? false;
   }
 
   @override
@@ -82,7 +90,7 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
                             children: [
                               buildAddressSection(context),
                               sizedBoxOfHeight(12),
-                              buildIconWithTextField(Icons.phone, "Your Number", phoneFieldController),
+                              buildIconWithTextField(Icons.contact_phone_outlined, "Your Number", phoneFieldController),
                               sizedBoxOfHeight(12),
                               buildIconWithTextField(Icons.mail_outline_rounded, "Your Email", emailFieldController),
                               sizedBoxOfHeight(12),
@@ -90,23 +98,36 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
                               sizedBoxOfHeight(12),
                               // Order Items
                               // OrderItems(getCartPdct: getCartPdct),
-                              OrderItems(),
+                              OrderItems(selectedCartItems: widget.selectedCartItems, isBuyNow: widget.isBuyNow),
 
                               sizedBoxOfHeight(12),
                               Divider(thickness: 0.1, color: Colors.cyan),
                               sizedBoxOfHeight(12),
-
-                              FutureBuilder(
-                                  future: UserDatabaseHelper().cartTotal,
-                                  builder: (context, snapshot) {
-                                    if (snapshot.hasData) {
-                                      cartTotal = snapshot.data;
-                                      deliveryCharge = 100;
-                                      // print(cartTotal.runtimeType);
-                                      return TotalAmounts(cartTotal, deliveryCharge);
-                                    }
-                                    return CircularProgressIndicator();
-                                  }),
+                              widget.isBuyNow ?? false
+                                  ? FutureBuilder(
+                                      future: ProductDatabaseHelper().getProductWithID(widget.selectedCartItems[0]),
+                                      builder: (context, snapshot) {
+                                        if (snapshot.hasData) {
+                                          Product pdct = snapshot.data;
+                                          double price = pdct.discountPrice.toDouble();
+                                          cartTotal = price;
+                                          deliveryCharge = 100;
+                                          // print(cartTotal.runtimeType);
+                                          return TotalAmounts(price, deliveryCharge);
+                                        }
+                                        return CircularProgressIndicator();
+                                      })
+                                  : FutureBuilder(
+                                      future: UserDatabaseHelper().selectedCartTotal(widget.selectedCartItems),
+                                      builder: (context, snapshot) {
+                                        if (snapshot.hasData) {
+                                          cartTotal = snapshot.data;
+                                          deliveryCharge = 100;
+                                          // print(cartTotal.runtimeType);
+                                          return TotalAmounts(cartTotal, deliveryCharge);
+                                        }
+                                        return CircularProgressIndicator();
+                                      }),
                             ],
                           ),
                           DefaultButton(
@@ -121,7 +142,21 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
                               print(_address);
                               print("");
                               print(totals);
+                              final Map orderDetails = {
+                                "address": _address,
+                                "totals": totals,
+                                "pay_method": "",
+                              };
 
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (context) => PaymentOptionsScreen(
+                                      onCheckout: widget.onCheckoutPressed, orderDetails: orderDetails, selectedCartItems: widget.selectedCartItems),
+                                ),
+                              );
+
+                              (orderDetails);
                             },
                           ),
                           // buildHintText("District"),
@@ -152,7 +187,7 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
   Row buildIconWithTextField(IconData iconData, String hintText, TextEditingController textController) {
     return Row(
       children: [
-        Icon(iconData, color: kPrimaryColor),
+        Icon(iconData, color: kSecondaryColor.withOpacity(0.8)),
         sizedBoxOfWidth(12),
         Expanded(
           child: Container(
@@ -175,17 +210,17 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
           children: [
             Icon(
               Icons.my_location_rounded,
-              color: kPrimaryColor,
+              color: kSecondaryColor.withOpacity(0.8),
             ),
             sizedBoxOfWidth(12),
             Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text(address != null ? address.receiver : "Kejung Lama"),
+                Text(address != null ? address.receiver : "Receiver's Name", style: cusBodyStyle()),
                 Row(
                   children: [
-                    Text((address != null ? address.addresLine1 : "Baluwatar") + ", "),
-                    Text(address != null ? address.city : "Kathmandu"),
+                    Text((address != null ? address.address : "Address") + ", ", style: cusBodyStyle()),
+                    Text(address != null ? address.city : "City", style: cusBodyStyle()),
                   ],
                 ),
               ],
@@ -202,7 +237,7 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
             });
             // print(address.receiver);
           },
-          child: Text("EDIT"),
+          child: Text("EDIT", style: cusBodyStyle(16, FontWeight.w400, kPrimaryColor.withOpacity(0.8))),
         ),
       ],
     );
@@ -231,35 +266,35 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
     );
   }
 
-  // getCartPdct(Map val) {
-  //   // print(val);
-  //   arr.add(val);
-  //   // String key = val.keys.toString();
-  //   // List _arr = [];
-  //   // for (int i = 0; i < arr.length; i++) {
-  //   //   if (arr[i].keys.toString() != key) {
-  //   //     // print("arr.add(val)");
-  //   //     continue;
-  //   //   }
-  //   //   // arr.add(val);
-  //   //   // print(val);
-  //   //
-  //   // }
-  //   // print(arr);
-  //   var _arr = arr.toSet().toList();
-  //   print(arr);
-  //   // var seen = Set<Map>();
-  //   // List<Map> uniqueList = arr.where((country) => seen.add(country)).toList();
-  //   // print(uniqueList);
-  //
-  //   // arr.forEach((e) {
-  //   //   String key = val.keys.toString();
-  //   //   if (e.keys.toString() != key) {
-  //   //     print("arr.add(val)");
-  //   //     continue;
-  //   //   }
-  //   //   _arr.add(val);
-  //   // });
-  //   // print(arr);
-  // }
+// getCartPdct(Map val) {
+//   // print(val);
+//   arr.add(val);
+//   // String key = val.keys.toString();
+//   // List _arr = [];
+//   // for (int i = 0; i < arr.length; i++) {
+//   //   if (arr[i].keys.toString() != key) {
+//   //     // print("arr.add(val)");
+//   //     continue;
+//   //   }
+//   //   // arr.add(val);
+//   //   // print(val);
+//   //
+//   // }
+//   // print(arr);
+//   var _arr = arr.toSet().toList();
+//   print(arr);
+//   // var seen = Set<Map>();
+//   // List<Map> uniqueList = arr.where((country) => seen.add(country)).toList();
+//   // print(uniqueList);
+//
+//   // arr.forEach((e) {
+//   //   String key = val.keys.toString();
+//   //   if (e.keys.toString() != key) {
+//   //     print("arr.add(val)");
+//   //     continue;
+//   //   }
+//   //   _arr.add(val);
+//   // });
+//   // print(arr);
+// }
 }

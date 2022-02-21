@@ -41,13 +41,13 @@ class OurFeatureCard extends StatelessWidget {
                           child: Text(
                             heading,
                             textAlign: TextAlign.start,
-                            style: cusHeadingStyle(getProportionateScreenWidth(16)),
+                            style: cusHeadingStyle(getProportionateScreenWidth(16), kSecondaryColor),
                           ),
                         ),
                         // SizedBox(height: getProportionateScreenHeight(2)),
                         Container(
                           alignment: Alignment.centerLeft,
-                          child: Text(subHeading, style: cusHeadingLinkStyle),
+                          child: Text(subHeading, style: cusBodyStyle()),
                         ),
                       ],
                     ),

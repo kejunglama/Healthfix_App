@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:healthfix/models/Product.dart';
 import 'package:healthfix/screens/product_details/provider_models/ColorVariations.dart';
 import 'package:healthfix/screens/product_details/provider_models/VariantBuilder.dart';
@@ -45,28 +46,23 @@ class ProductDescription extends StatelessWidget {
     // print(product.variations);
 
     return Container(
-      margin: EdgeInsets.symmetric(horizontal: getProportionateScreenWidth(20)),
+      margin: EdgeInsets.symmetric(horizontal: getProportionateScreenWidth(20), vertical: getProportionateScreenHeight(12)),
       child: Stack(
         children: [
           Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
+              Text("${product.variant.toUpperCase()}", style: cusHeadingStyle(getProportionateScreenHeight(14), Colors.black87, null, FontWeight.w500)),
+              sizedBoxOfHeight(8),
+              Text(product.title.capitalize(), style: GoogleFonts.montserrat(
+                textStyle: TextStyle(
+                  fontSize: 24,
+                  color: kSecondaryColor,
+                )
+              )),
+
               // Product Title
-              Text.rich(
-                TextSpan(
-                  text: product.title.capitalize(),
-                  style: cusHeadingStyle(20, kSecondaryColor),
-                  children: [
-                    TextSpan(
-                      text: "\n${product.variant.capitalize()} ",
-                      style: TextStyle(
-                        fontWeight: FontWeight.normal,
-                        fontSize: 15,
-                      ),
-                    ),
-                  ],
-                ),
-              ),
+
               // const SizedBox(height: 16),
               // Text(product.highlights),
               // const SizedBox(height: 16),
@@ -80,16 +76,17 @@ class ProductDescription extends StatelessWidget {
                 setSelectedVariant: setSelectedVariant,
               ),
 
-              const SizedBox(height: 16),
-              ExpandableText(
-                title: "Description",
-                content: product.description,
-              ),
+              const SizedBox(height: 12),
+              Text(product.description.trim().replaceAll("\\n", "\n"), style: cusBodyStyle(),),
+              // ExpandableText(
+              //   title: "",
+              //   content: product.description,
+              // ),
               const SizedBox(height: 16),
               Text.rich(
                 TextSpan(
                   text: "By ",
-                  style: cusHeadingStyle(getProportionateScreenHeight(14), Colors.black87),
+                  style: cusHeadingStyle(getProportionateScreenHeight(14), kSecondaryColor),
                   children: [
                     TextSpan(
                       text: "${product.seller}",

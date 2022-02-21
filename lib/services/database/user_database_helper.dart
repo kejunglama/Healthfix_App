@@ -1,6 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:healthfix/models/Address.dart';
 import 'package:healthfix/models/CartItem.dart';
+import 'package:healthfix/models/GymSubscription.dart';
 import 'package:healthfix/models/OrderedProduct.dart';
 import 'package:healthfix/services/authentification/authentification_service.dart';
 import 'package:healthfix/services/database/product_database_helper.dart';
@@ -10,6 +11,7 @@ class UserDatabaseHelper {
   static const String ADDRESSES_COLLECTION_NAME = "addresses";
   static const String CART_COLLECTION_NAME = "cart";
   static const String ORDERED_PRODUCTS_COLLECTION_NAME = "ordered_products";
+  static const String GYM_SUBSCRIPTIONS_COLLECTION_NAME = "gym_subscriptions";
 
   static const String PHONE_KEY = 'phone';
   static const String DP_KEY = "display_picture";
@@ -117,10 +119,24 @@ class UserDatabaseHelper {
     return address;
   }
 
+  Future<bool> getNameForCurrentUser(Address address) async {
+    String uid = AuthentificationService().currentUser.uid;
+    final addressesCollectionReference = firestore.collection(USERS_COLLECTION_NAME).doc(uid).collection(ADDRESSES_COLLECTION_NAME);
+    await addressesCollectionReference.add(address.toMap());
+    return true;
+  }
+
   Future<bool> addAddressForCurrentUser(Address address) async {
     String uid = AuthentificationService().currentUser.uid;
     final addressesCollectionReference = firestore.collection(USERS_COLLECTION_NAME).doc(uid).collection(ADDRESSES_COLLECTION_NAME);
     await addressesCollectionReference.add(address.toMap());
+    return true;
+  }
+
+  Future<bool> addGymSubscriptionForCurrentUser(GymSubscription gymSubscription) async {
+    String uid = AuthentificationService().currentUser.uid;
+    final gymSubscriptionsCollectionReference = firestore.collection(USERS_COLLECTION_NAME).doc(uid).collection(GYM_SUBSCRIPTIONS_COLLECTION_NAME);
+    await gymSubscriptionsCollectionReference.add(gymSubscription.toMap());
     return true;
   }
 
@@ -145,6 +161,15 @@ class UserDatabaseHelper {
     final docSnapshot = await docRef.get();
     final cartItem = CartItem.fromMap(docSnapshot.data(), id: docSnapshot.id);
     return cartItem;
+  }
+
+  Future<GymSubscription> getGymSubscriptionFromId(String id) async {
+    String uid = AuthentificationService().currentUser.uid;
+    final gymSubscriptionsCollectionRef = firestore.collection(USERS_COLLECTION_NAME).doc(uid).collection(GYM_SUBSCRIPTIONS_COLLECTION_NAME);
+    final docRef = gymSubscriptionsCollectionRef.doc(id);
+    final docSnapshot = await docRef.get();
+    final gymSubscription = GymSubscription.fromMap(docSnapshot.data(), id: docSnapshot.id);
+    return gymSubscription;
   }
 
   Future<bool> addProductToCart(String productId, Map variation) async {
@@ -186,14 +211,32 @@ class UserDatabaseHelper {
     return true;
   }
 
-  Future<List<String>> emptyCart() async {
+  Future<Map> emptyCart() async {
     String uid = AuthentificationService().currentUser.uid;
     final cartItems = await firestore.collection(USERS_COLLECTION_NAME).doc(uid).collection(CART_COLLECTION_NAME).get();
-    List orderedProductsUid = List<String>();
+    Map orderedProductsUid = {};
     for (final doc in cartItems.docs) {
-      orderedProductsUid.add(doc.id);
+      orderedProductsUid[doc.id] = doc.data();
+      // orderedProductsUid.add(doc.id);
       await doc.reference.delete();
     }
+    // print(orderedProductsUid);
+    return orderedProductsUid;
+  }
+
+  Future<Map> emptySelectedCart(List selectedProductsUid) async {
+    String uid = AuthentificationService().currentUser.uid;
+    final cartItems = await firestore.collection(USERS_COLLECTION_NAME).doc(uid).collection(CART_COLLECTION_NAME).get();
+    Map orderedProductsUid = {};
+    for (final doc in cartItems.docs) {
+      if(selectedProductsUid.contains(doc.id)){
+        print("contains ${doc.id}");
+        orderedProductsUid[doc.id] = doc.data();
+        // orderedProductsUid.add(doc.id);
+        await doc.reference.delete();
+      }
+    }
+    // print(orderedProductsUid);
     return orderedProductsUid;
   }
 
@@ -216,6 +259,26 @@ class UserDatabaseHelper {
     return total;
   }
 
+  Future<num> selectedCartTotal(List selectedCartItemIDs) async {
+    String uid = AuthentificationService().currentUser.uid;
+    final cartItems = await firestore.collection(USERS_COLLECTION_NAME).doc(uid).collection(CART_COLLECTION_NAME).get();
+    num total = 0.0;
+    for (final doc in cartItems.docs) {
+      num itemsCount;
+      print(doc.id);
+      if(selectedCartItemIDs.contains(doc.id)){
+        if (doc.data()[CartItem.VARIATION_KEY] == null) {
+          itemsCount = doc.data()[CartItem.ITEM_COUNT_KEY];
+        } else {
+          itemsCount = doc.data()[CartItem.VARIATION_KEY][0][CartItem.ITEM_COUNT_KEY];
+        }
+        final product = await ProductDatabaseHelper().getProductWithID(doc.id);
+        total += (itemsCount * product.discountPrice);
+      }
+    }
+    return total;
+  }
+
   Future<bool> removeProductFromCart(String cartItemID) async {
     String uid = AuthentificationService().currentUser.uid;
     final cartCollectionReference = firestore.collection(USERS_COLLECTION_NAME).doc(uid).collection(CART_COLLECTION_NAME);
@@ -227,32 +290,32 @@ class UserDatabaseHelper {
     String uid = AuthentificationService().currentUser.uid;
     final cartCollectionRef = firestore.collection(USERS_COLLECTION_NAME).doc(uid).collection(CART_COLLECTION_NAME);
     final docRef = cartCollectionRef.doc(cartItemID);
-    // docRef.update({CartItem.ITEM_COUNT_KEY: FieldValue.increment(1)});
-    final docSnapshot = await docRef.get();
-    List _variation = docSnapshot.data()["variation"];
-    print(_variation);
-    // If with Single Variant
-    if (_variation == null) {
-      docRef.update({CartItem.ITEM_COUNT_KEY: FieldValue.increment(1)});
-    }
-    // If has Variantion
-    else {
-      // _variation.remove(CartItem.ITEM_COUNT_KEY);
-      _variation.forEach((vari) {
-        if (vari["size"] == variation["size"] && vari["color"]["name"] == variation["color"]["name"]) {
-          vari[CartItem.ITEM_COUNT_KEY]++;
-          docRef.update({CartItem.VARIATION_KEY: _variation});
-        } else {
-          _variation.add(variation);
-          docRef.set(CartItem(itemCount: 1, variation: _variation).toMap());
-        }
-      });
-
-      // _variation[CartItem.ITEM_COUNT_KEY]++;
-      // print(_variation);
-      // docRef.update({CartItem.VARIATION_KEY: _variation});
-      // print(CartItem.VARIATION_KEY);
-    }
+    docRef.update({CartItem.ITEM_COUNT_KEY: FieldValue.increment(1)});
+    // final docSnapshot = await docRef.get();
+    // List _variation = docSnapshot.data()["variation"];
+    // print(_variation);
+    // // If with Single Variant
+    // if (_variation == null) {
+    //   docRef.update({CartItem.ITEM_COUNT_KEY: FieldValue.increment(1)});
+    // }
+    // // If has Variantion
+    // else {
+    //   // _variation.remove(CartItem.ITEM_COUNT_KEY);
+    //   _variation.forEach((vari) {
+    //     if (vari["size"] == variation["size"] && vari["color"]["name"] == variation["color"]["name"]) {
+    //       vari[CartItem.ITEM_COUNT_KEY]++;
+    //       docRef.update({CartItem.VARIATION_KEY: _variation});
+    //     } else {
+    //       _variation.add(variation);
+    //       docRef.set(CartItem(itemCount: 1, variation: _variation).toMap());
+    //     }
+    //   });
+    //
+    //   // _variation[CartItem.ITEM_COUNT_KEY]++;
+    //   // print(_variation);
+    //   // docRef.update({CartItem.VARIATION_KEY: _variation});
+    //   // print(CartItem.VARIATION_KEY);
+    // }
     return true;
   }
 
@@ -291,12 +354,23 @@ class UserDatabaseHelper {
     return orderedProductsId;
   }
 
-  Future<bool> addToMyOrders(List<OrderedProduct> orders) async {
+  Future<List<String>> get gymSubscriptionsList async {
+    String uid = AuthentificationService().currentUser.uid;
+    final gymSubscriptionsSnapshot = await firestore.collection(USERS_COLLECTION_NAME).doc(uid).collection(GYM_SUBSCRIPTIONS_COLLECTION_NAME).get();
+    List gymSubscriptionsId = List<String>();
+    for (final doc in gymSubscriptionsSnapshot.docs) {
+      gymSubscriptionsId.add(doc.id);
+    }
+    return gymSubscriptionsId;
+  }
+
+  Future<bool> addToMyOrders(OrderedProduct order) async {
     String uid = AuthentificationService().currentUser.uid;
     final orderedProductsCollectionRef = firestore.collection(USERS_COLLECTION_NAME).doc(uid).collection(ORDERED_PRODUCTS_COLLECTION_NAME);
-    for (final order in orders) {
       await orderedProductsCollectionRef.add(order.toMap());
-    }
+    // for (final order in orders) {
+    //   await orderedProductsCollectionRef.add(order.toMap());
+    // }
     return true;
   }
 

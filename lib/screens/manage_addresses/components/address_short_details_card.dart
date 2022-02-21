@@ -33,7 +33,7 @@ class AddressShortDetailsCard extends StatelessWidget {
                       padding:
                           EdgeInsets.symmetric(horizontal: 8, vertical: 12),
                       decoration: BoxDecoration(
-                        color: Colors.cyan.withOpacity(0.24),
+                        color: kSecondaryColor.withOpacity(0.75),
                         borderRadius: BorderRadius.only(
                           topLeft: Radius.circular(5),
                           bottomLeft: Radius.circular(5),
@@ -43,7 +43,7 @@ class AddressShortDetailsCard extends StatelessWidget {
                         child: Text(
                           address.title,
                           style: TextStyle(
-                            color: Colors.black,
+                            color: Colors.white,
                             fontSize: 18,
                             fontWeight: FontWeight.w600,
                           ),
@@ -80,7 +80,7 @@ class AddressShortDetailsCard extends StatelessWidget {
                           Text("${address.landmark}"),
                           Row(
                             children: [
-                              Text("${address.addresLine1}, "),
+                              Text("${address.address}, "),
                               Text("${address.city}"),
                             ],
                           ),

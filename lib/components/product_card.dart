@@ -9,11 +9,13 @@ import '../constants.dart';
 class ProductCard extends StatelessWidget {
   final String productId;
   final GestureTapCallback press;
+  bool noSpacing;
 
-  const ProductCard({
+  ProductCard({
     Key key,
     @required this.productId,
     @required this.press,
+    this.noSpacing,
   }) : super(key: key);
 
   @override
@@ -21,15 +23,14 @@ class ProductCard extends StatelessWidget {
     return GestureDetector(
       onTap: press,
       child: Container(
+        margin: noSpacing ?? false ? null : EdgeInsets.only(left: getProportionateScreenWidth(12)),
         decoration: BoxDecoration(
           color: Colors.white,
           border: Border.all(color: kTextColor.withOpacity(0.15)),
-          borderRadius: BorderRadius.all(
-            Radius.circular(5),
-          ),
+          borderRadius: BorderRadius.all(Radius.circular(5)),
         ),
         child: Padding(
-          padding: EdgeInsets.symmetric(horizontal: getProportionateScreenHeight(15), vertical: getProportionateScreenHeight(15)),
+          padding: EdgeInsets.symmetric(horizontal: getProportionateScreenHeight(12), vertical: getProportionateScreenHeight(12)),
           child: FutureBuilder<Product>(
             future: ProductDatabaseHelper().getProductWithID(productId),
             builder: (context, snapshot) {
@@ -63,8 +64,8 @@ class ProductCard extends StatelessWidget {
       // mainAxisAlignment: MainAxisAlignment.center,
       children: [
         Container(
-          width: getProportionateScreenHeight(110),
-          height: getProportionateScreenHeight(110),
+          width: getProportionateScreenHeight(80),
+          height: getProportionateScreenHeight(80),
           child: ClipRRect(
             borderRadius: BorderRadius.circular(5),
             child: Image.network(
@@ -72,7 +73,7 @@ class ProductCard extends StatelessWidget {
             ),
           ),
         ),
-        SizedBox(height: getProportionateScreenHeight(10)),
+        SizedBox(height: getProportionateScreenHeight(14)),
         Container(
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
@@ -100,7 +101,7 @@ class ProductCard extends StatelessWidget {
                         "${product.calculatePercentageDiscount()}% OFF",
                         style: TextStyle(
                           color: Colors.red,
-                          fontSize: getProportionateScreenHeight(13),
+                          fontSize: getProportionateScreenHeight(10),
                           fontWeight: FontWeight.w900,
                         ),
                       ),

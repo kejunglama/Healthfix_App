@@ -1,3 +1,5 @@
+// ignore_for_file: must_be_immutable
+
 import 'package:flutter/material.dart';
 import 'package:healthfix/models/Product.dart';
 import 'package:healthfix/services/database/product_database_helper.dart';
@@ -23,6 +25,7 @@ class ProductShortDetailCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     // print(variation != null && variation.isNotEmpty);
+    // print("item count --- ${itemCount}");
     return InkWell(
       onTap: onPressed,
       child: FutureBuilder<Product>(
