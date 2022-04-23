@@ -56,7 +56,7 @@ class _BodyState extends State<Body> {
   // ];
 
   final List<String> topBrandsList = [
-    'https://scontent.fktm3-1.fna.fbcdn.net/v/t1.6435-9/117764675_145916383862343_2574290256692351033_n.jpg?_nc_cat=108&ccb=1-5&_nc_sid=09cbfe&_nc_ohc=3f03Voa66JgAX9TMaXG&_nc_ht=scontent.fktm3-1.fna&oh=00_AT-9_pn2sBZo8ibxkZ0qLKl0xTji25uS-bPx-f73uYuN9g&oe=627BA2D6',
+    'https://firebasestorage.googleapis.com/v0/b/siteux-healthfix.appspot.com/o/logos%2Flogo-fitcal.jpg?alt=media&token=a3e9d47f-4b12-4614-bb90-83b7d0605a64',
     'https://media.designrush.com/inspiration_images/134805/conversions/_1512076803_93_Nike-preview.jpg',
     'https://image.shutterstock.com/image-photo/kiev-ukraine-march-31-2015-260nw-275940803.jpg',
     'https://cdn.shopify.com/s/files/1/1367/5207/files/gymshark_social_banner_1200x1200.jpg?v=1549554503',

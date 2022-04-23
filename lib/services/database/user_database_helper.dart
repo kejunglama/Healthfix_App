@@ -163,6 +163,14 @@ class UserDatabaseHelper {
     return cartItem;
   }
 
+  Future getUserDataFromId(String id) async {
+    // String uid = AuthentificationService().currentUser.uid;
+    final docRef = firestore.collection(USERS_COLLECTION_NAME).doc(id);
+    // final docRef = cartCollectionRef.doc(id);
+    final docSnapshot = await docRef.get();
+    return docSnapshot.data();
+  }
+
   Future<GymSubscription> getGymSubscriptionFromId(String id) async {
     String uid = AuthentificationService().currentUser.uid;
     final gymSubscriptionsCollectionRef = firestore.collection(USERS_COLLECTION_NAME).doc(uid).collection(GYM_SUBSCRIPTIONS_COLLECTION_NAME);
@@ -180,6 +188,7 @@ class UserDatabaseHelper {
     bool alreadyPresent = docSnapshot.exists;
     // If New Product
     if (alreadyPresent == false) {
+      print("already");
       docRef.set(CartItem(itemCount: 1, variation: variation).toMap());
       // If Already Product
     } else {
@@ -191,6 +200,8 @@ class UserDatabaseHelper {
       }
       // If has Variantion
       else {
+        docRef.set(CartItem(itemCount: 1, variation: _variation).toMap());
+
         // _variation.remove(CartItem.ITEM_COUNT_KEY);
         _variation.forEach((vari) {
           if (vari["size"] == variation["size"] && vari["color"]["name"] == variation["color"]["name"]) {

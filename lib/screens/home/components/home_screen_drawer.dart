@@ -15,6 +15,7 @@ import 'package:healthfix/screens/my_orders/my_orders_screen.dart';
 import 'package:healthfix/screens/my_products/my_products_screen.dart';
 import 'package:healthfix/services/authentification/authentification_service.dart';
 import 'package:healthfix/services/database/user_database_helper.dart';
+import 'package:healthfix/shared_preference.dart';
 import 'package:healthfix/utils.dart';
 import 'package:logger/logger.dart';
 
@@ -130,7 +131,8 @@ class HomeScreenDrawer extends StatelessWidget {
                         );
                       },
                     ),
-                  ),CardDesign(
+                  ),
+                  CardDesign(
                     child: ListTile(
                       leading: Icon(Icons.fitness_center, color: kSecondaryColor),
                       title: Text(
@@ -193,7 +195,11 @@ class HomeScreenDrawer extends StatelessWidget {
                       ),
                       onTap: () async {
                         final confirmation = await showConfirmationDialog(context, "Confirm Sign out ?");
-                        if (confirmation) AuthentificationService().signOut();
+                        if (confirmation) {
+                          UserPreferences prefs = new UserPreferences();
+                          prefs.reset();
+                          AuthentificationService().signOut();
+                        }
                       },
                     ),
                   ),

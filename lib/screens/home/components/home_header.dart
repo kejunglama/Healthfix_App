@@ -4,7 +4,9 @@ import 'package:healthfix/components/popup_dialog.dart';
 import 'package:healthfix/data.dart';
 import 'package:healthfix/models/Product.dart';
 import 'package:healthfix/screens/category_products/category_products_screen.dart';
+import 'package:healthfix/shared_preference.dart';
 import 'package:healthfix/size_config.dart';
+import 'package:healthfix/wrappers/authentification_wrapper.dart';
 
 import '../../../constants.dart';
 import 'home_screen_drawer.dart';
@@ -18,7 +20,8 @@ class HomeHeader extends StatelessWidget {
   HomeHeader({
     Key key,
     @required this.onSearchSubmitted,
-    @required this.onCartButtonPressed, this.showNotification,
+    @required this.onCartButtonPressed,
+    this.showNotification,
   }) : super(key: key);
 
   @override
@@ -30,10 +33,18 @@ class HomeHeader extends StatelessWidget {
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               // Logo
-              Container(
-                margin: EdgeInsets.only(left: getProportionateScreenWidth(12)),
-                height: getProportionateScreenHeight(30),
-                child: Image.asset('assets/logo/HF-logo.png'),
+              GestureDetector(
+                child: Container(
+                  margin: EdgeInsets.only(left: getProportionateScreenWidth(12)),
+                  height: getProportionateScreenHeight(30),
+                  child: Image.asset('assets/logo/HF-logo.png'),
+                ),
+                onTap: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(builder: (context) => AuthenticationWrapper()),
+                  );
+                },
               ),
 
               // Icons
@@ -58,7 +69,10 @@ class HomeHeader extends StatelessWidget {
                         //     ),
                         //   );
                         // },
-                        onPressed: () {},
+                        onPressed: () {
+                          UserPreferences prefs = new UserPreferences();
+                          prefs.getUser().then((user) => print("User: $user"));
+                        },
                         icon: Icon(Icons.favorite_border_outlined),
                         color: kPrimaryColor,
                         splashRadius: 20,
@@ -70,10 +84,17 @@ class HomeHeader extends StatelessWidget {
                       width: getProportionateScreenWidth(35),
                       child: IconButton(
                         onPressed: () {
-                          Navigator.push(
-                            context,
-                            MaterialPageRoute(builder: (context) => HomeScreenDrawer()),
-                          );
+                          UserPreferences prefs = new UserPreferences();
+
+                          prefs.hasUser().then((hasUser) => hasUser
+                              ? Navigator.push(
+                                  context,
+                                  MaterialPageRoute(builder: (context) => HomeScreenDrawer()),
+                                )
+                              : Navigator.push(
+                                  context,
+                                  MaterialPageRoute(builder: (context) => AuthenticationWrapper()),
+                                ));
                         },
                         icon: Icon(Icons.account_circle_outlined),
                         color: kPrimaryColor,

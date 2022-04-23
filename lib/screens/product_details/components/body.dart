@@ -11,7 +11,9 @@ import 'package:healthfix/screens/product_details/components/product_actions_sec
 import 'package:healthfix/screens/product_details/components/product_images.dart';
 import 'package:healthfix/services/database/product_database_helper.dart';
 import 'package:healthfix/services/database/user_database_helper.dart';
+import 'package:healthfix/shared_preference.dart';
 import 'package:healthfix/size_config.dart';
+import 'package:healthfix/wrappers/authentification_wrapper.dart';
 import 'package:intl/intl.dart';
 import 'package:logger/logger.dart';
 
@@ -183,6 +185,8 @@ class _BodyState extends State<Body> {
   }
 
   Positioned bottomProductBar() {
+    UserPreferences prefs = new UserPreferences();
+
     return Positioned(
       bottom: 0,
       left: 0,
@@ -246,22 +250,35 @@ class _BodyState extends State<Body> {
             ),
             AddToCartFAB(
               productId: product.id,
-              onTap: onCartTapFetchVariant,
+              onTap: () {
+                prefs.hasUser().then((hasUser) => hasUser
+                    ? onCartTapFetchVariant
+                    : Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => AuthenticationWrapper(),
+                        )));
+              },
             ),
             sizedBoxOfWidth(12),
             BuyNowFAB(
               productId: product.id,
               onTap: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder: (context) => CheckoutScreen(
-                      selectedCartItems: [product.id],
-                      onCheckoutPressed: selectedCheckoutButtonFromBuyNowCallback,
-                      isBuyNow: true,
-                    ),
-                  ),
-                );
+                prefs.hasUser().then((hasUser) => hasUser
+                    ? Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => CheckoutScreen(
+                            selectedCartItems: [product.id],
+                            onCheckoutPressed: selectedCheckoutButtonFromBuyNowCallback,
+                            isBuyNow: true,
+                          ),
+                        ),
+                      )
+                    : Navigator.push(
+                        context,
+                        MaterialPageRoute(builder: (context) => AuthenticationWrapper()),
+                      ));
               },
             ),
           ],
@@ -306,12 +323,12 @@ class _BodyState extends State<Body> {
         Logger().e(e.toString());
         snackbarmMessage = e.toString();
       } finally {
-          Navigator.of(context).popUntil((route) => route.isFirst);
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(
-              content: Text(snackbarmMessage ?? "Something went wrong"),
-            ),
-          );
+        Navigator.of(context).popUntil((route) => route.isFirst);
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text(snackbarmMessage ?? "Something went wrong"),
+          ),
+        );
       }
     }
   }

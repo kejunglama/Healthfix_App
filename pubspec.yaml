@@ -43,6 +43,7 @@ dependencies:
   firebase_messaging: ^11.2.6
   new_version: ^0.3.0
   timelines: ^0.1.0
+  shared_preferences: ^2.0.15
 
 dev_dependencies:
   flutter_test:

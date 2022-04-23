@@ -28,20 +28,23 @@ class CartItem extends Model {
   Map<String, dynamic> toMap() {
     // print("variation in DBHELPER");
     Map map;
-    if(variation != null){
-      if (variation.isEmpty) {
-        map = <String, dynamic>{
-          ITEM_COUNT_KEY: itemCount,
-        };
-      } else {
-        variation[ITEM_COUNT_KEY] = itemCount;
-        // print(variation);
-        map = <String, dynamic>{
-          VARIATION_KEY: [variation],
-        };
-      }
-    }
-
+    map = <String, dynamic>{
+      ITEM_COUNT_KEY: itemCount,
+    };
+    // if(variation != null){
+    //   if (variation.isEmpty) {
+    //     map = <String, dynamic>{
+    //       ITEM_COUNT_KEY: itemCount,
+    //     };
+    //   } else {
+    //     variation[ITEM_COUNT_KEY] = itemCount;
+    //     // print(variation);
+    //     map = <String, dynamic>{
+    //       VARIATION_KEY: [variation],
+    //     };
+    //   }
+    // }
+    // print("$map $variation");
     return map;
   }
 

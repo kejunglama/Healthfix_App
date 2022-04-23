@@ -15,6 +15,7 @@ import 'package:healthfix/services/data_streams/cart_items_stream.dart';
 import 'package:healthfix/services/database/product_database_helper.dart';
 import 'package:healthfix/services/database/user_database_helper.dart';
 import 'package:healthfix/size_config.dart';
+import 'package:healthfix/wrappers/authentification_wrapper.dart';
 import 'package:logger/logger.dart';
 
 import '../../../utils.dart';
@@ -148,10 +149,26 @@ class _BodyState extends State<Body> {
           Logger().w(error.toString());
         }
         return Center(
-          child: NothingToShowContainer(
-            iconPath: "assets/icons/network_error.svg",
-            primaryMessage: "Something went wrong",
-            secondaryMessage: "Unable to connect to Database",
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Center(
+                child: GestureDetector(
+                  onTap: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(builder: (context) => AuthenticationWrapper()),
+                    );
+                  },
+                  child: Text("Login to Continue", style: cusHeadingLinkStyle,),
+                ),
+              ),
+              // NothingToShowContainer(
+              //   iconPath: "assets/icons/network_error.svg",
+              //   primaryMessage: "Something went wrong",
+              //   secondaryMessage: "Unable to connect to Database",
+              // ),
+            ],
           ),
         );
       },

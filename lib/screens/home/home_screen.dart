@@ -7,6 +7,7 @@ import 'package:healthfix/constants.dart';
 import 'package:healthfix/screens/cart/cart_screen.dart';
 import 'package:healthfix/screens/category/category_screen.dart';
 import 'package:healthfix/screens/explore_fitness/explore_screen.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 import '../../size_config.dart';
 import 'components/body.dart';
@@ -30,8 +31,28 @@ class _HomeScreenState extends State<HomeScreen> {
       importance: Importance.high,
       playSound: true);
 
+  /// Initializes shared_preference
+  void sharedPrefInit() async {
+    try {
+      /// Checks if shared preference exist
+      Future<SharedPreferences> _prefs = SharedPreferences.getInstance();
+      final SharedPreferences prefs = await _prefs;
+      prefs.getString("app-name");
+    } catch (err) {
+      /// setMockInitialValues initiates shared preference
+      /// Adds app-name
+      SharedPreferences.setMockInitialValues({});
+      Future<SharedPreferences> _prefs = SharedPreferences.getInstance();
+      final SharedPreferences prefs = await _prefs;
+      prefs.setString("app-name", "healthfix");
+    }
+  }
+
+
   @override
   void initState() {
+    sharedPrefInit();
+
     super.initState();
     _tabsPageController = PageController();
     FirebaseMessaging.onMessage.listen((RemoteMessage message) {

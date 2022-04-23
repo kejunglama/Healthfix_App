@@ -52,6 +52,8 @@ class AddToCartFAB extends StatelessWidget {
         String snackbarMessage;
         try {
           addedSuccessfully = await UserDatabaseHelper().addProductToCart(productId, variations);
+          print("addedSuccessfully $addedSuccessfully");
+
           if (addedSuccessfully == true) {
             snackbarMessage = "Product added successfully";
           } else {
